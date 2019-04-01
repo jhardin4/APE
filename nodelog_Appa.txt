@@ -1,0 +1,45 @@
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.executor.execute', 'args': [[[{'devices': 'gantry', 'procedure': 'Connect', 'details': {}}]]]}
+Sent {'subject': 'target.executor.execute', 'args': [[[{'devices': 'pump0', 'procedure': 'Connect', 'details': {'COM': 9}}]]]}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.executor.execute', 'args': [[[{'devices': 'gantry', 'procedure': 'Connect', 'details': {}}]]]}
+Sent {'subject': 'target.executor.execute', 'args': [[[{'devices': 'pump0', 'procedure': 'Connect', 'details': {'COM': 9}}]]]}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.recv_value', 'args': ['devMade', 'e_reply']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['devMade', 'e_reply']}}
+Handled {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}
+Sent {'subject': 'target.executor.devices.gantry.address.getDescriptors', 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['gotDescriptors', 'e_reply']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['devMade', 'e_reply']}}
+Handled {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}
+Sent {'subject': 'target.executor.devicelist.gantry.address.getDescriptors', 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['gotDescriptors', 'e_reply']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['devMade', 'e_reply']}}
+Handled {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}
+Sent {'subject': 'target.executor.devicelist.gantry.Address.getDescriptors', 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['gotDescriptors', 'e_reply']}}
+Sent {'subject': 'target.test_print', 'args': ['cal.json']}
+Handled {'subject': 'target.getValue', 'kwargs': {'infoAddress': ['information', 'calibrationfile']}, 'ereply': {'subject': 'target.test_print', 'args': ['cal.json']}}
+Sent {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['devMade', 'e_reply']}}
+Handled {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}
+Sent {'subject': 'target.executor.devicelist.gantry.Address.getDescriptors', 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['gotDescriptors', 'e_reply']}}

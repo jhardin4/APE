@@ -1,0 +1,16 @@
+Sent {'subject': 'close'}
+Handled {'subject': 'close'}
+Handled {'subject': 'close'}
+Handled {'subject': 'close'}
+Handled {'subject': 'close'}
+Sent {'subject': 'target.recv_value', 'args': ['devMade', None]}
+Handled {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.recv_value', 'args': ['devMade', None]}}
+Handled {'subject': 'close'}
+Sent {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}
+Handled {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}}
+Sent {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}
+Handled {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}}
+Sent {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}
+Handled {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}}
+Sent {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}
+Handled {'subject': 'target.executor.createDevice', 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'pointer'], 'ereply': {'subject': 'target.device_interface.recv_value', 'args': ['devMade', None]}}
