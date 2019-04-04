@@ -44,6 +44,7 @@ class Device():
         self.log = ''
         # Information for handling connections
         self.apparatus_connection = 'pointer'
+        self.executor = ''
 
     def On(self):
         # Example of turning the device on
@@ -153,6 +154,13 @@ class Device():
 
         return self.returnlog()
 
+    def checkDependencies(self, name, device):
+        if type(device) == str:
+            return self.executor.devicelist[name]['Address']
+        else:
+            return device
+            
+        
 
 # For testing and debuging
 if __name__ == '__main__':

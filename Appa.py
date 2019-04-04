@@ -1,46 +1,30 @@
 import Core
+import APE_Interfaces
 from zmqNode import zmqNode
 import threading
 
 class Appa():
-    def __init__(self):
+    def __init__(self, A2I_address, A2PE_address):
+        # Create the node and set its target to Appa
+        self.node = zmqNode('appa')
+        self.node.target = self
+        self.node.logging = True
+        # Create an Apparatus
         self.apparatus = Core.Apparatus()
-        self.com_node = ''
-        
-    def connect_node(self, address=''):
-        if address == '':
-            address = self.address
-        self.com_node.connect('server', address, server=True)
-        self.address = address
-        self.com_node.start_listening()
-    
-    # Does a procedure immediately and does not add it to the procedure list
-    def Do(self, procedure, requirements):
-        if requirements == {}:
-            procedure.Do()
-        else:
-            procedure.Do(requirements)
-    
-    def DoProclist(self):
-        for line in self.proclist:
-            self.Do(line['procedure'], line['requirements'])
+        # Create an interface to for the executor and assign it to the apparatus
+        self.executor = APE_Interfaces.ExecutorInterface(self.node)
+        self.executor.localDefault = False
+        self.apparatus.executor = self.executor
+        # Connect to the user interface and procexec process
+        self.connect2I(A2I_address)
+        self.connect2PE(A2PE_address)
+        self.node.start_listening()
 
+    def connect2I(self, A2I_address):
+        self.node.connect('User', A2I_address, server=True)
 
-def StartAPE(address):
-    MyAPE = APE()
-    import FlexPrinterApparatus
-    materials = [{'AgPMMA': 'ZZ1'}]
-    # These are other tools that can be added in. Comment out the ones not used.
-    tools = []
-    # tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
-    # tools.append({'name': 'camera', 'axis': 'ZZ4', 'type': 'IDS_ueye'})
-    FlexPrinterApparatus.Build_FlexPrinter(materials, tools, MyAPE.apparatus)
-
-    if address != '':
-        MyAPE.com_node = zmqNode('server')
-        MyAPE.com_node.target = MyAPE
-        MyAPE.connect_node(address)
-    return MyAPE
+    def connect2PE(self, A2PE_address):
+        self.node.connect('procexec', A2PE_address, server=True)
 
 
 if __name__ == '__main__':

@@ -14,7 +14,8 @@ class User_FlexPrinter_Alignments_Align(Procedure):
         self.requirements['filename']['address']=['information','alignmentsfile']
         self.updatealign = Procedures.User_FlexPrinter_Alignments_Update(self.apparatus, self.executor)
         self.derivealign = Procedures.User_FlexPrinter_Alignments_Derive(self.apparatus, self.executor)
-        self.useroptions = Procedures.Data_User_Input_Options(self.apparatus, self.executor)
+        self.useroptions = Procedures.User_Consol_InputOptions(self.apparatus, self.executor)
+        self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
     
     def Plan(self):
         measuredlist = self.requirements['Measured_List']['value']
@@ -31,12 +32,13 @@ class User_FlexPrinter_Alignments_Align(Procedure):
         self.useroptions.Do({'message': message, 'options': options, 'default': default})
         doalignment = self.useroptions.response
         if doalignment in ['y', 'Y', 'yes', 'Yes', 'YES', '']:
-            afilename = input('What filename?([' + filename + '])')
-            if afilename == '':
-                afilename = filename
+            message = 'What filename?'
+            default = filename
+            self.userinput.Do({'message': message, 'default': default})
+            afilename = self.userinput.response
             try:
                 with open(filename, 'r') as TPjson:
-                    self.apparatus['information']['alignments'] = json.load(TPjson)
+                    self.apparatus.setValue(['information','alignments'], json.load(TPjson))
                 alignmentscollected = True
             except FileNotFoundError:
                 print('No file loaded.  Possible error in ' + afilename)
@@ -49,12 +51,17 @@ class User_FlexPrinter_Alignments_Align(Procedure):
         # Check if any alignments need to be redone
         alignmentsOK = False
         while not alignmentsOK:
-            redoalignments = input('Would you like to redo any alignments?(y/[n])')
+            message = 'Would you like to redo any alignments?'
+            options = ['y', 'n']
+            default = 'n'
+            self.useroptions.Do({'message': message, 'options': options, 'default': default})
+            redoalignments = self.useroptions.response
             if redoalignments in ['y', 'Y', 'yes', 'Yes', 'YES']:
-                namestring = ''
-                for name in measuredlist:
-                    namestring += name + ' '
-                which_alignment = input('Which alignment would you like to redo? (pick from list below)\n'+namestring)
+                message = 'Which alignment would you like to redo?'
+                options = measuredlist
+                default = ''
+                self.useroptions.Do({'message': message, 'options': options, 'default': default})  
+                which_alignment = self.useroptions.response
                 if which_alignment in measuredlist:
                     self.updatealign.Do({'alignmentname': which_alignment})
                 else:

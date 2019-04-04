@@ -1,12 +1,10 @@
 # APE framework.  Procedure may not be necessary
-import Core
 from ProcExec import ProcExec
 import Procedures
-from zmqNode import zmqNode
-from Interface_Node import  Interface_Node
+from Interface_Node import Interface_Node
 from multiprocessing import Process
 import threading
-import APE_Interfaces
+from Appa import Appa
 
 
 # Import the procedure sets that are needed
@@ -14,13 +12,12 @@ import APE_Interfaces
 # Import other libraries
 import FlexPrinterApparatus  # This is specific to the Flex Printer at AFRL
 import XlineTPGen as TPGen  # Toolpath generator
-import time
 
-def StartAppa(address, A2PE_address):
+
+def StartAppa(A2I_address, A2PE_address):
     # Create apparatus and executor
-    MyApparatus = Core.Apparatus()
-    MyApparatus.device_interface = APE_Interfaces.DeviceInterface()
-    MyApparatus.executor = APE_Interfaces.ExecutorInterface()
+    MyAppa = Appa(A2I_address, A2PE_address)
+    MyApparatus = MyAppa.apparatus
     # ____FLexPrinterApparatus____#
     # Set up a basic description of the system that is later used to create an
     # apparatus specific to the Flex Printer at AFRL
@@ -46,7 +43,7 @@ def StartAppa(address, A2PE_address):
     MyApparatus['devices']['aeropump0']['pumpres_time'] = 0.3
     MyApparatus['devices']['aeropump0']['pressure'] = 155
     MyApparatus['devices']['pump0']['COM'] = 9
-    
+
     MyApparatus['information']['materials'][mat0]['density'] = 1.84
     MyApparatus['information']['toolpaths'] = {}
     MyApparatus['information']['toolpaths']['generator'] = TPGen.GenerateToolpath
@@ -54,27 +51,21 @@ def StartAppa(address, A2PE_address):
     MyApparatus['information']['toolpaths']['toolpath'] = [0]
     MyApparatus['information']['ink calibration']['time'] = 30
 
+    for device in MyApparatus['devices']:
+        if MyApparatus['devices'][device]['addresstype'] == 'pointer':
+            MyApparatus['devices'][device]['addresstype'] = 'zmqNode'
+            MyApparatus['devices'][device]['address'] = 'procexec'
+
     MyApparatus['devices']['User'] = {'type': 'User_Consol',
                'descriptors': ['Interface'],
                'addresstype': 'zmqNode',
-               'address': address}
-    
-    for device in MyApparatus['devices']:
-        MyApparatus['devices'][device]['addresstype'] = 'zmqNode'
-        
-    MyApparatus.com_node = zmqNode('Appa')
-    MyApparatus.executor.node = MyApparatus.com_node
-    MyApparatus.device_interface.node = MyApparatus.com_node
-    MyApparatus.com_node.target = MyApparatus
-    MyApparatus.com_node.logging = True
-    MyApparatus.com_node.connect('User', address, server=True)
-    MyApparatus.com_node.connect('procexec', A2PE_address, server=True)
-    MyApparatus.com_node.start_listening()
+               'address': 'User'}
+
     return MyApparatus
 
-def StartProcExec(appa_address, procexec_address):
+def StartProcExec(PE2I_address, PE2A_address):
     
-    MyProcExec = ProcExec()
+    MyProcExec = ProcExec(PE2I_address, PE2A_address)
     MyApparatus = MyProcExec.apparatus
     MyExecutor = MyProcExec.executor
     
@@ -83,6 +74,7 @@ def StartProcExec(appa_address, procexec_address):
 
     MyProcExec.proclist.append({'procedure': Procedures.User_FlexPrinter_Alignments_Align(MyApparatus, MyExecutor),
                            'requirements': {'primenoz': 'n' + 'AgPMMA'}})
+    '''
     MyProcExec.proclist.append({'procedure': Procedures.User_InkCal_Calibrate(MyApparatus, MyExecutor),
                            'requirements': {'material': 'AgPMMA'}})
     MyProcExec.proclist.append({'procedure': Procedures.Toolpath_Generate(MyApparatus, MyExecutor),
@@ -91,14 +83,7 @@ def StartProcExec(appa_address, procexec_address):
     PrintTP.requirements['toolpath']['address'] = ['information', 'toolpaths', 'toolpath']
     MyProcExec.proclist.append({'procedure': PrintTP,
                            'requirements': {}})
-    
-    MyProcExec.com_node = zmqNode('ProcExec')
-    MyProcExec.com_node.target = MyProcExec
-    MyApparatus.node = MyProcExec.com_node
-    MyProcExec.com_node.logging = True
-    MyProcExec.com_node.connect('User', procexec_address, server=True)
-    MyProcExec.com_node.connect('appa', appa_address)
-    MyProcExec.com_node.start_listening()
+    '''
     return MyProcExec
     
 if __name__ == '__main__':
@@ -112,17 +97,14 @@ if __name__ == '__main__':
         # Spin up the other processes
         proc_Appa = Process(target=StartAppa, args=(I2A_address,A2PE_address,))
         proc_Appa.start()
-        proc_ProcExec = Process(target=StartProcExec, args=(A2PE_address, I2PE_address,))
+        proc_ProcExec = Process(target=StartProcExec, args=(I2PE_address, A2PE_address,))
         proc_ProcExec.start()
         # Start the Interface
-        banana = Interface_Node()
-        banana.node.logging = True
-        banana.node.connect('appa', I2A_address)
-        banana.node.connect('procexec', I2PE_address)
-        banana.node.start_listening()
-        banana.getValue(['information', 'calibrationfile'], 'test_print', local_args=['e_reply'])
-        banana.Connect_All()
-        waitTime = 20
+        banana = Interface_Node(I2A_address, I2PE_address)
+        print(banana.apparatus.getValue(['information', 'calibrationfile']))
+        banana.apparatus.Connect_All(simulation=True)
+        threading.Timer(20.0, banana.DoProclist).start()
+        waitTime = 40.0
         threading.Timer(waitTime, banana.sendCloseAll).start()
         threading.Timer(waitTime+0.1, banana.node.close).start()
         threading.Timer(waitTime+0.2, proc_Appa.join).start()

@@ -16,8 +16,6 @@ class Apparatus(dict):
         self.simulation = False
         self.dependent_Devices = []
         self.logpath = 'Logs//'
-        self.com_node = ''
-        self.device_interface = ''
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
@@ -49,21 +47,21 @@ class Apparatus(dict):
                 else:
                     self.Connect(device)
             elif self['devices'][device]['addresstype'] == 'zmqNode':
-                # Register the device with the Executor
-                # self['devices'][device]['address'].ERegister(executor)
-                self.device_interface.createDevice(device, self['devices'][device]['type'], 'pointer')
+                # Create a device through the executor
+                self.executor.createDevice(device, self['devices'][device]['type'], 'procexec', self['devices'][device]['address'])
+
                 # Add Device descriptors to Apparatus ones
                 if 'descriptors' in self['devices'][device] and type(self['devices'][device]['descriptors']) == list:
                     self['devices'][device]['descriptors'] = [*self['devices'][device]['descriptors'],
-                                                              *self.device_interface.getDescriptors(device)]
+                                                              *self.executor.getDescriptors(device, self['devices'][device]['address'])]
                 else:
-                    self['devices'][device]['descriptors'] = self.device_interface.getDescriptors(device)
+                    self['devices'][device]['descriptors'] = self.executor.getDescriptors(device, self['devices'][device]['address'])
 
                 # Set Device simulation state
-                self.device_interface.setSimulation(device,simulation)
+                self.executor.setSimulation(device, simulation, self['devices'][device]['address'])
 
                 # Check if the device is dependent on other devices and conncect if not dependent
-                if self.device_interface.getDependence(device):
+                if self.executor.getDependence(device, self['devices'][device]['address']):
                     # Add to dependent device list for later processing
                     self.dependent_Devices.append(device)
                 else:
@@ -83,7 +81,7 @@ class Apparatus(dict):
         if self['devices'][deviceName]['addresstype'] == 'pointer':
             arguments = list(self['devices'][deviceName]['address'].requirements['Connect'])
         if self['devices'][deviceName]['addresstype'] == 'zmqNode':
-            arguments = self.device_interface.getRequirements(deviceName, 'Connect')
+            arguments = self.executor.getRequirements(deviceName, 'Connect', self['devices'][deviceName]['address'])
         # Try to collect the required arguments together
         details = {}
         for element in arguments:
@@ -107,8 +105,12 @@ class Apparatus(dict):
         while len(self.dependent_Devices) > 0:
             device = self.dependent_Devices.pop(0)
             Ready2Connect = True
-
-            for devname in self['devices'][device]['address'].dependencies:
+            if self['devices'][device]['addresstype'] == 'pointer':
+                depList = self.executor.getDependencies(device)
+            elif self['devices'][device]['addresstype'] == 'zmqNode':
+                depList = self.executor.getDependencies(device, self['devices'][device]['address'])
+            
+            for devname in depList:
                 parent_devname = self['devices'][device][devname+'name']
 
                 if self['devices'][parent_devname]['Connected']:
@@ -327,3 +329,18 @@ class Apparatus(dict):
             }]])
         self.LogProc('eproc_' + device + '_' + method, details)
         self.LogProc('eproc_' + device + '_' + method, 'end')
+
+    def createAppEntry(self, AppAddress):
+        target = self
+        # Build everything but the last entry
+        for n in range(len(AppAddress)-1):
+            if AppAddress[n] in target:
+                if type(target[AppAddress[n]]) == dict:
+                    target = target[AppAddress[n]]
+                else:
+                    raise Exception(str(AppAddress[n]) + ' in ' + str(AppAddress) + ' is already occupied')
+            else:
+                target[AppAddress[n]] = {}
+                target = target[AppAddress[n]]
+        if AppAddress[len(AppAddress)-1] not in target:
+            target[AppAddress[len(AppAddress)-1]] = ''

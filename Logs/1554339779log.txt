@@ -1,0 +1,14 @@
+Time: 1554339779.639
+gantry is connected
+
+Time: 1554339779.779
+Ultimus pump0 is connected on port 9
+
+Time: 1554339780.056
+system is connected.
+
+Time: 1554339780.275
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+

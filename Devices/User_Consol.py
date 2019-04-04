@@ -5,13 +5,13 @@
 # Handle the different relative locations for independently running and
 #
 
-from Devices import Device
+from Devices import Sensor
 
 
-class User_Consol(Device):
+class User_Consol(Sensor):
     def __init__(self, name):
-        Device.__init__(self, name)
-        self.descriptors.append('pump')
+        Sensor.__init__(self, name)
+        self.descriptors = [*self.descriptors, *['sensor', 'User', 'consol']]
         self.requirements['GetInput'] = {}
         self.requirements['GetInput']['message'] = {'source': 'apparatus',
                          'address': '',
@@ -26,7 +26,7 @@ class User_Consol(Device):
                          'value': '',
                          'desc': 'default response'}
 
-    def GetInput(self, message='', options='', default=''):
+    def GetInputOptions(self, message='', options='', default='', address='', addressType=''):
         print(message)
         # Construct the list of options if options are given
         if options != '':
@@ -57,5 +57,19 @@ class User_Consol(Device):
         if response == 'stop':
             self.addlog(response)
             raise Exception('User requested stop')
+        self.StoreMeasurement(address, addressType, response)
+        self.addlog(response)
+        return self.returnlog()
+
+    def GetInput(self, message='', default='', address='', addressType=''):
+        print(message)
+        print('[' + str(default) + ']')
+        response = input('')
+        if response == '':
+            response = default
+        elif response == 'stop':
+            self.addlog(response)
+            raise Exception('User requested stop')
+        self.StoreMeasurement(address, addressType, response)
         self.addlog(response)
         return self.returnlog()

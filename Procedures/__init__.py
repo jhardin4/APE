@@ -42,3 +42,6 @@ from Procedures.Planner_Combinatorial import Planner_Combinatorial
 
 from Procedures.SampleTray_Start import SampleTray_Start
 from Procedures.SampleTray_XY_Setup import SampleTray_XY_Setup
+
+from Procedures.User_Consol_Input import User_Consol_Input
+from Procedures.User_Consol_InputOptions import User_Consol_InputOptions

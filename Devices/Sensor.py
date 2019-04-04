@@ -18,6 +18,12 @@ class Sensor(Device):
         if addresstype == 'pointer':
             # this assumes that address=[0] exists when this method is used.
             address[0] = result
+        elif addresstype == 'zmqNode_AppAddress':
+            # assumes that address is of the form
+            # {'global':'appa', 'AppAddress': ['information','procedure']}
+            kwargs = {'infoAddress': address['AppAddress'], 'value': result}
+            message = {'subject': 'target.apparatus.setValue', 'kwargs': kwargs}
+            self.executor.node.send(address['global'], message)
 
     def Measure(self, address='', addresstype=''):
         pass

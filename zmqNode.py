@@ -85,8 +85,11 @@ class zmqNode():
         return False
 
     def send(self, name, message):
-        self.connections[name].send_json(message)
-        self.addlog('Sent ' + str(message))
+        try:
+            self.connections[name].send_json(message)
+        except TypeError:
+            raise Exception(str(message))
+        self.addlog('Sent ' + name + ' ' + str(message))
 
     def start_listening(self):
         self.listening = True
@@ -160,16 +163,20 @@ class zmqNode():
             reply_message = self.build_message(**message['ereply'])
             self.send(self.cur_connection, reply_message)
 
-        self.addlog('Handled ' + str(message))
+        self.addlog('Handled ' + self.cur_connection + ' ' + str(message))
 
     def getMethod(self, maddress):
         madd_list = maddress.split('.')
         targetMethod = self
         for step in madd_list:
-            if hasattr(targetMethod, step):
-                targetMethod = getattr(targetMethod, step)
+            keys = step.replace(']','').replace('"','').split('[')
+            if hasattr(targetMethod, keys[0]):
+                targetMethod = getattr(targetMethod, keys[0])
             else:
-                raise Exception('Failed to find ' + str(step) + ' of ' + str(maddress))
+                raise Exception('Failed to find ' + str(keys[0]) + ' of ' + str(maddress))
+            if len(keys) > 1:
+                for n in range(1, len(keys)):
+                    targetMethod = targetMethod[keys[n]] 
         return targetMethod
 
     def addlog(self, message):

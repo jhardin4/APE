@@ -10,7 +10,7 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
     def Plan(self):
         measuredlist = self.requirements['Measured_List']['value']
         primenoz = self.requirements['primenoz']['value']
-        alignments = self.apparatus['information']['alignments']
+        alignments = self.apparatus.getValue(['information','alignments'])
         
         motionname = self.apparatus.findDevice({'descriptors':'motion'})
         
@@ -24,14 +24,14 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
         
         toollist.remove('initial')
         
-        paxismask = self.apparatus['devices'][motionname][primenoz]['axismask']
+        paxismask = self.apparatus.getValue(['devices', motionname, primenoz, 'axismask'])
         pzaxis = 'Z'
         if 'Z' in paxismask:
             pzaxis =paxismask['Z']
 
         for tool in toollist:
             zaxis = 'Z'
-            axismask = self.apparatus['devices'][motionname][tool]['axismask']
+            axismask = self.apparatus.getValue(['devices', motionname, tool,'axismask'])
             if 'Z' in axismask:
                 zaxis =axismask['Z']
 
@@ -45,3 +45,5 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
             alignments[tool+'@cal']['X']=alignments[primenoz+'@cal']['X'] -(alignments[primenoz+'@mark']['X'] - alignments[tool+'@mark']['X'])
             alignments[tool+'@cal']['Y']=alignments[primenoz+'@cal']['Y'] -(alignments[primenoz+'@mark']['Y'] - alignments[tool+'@mark']['Y'])
             alignments[tool+'@cal'][zaxis]=alignments[primenoz+'@cal'][pzaxis] -(alignments[primenoz+'@mark'][pzaxis] - alignments[tool+'@mark'][zaxis])
+
+        self.apparatus.setValue(['information', 'alignments'], alignments)

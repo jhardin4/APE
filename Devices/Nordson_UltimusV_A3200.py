@@ -57,8 +57,8 @@ class Nordson_UltimusV_A3200(Nordson_UltimusV):
     def Connect(self, pumpname='', A3200name='', pumpaddress='', A3200address='', IOaxis = '', IObit = ''):
         self.descriptors.append(pumpname)
         self.descriptors.append(A3200name)
-        self.pumphandle = pumpaddress
-        self.A3200handle = A3200address
+        self.pumphandle = self.checkDependencies(pumpname, pumpaddress)
+        self.A3200handle = self.checkDependencies(A3200name, A3200address)
         self.IOaxis = IOaxis
         self.IObit = IObit
 

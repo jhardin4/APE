@@ -76,3 +76,4 @@ class Procedure():
             }]])
         self.apparatus.LogProc('eproc_' + device + '_' + method, details)
         self.Report(string='end')
+
