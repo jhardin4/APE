@@ -12,14 +12,19 @@ class User_InkCal_Measure(Procedure):
         self.requirements['material'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'parameters used to generate toolpath'}
         self.requirements['filename'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of alignmentfile'}
         self.requirements['filename']['address'] = ['information', 'calibrationfile']
+        self.requirements['time'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of alignmentfile'}
+        self.requirements['time']['address'] = ['information', 'ink calibration', 'time']
         self.pmotion = Procedures.Motion_RefRelPriorityLineMotion(self.apparatus, self.executor)
         self.pumpon = Procedures.Pump_PumpOn(self.apparatus, self.executor)
         self.pumpoff = Procedures.Pump_PumpOff(self.apparatus, self.executor)
+        self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
+        self.useroptions = Procedures.User_Consol_InputOptions(self.apparatus, self.executor)
 
     def Plan(self):
         # Reassignments for convienence
         material = self.requirements['material']['value']
         filename = self.requirements['filename']['value']
+        ptime = self.requirements['time']['value']
 
         # FIND devices needed for procedure
         motion = self.apparatus.findDevice({'descriptors': ['motion']})
@@ -27,11 +32,6 @@ class User_InkCal_Measure(Procedure):
         nozzle = self.apparatus.findDevice({'descriptors': ['nozzle', material]})
         pump = self.apparatus.findDevice({'descriptors': ['pump', material]})
 
-        #Find elemental procedures
-        run = self.apparatus.GetEproc(motion, 'Run')
-        dwell = self.apparatus.GetEproc(system, 'Dwell')
-        pumpset = self.apparatus.GetEproc(pump, 'Set')
-        
         self.pmotion.requirements['axismask']['address'] = ['devices', motion, 'n'+material, 'axismask']
         self.pmotion.requirements['refpoint']['address'] = ['information', 'alignments', 'n'+material+'@cal']
         self.pmotion.requirements['speed']['address'] = ['devices', motion, 'default', 'speed']
@@ -39,37 +39,50 @@ class User_InkCal_Measure(Procedure):
         # Do stuff
         # Go to calibration position
         self.pmotion.Do({'priority': [['Z'], ['X', 'Y']]})
-        run.Do()
+        self.DoEproc(motion, 'Run', {})
 
         # Get intial information
         initialweightok = False
         while not initialweightok:
-            initialweightstr = input('What is the initial weight of the slide in grams?')
+            message = 'What is the initial weight of the slide in grams?'
+            default = ''
+            self.userinput.Do({'message': message, 'default': default})
+            initialweightstr = self.userinput.response
             try:
                 initialweight = float(initialweightstr)
-                qtext = 'Is ' + initialweightstr + 'g the correct value?(y/n)'
-                confirmation = input(qtext)
+                message = 'Is ' + initialweightstr + 'g the correct value?(y/n)'
+                options = ['y', 'n']
+                default = 'y'
+                self.useroptions.Do({'message': message, 'options': options, 'default': default})
+                confirmation = self.useroptions.response
                 if confirmation == 'y':
                     initialweightok = True
             except ValueError:
                 print('That is not a number.  Try again.')
-        input('Put slide in place and press ENTER.')
+        message = 'Put slide in place and press ENTER.'
+        default = ''
+        self.userinput.Do({'message': message, 'default': default})
 
         # turn pumps on and off
-        ptime = self.apparatus['information']['ink calibration']['time']
-        pumpset.requirements['pressure']['address'] = ['devices', pump, 'pressure']
-        pumpset.Do()
+        pressure = self.apparatus.getValue(['devices', pump, 'pressure'])
+        self.DoEproc(pump, 'Set', {'pressure': pressure})
         self.pumpon.Do({'name': pump})
-        dwell.Do({'dtime': ptime})
+        self.DoEproc(system, 'Dwell', {'dtime': ptime})
         self.pumpoff.Do({'name': pump})
 
         finalweightok = False
         while not finalweightok:
-            finalweightstr = input('What is the final weight of the slide in grams?')
+            message = 'What is the final weight of the slide in grams?'
+            default = ''
+            self.userinput.Do({'message': message, 'default': default})
+            finalweightstr = self.userinput.response
             try:
                 finalweight = float(finalweightstr)
-                qtext = 'Is ' + str(finalweightstr + 'g the correct value?(y/n)')
-                confirmation = input(qtext)
+                message = 'Is ' + str(finalweightstr) + 'g the correct value?(y/n)'
+                options = ['y', 'n']
+                default = 'y'
+                self.useroptions.Do({'message': message, 'options': options, 'default': default})
+                confirmation = self.useroptions.response
                 if confirmation == 'y':
                     finalweightok = True
             except ValueError:

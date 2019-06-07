@@ -13,8 +13,7 @@ class SampleTray_XY_Setup(Procedure):
         self.requirements['xtray'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'time to weight before taking picture'}
         self.requirements['ytray'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of the camera to be used'}
         # Setup Apparatus
-        if 'trays' not in self.apparatus['information']:
-            self.apparatus['information']['trays'] = {}
+        self.apparatus.createAppEntry(['information','ProcedureData',self.name,'trays'])
             
 
     def Plan(self):
@@ -63,5 +62,5 @@ class SampleTray_XY_Setup(Procedure):
             for y in range(ysamples):
                 sample_designation = samplename + 'x' + str(x) + 'y' + str(y)
                 grid.append({'X': x * xspacing, 'Y': y * yspacing, 'sample': sample_designation, 'used': False})
-        self.apparatus['information']['trays'][trayname] = grid
+        self.apparatus.setValue(['information', 'ProcedureData', self.name, 'trays', trayname], grid)
 

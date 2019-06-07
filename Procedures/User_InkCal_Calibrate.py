@@ -12,6 +12,7 @@ class User_InkCal_Calibrate(Procedure):
         self.requirements['filename']['address'] = ['information', 'calibrationfile']
         self.cal_calculation = Procedures.User_InkCal_Calculate(self.apparatus, self.executor)
         self.cal_measurement = Procedures.User_InkCal_Measure(self.apparatus, self.executor)
+        self.useroptions = Procedures.User_Consol_InputOptions(self.apparatus, self.executor)
 
     def Plan(self):
         material = self.requirements['material']['value']
@@ -20,11 +21,19 @@ class User_InkCal_Calibrate(Procedure):
         # Do stuff
         # Handle the first call of a calibration on a particular material
         # This involves choosing to calibrate or not and whether to make a new file
-        if not self.apparatus['information']['materials'][material]['calibrated']:
-            usecal = input('Would you like to use ink calibraton for ' + material + '?([y],n)')
+        if not self.apparatus.getValue(['information', 'materials', material, 'calibrated']):
+            message = 'Would you like to use ink calibraton for ' + material + '?'
+            options = ['y', 'n']
+            default = 'y'
+            self.useroptions.Do({'message': message, 'options': options, 'default': default})
+            usecal = self.useroptions.response
             if usecal in ['Y', 'y', 'yes', 'Yes', '']:
-                self.apparatus['information']['materials'][material]['calibrated'] = True
-                newfile = input('Would you like to make a new file for ' + material + '?(y,[n])')
+                self.apparatus.setValue(['information', 'materials', material, 'calibrated'], True)
+                message = 'Would you like to make a new file for ' + material + '?'
+                options = ['y', 'n']
+                default = 'n'
+                self.useroptions.Do({'message': message, 'options': options, 'default': default})
+                newfile = self.useroptions.response
                 if newfile in ['Y', 'y', 'yes', 'Yes']:
                     # Clear existing file
                     cfilename = material + filename
@@ -33,7 +42,11 @@ class User_InkCal_Calibrate(Procedure):
                     tempfile.close()
                     self.cal_measurement.Do({'material': material})
                 else:
-                    newdata = input('Would you like to make new measurement of ' + material + '?(y,[n])')
+                    message = 'Would you like to make new measurement of ' + material + '?'
+                    options = ['y', 'n']
+                    default = 'n'
+                    self.useroptions.Do({'message': message, 'options': options, 'default': default})
+                    newdata = self.useroptions.response
                     if newdata in ['Y', 'y', 'yes', 'Yes']:
                         self.cal_measurement.Do({'material': material})
                     else:

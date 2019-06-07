@@ -1,6 +1,9 @@
 import Devices
 import json
 import time
+from copy import deepcopy
+from importlib import import_module
+import AppTemplates
 
 class Apparatus(dict):
     def __init__(self):
@@ -26,6 +29,7 @@ class Apparatus(dict):
             if self['devices'][device]['addresstype'] == 'pointer':
                 # Create instance of the Device
                 self['devices'][device]['address'] = getattr(Devices, self['devices'][device]['type'])(device)
+                self.executor.loadDevice(device, self['devices'][device]['address'], 'pointer')
 
                 # Register the device with the Executor
                 # self['devices'][device]['address'].ERegister(executor)
@@ -132,16 +136,26 @@ class Apparatus(dict):
         # if self['devices'][deviceName]['addresstype'] == 'pointer':
             # deviceDisconnect = self.GetEproc(deviceName, 'Disconnect')
             # deviceDisconnect.Do()
-        self.DoEproc(deviceName, 'Disconnect', {})
+        if self['devices'][deviceName]['addresstype'] != '':
+            self.DoEproc(deviceName, 'Disconnect', {})
             # Remove the eprocs registered with the apparatus
             # methodlist = self.findDeviceMethods(deviceName)
             # for method in methodlist:
                 # self.removeEproc(deviceName, method)
 
-    def Disconnect_All(self):
-        self.logApparatus()
+
+    def Disconnect_All(self, simulation=False):
         for device in self['devices']:
             self.Disconnect(device)
+        self.logApparatus()
+         
+        
+        #need to change Connected in devices to False to show all devices disconnected
+        
+        #code after this was added to wok on disconnect button
+        
+   
+
 
     def getValue(self, infoAddress=''):
         if infoAddress == '':
@@ -153,6 +167,7 @@ class Apparatus(dict):
             try:
                 level = level[branch]
             except TypeError:
+                
                 return 'Invalid ApparatusAddress'
             except KeyError:
                 return 'Invalid ApparatusAddress'
@@ -164,9 +179,10 @@ class Apparatus(dict):
             return ''
 
         level = self
-        lastlevel = infoAddress.pop()
+        dc_infoAddress = deepcopy(infoAddress)
+        lastlevel = dc_infoAddress.pop()
 
-        for branch in infoAddress:
+        for branch in dc_infoAddress:
             try:
                 level = level[branch]
             except TypeError:
@@ -343,4 +359,13 @@ class Apparatus(dict):
                 target[AppAddress[n]] = {}
                 target = target[AppAddress[n]]
         if AppAddress[len(AppAddress)-1] not in target:
-            target[AppAddress[len(AppAddress)-1]] = ''
+            target[AppAddress[len(AppAddress)-1]] = {}
+
+    def applyTemplate(self, template, args=[], kwargs={}):
+        if template == 'blank':
+            self['devices'] = {}
+            self['information'] = {}
+        else:
+            templateFunc = getattr(AppTemplates, template)
+            templateFunc(self, *args, **kwargs)
+                

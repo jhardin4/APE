@@ -1,6 +1,7 @@
 #Device-related Procedures
 from Procedures.Aerotech_A3200_Set import Aerotech_A3200_Set
 from Procedures.Aerotech_A3200_SolventClean import Aerotech_A3200_SolventClean
+from Procedures.Aerotech_A3200_getPosition import Aerotech_A3200_getPosition
 
 from Procedures.Motion_RefRelLinearMotion import Motion_RefRelLinearMotion
 from Procedures.Motion_RefRelPriorityLineMotion import Motion_RefRelPriorityLineMotion

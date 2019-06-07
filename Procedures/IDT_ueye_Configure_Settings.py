@@ -13,8 +13,6 @@ class IDT_ueye_Configure_Settings(Procedure):
         cname = self.requirements['camera_name']['value']
         gain = self.requirements['gain']['value']
 
-        # Getting necessary eprocs
-        configure = self.apparatus.GetEproc(cname, 'Configure')
         
         # Doing stuff
-        configure.Do({'gain': gain, 'camera_name': cname})
+        self.DoEproc(cname, 'Configure', {'gain': gain})

@@ -7,14 +7,16 @@ class Aerotech_A3200_Set(Procedure):
         self.requirements['Type']={'source':'apparatus', 'address':'', 'value':'', 'desc':'name of the full description of A3200 movement stored under the motion devices in the apparatus'}
 
     def Plan(self):
+        motionType = self.requirements['Type']['value']
         motionname = self.apparatus.findDevice({'descriptors': 'motion'})
-        setmotion = self.apparatus.GetEproc(motionname, 'Set_Motion')
         settinglist = {}
-        if not self.requirements['Type']['value'] in self.apparatus['devices'][motionname]:
-            raise Exception(str(self.requirements['Type']['value']) + ' not found under ' + motionname)
-        for req in setmotion.requirements:
-            if req in self.apparatus['devices'][motionname][self.requirements['Type']['value']]:
-                settinglist[req]=self.apparatus['devices'][motionname][self.requirements['Type']['value']][req]
+        settingTypes = self.apparatus.getValue(['devices', motionname])
+        if not motionType in settingTypes:
+            raise Exception(str(motionType) + ' not found under ' + motionname)
+        setReqs = self.executor.devicelist[motionname]['Address'].getRequirements('Set_Motion')
+        typeSettings = self.apparatus.getValue(['devices', motionname, motionType])
+        for req in setReqs:
+            if req in typeSettings:
+                settinglist[req]=self.apparatus.getValue(['devices', motionname,motionType, req])
             
-        setmotion.Do(settinglist)
-
+        self.DoEproc(motionname, 'Set_Motion', settinglist)

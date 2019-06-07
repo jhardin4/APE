@@ -19,13 +19,9 @@ class Camera_Capture_Image(Procedure):
         
         # Retrieving information from apparatus
 
-        # Getting necessary eprocs
-        capture = self.apparatus.GetEproc(cname, 'Measure')
-        dwell = self.apparatus.GetEproc(systemname, 'Dwell')
-
         # Assign apparatus addresses to procedures
         
         
         # Doing stuff
-        dwell.Do({'dtime':stime})
-        capture.Do({'file':file})
+        self.DoEproc(systemname, 'Dwell', {'dtime':stime})
+        self.DoEproc(cname, 'Measure', {'file':file})

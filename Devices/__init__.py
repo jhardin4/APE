@@ -9,3 +9,4 @@ from Devices.Nordson_UltimusV import Nordson_UltimusV
 from Devices.Nordson_UltimusV_A3200 import Nordson_UltimusV_A3200
 from Devices.Keyence_GT2_A3200 import Keyence_GT2_A3200
 from Devices.User_Consol import User_Consol
+from Devices.User_GUI import User_GUI

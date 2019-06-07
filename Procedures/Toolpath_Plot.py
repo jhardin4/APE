@@ -18,6 +18,8 @@ class Toolpath_Plot(Procedure):
     
         # Assumes toolpath is a standard toolpath structure 2D or 3D
         # is of form [identifier, color designator, line style designator, linewidth, alpha]
+        import matplotlib
+        matplotlib.use('AGG')
         import matplotlib.pyplot as plt
         import time
         #Determine toolpath dimension

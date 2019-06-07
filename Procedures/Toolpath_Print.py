@@ -45,7 +45,7 @@ class Toolpath_Print(Procedure):
             else:
                 motionname = self.apparatus.findDevice({'descriptors': 'motion' })
                 nozzlename = self.apparatus.findDevice({'descriptors':['nozzle', line['material']] })
-                refpoint = self.apparatus['information']['alignments'][nozzlename+'@start']
-                speed = self.apparatus['devices'][motionname][nozzlename]['speed']
-                axismask = self.apparatus['devices'][motionname][nozzlename]['axismask']
+                refpoint = self.apparatus.getValue(['information', 'alignments', nozzlename+'@start'])
+                speed = self.apparatus.getValue(['devices', motionname, nozzlename, 'speed'])
+                axismask = self.apparatus.getValue(['devices', motionname, nozzlename, 'axismask'])
                 self.move.Do({'refpoint':refpoint,'relpoint':line['endpoint'], 'speed':speed, 'axismask':axismask})

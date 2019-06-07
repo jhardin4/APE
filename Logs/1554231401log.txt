@@ -1,9 +1,0 @@
-Time: 1554231401.963
-gantry is connected
-
-Time: 1554231402.122
-Ultimus pump0 is connected on port 9
-
-Time: 1554231402.416
-system is connected.
-

@@ -104,7 +104,7 @@ class Executor():
             message['kwargs'] = eproc['details']
             message['ereply'] = {}
             message['ereply']['subject'] = 'target.executor.logResponse'
-            message['ereply']['args'] = ['e_proc']
+            message['ereply']['args'] = ['e_reply']
             self.node.send(self.devicelist[eproc['devices']]['Address'], message)
             while not self.ready4next:
                     self.node.listen(self.prevDevice)
@@ -113,10 +113,13 @@ class Executor():
         self.ready4next = True
         if self.logging:
             loghandle = open('Logs/' + self.logaddress, mode='a')
-            loghandle.write(self.log)
+            loghandle.write(message)
             loghandle.close()
             self.log = ''
 
     def recv_value(self, target, value):
         self.loopBlocks[target] = True
         self.returnedValue = value
+
+    def getDependencies(self, device):
+        return self.devicelist[device]["Address"].getDependencies()

@@ -6,6 +6,8 @@
 import time
 
 from Devices import Device
+from importlib import import_module
+
 
 class System(Device):
     def __init__(self, name):
@@ -38,7 +40,12 @@ class System(Device):
         # dependence.
         # THESE WILL RUN IN SIMULATION MODE!!
         if addresstype == 'pointer':
-            address(*arguments)
+            addList = address.split('.')
+            base = import_module(addList[0])
+            if len(addList) > 1:
+                for n in range(1, len(addList)):
+                    base = getattr(base, addList[n])
+            base(*arguments)
         progdesc = str(address)
         self.addlog(self.name + ' ran a program, ' + progdesc)
 

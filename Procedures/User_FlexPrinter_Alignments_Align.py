@@ -11,12 +11,12 @@ class User_FlexPrinter_Alignments_Align(Procedure):
         self.requirements['Measured_List']={'source':'apparatus', 'address':['information','alignmentnames'], 'value':'', 'desc':'parameters used to generate toolpath'}
         self.requirements['primenoz']={'source':'apparatus', 'address':'', 'value':'', 'desc':'prime material'}
         self.requirements['filename']={'source':'apparatus', 'address':'', 'value':'', 'desc':'name of alignmentfile'}
-        self.requirements['filename']['address']=['information','alignmentsfile']
+        self.requirements['filename']['address']=['information', 'alignmentsfile']
         self.updatealign = Procedures.User_FlexPrinter_Alignments_Update(self.apparatus, self.executor)
         self.derivealign = Procedures.User_FlexPrinter_Alignments_Derive(self.apparatus, self.executor)
         self.useroptions = Procedures.User_Consol_InputOptions(self.apparatus, self.executor)
         self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
-    
+
     def Plan(self):
         measuredlist = self.requirements['Measured_List']['value']
         primenoz = self.requirements['primenoz']['value']
@@ -51,7 +51,7 @@ class User_FlexPrinter_Alignments_Align(Procedure):
         # Check if any alignments need to be redone
         alignmentsOK = False
         while not alignmentsOK:
-            message = 'Would you like to redo any alignments?'
+            message = self.PrintAlignments(self.apparatus.getValue(['information', 'alignments'])) + 'Would you like to redo any alignments?'
             options = ['y', 'n']
             default = 'n'
             self.useroptions.Do({'message': message, 'options': options, 'default': default})
@@ -74,21 +74,19 @@ class User_FlexPrinter_Alignments_Align(Procedure):
 
         # Save a copy of the alignments to the main folder and to the log folder
         with open(filename, 'w') as TPjson:
-            json.dump(self.apparatus['information']['alignments'], TPjson)
+            json.dump(self.apparatus.getValue(['information', 'alignments']), TPjson)
 
         with open('Logs/'+str(int(round(time.time(), 0)))+filename, 'w') as TPjson:
-            json.dump(self.apparatus['information']['alignments'], TPjson)
+            json.dump(self.apparatus.getValue(['information', 'alignments']), TPjson)
  
     def PrintAlignments(self, alignments):
         printstr = ''
-        alignlist = list(alignments.keys())
-        for alignment in alignlist:
-            printstr = printstr + alignment + '\n'+ ' '
-            dimlist = list(alignments[alignment].keys())
-            for dim in dimlist:
-                printstr += dim + ' ' + str(alignments[alignment][dim])
+        for alignment in alignments:
+            printstr += alignment + '\n'
+            for dim in alignments[alignment]:
+                printstr += dim + ' ' + str(alignments[alignment][dim]) + ' '
             printstr += '\n\n'
-        print(printstr)
+        return printstr
         
 
 

@@ -10,13 +10,11 @@ class Pump_PumpOn(Procedure):
     
     def Plan(self):
         pumpname = self.requirements['name']['value']
-        pumpon = self.apparatus.GetEproc(pumpname, 'On')
-        systemname = self.apparatus.findDevice({'descriptors':'system'})
-        systemdwell = self.apparatus.GetEproc(systemname, 'Dwell')
-        
+        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+
         mid_time = self.requirements['mid_time']['value']
         pumpon_time = self.requirements['pumpon_time']['value']
-        
-        systemdwell.Do({'dtime':mid_time})
-        pumpon.Do()
-        systemdwell.Do({'dtime':pumpon_time})
+
+        self.DoEproc(systemname, 'Dwell', {'dtime': mid_time})
+        self.DoEproc(pumpname, 'On', {})
+        self.DoEproc(systemname, 'Dwell', {'dtime': pumpon_time})

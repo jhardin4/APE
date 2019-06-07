@@ -15,8 +15,6 @@ class Motion_RefRelLinearMotion(Procedure):
         axismask = self.requirements['axismask']['value']
         
         motionname = self.apparatus.findDevice({'descriptors':'motion'})
-        
-        move = self.apparatus.GetEproc(motionname, 'Move')
 
         
         
@@ -38,5 +36,5 @@ class Motion_RefRelLinearMotion(Procedure):
                 realpoint[dim]=refpoint[dim]+relpoint[dim]
             else:
                 realpoint[dim]=refpoint[dim]
-            
-        move.Do({'point':realpoint, 'speed':speed})
+
+        self.DoEproc(motionname, 'Move', {'point': realpoint, 'speed': speed})

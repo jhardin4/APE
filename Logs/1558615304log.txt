@@ -1,0 +1,17 @@
+Time: 1558615357.23
+gantry is connected
+
+Time: 1558615357.402
+Ultimus pump0 is connected on port 
+
+Time: 1558615357.777
+system is connected.
+
+Time: 1558615357.87
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1558615357.949
+Keyence Touchprobe using gantry using ZZ1 bit 0
+

@@ -260,6 +260,8 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
             self.commandlog = []
 
     def getPosition(self, address='', addresstype='', axislist=''):
+        if addresstype == '':
+            addresstype = 'pointer'
         # Get the postion from the driver
         if not self.simulation:
             result = self.handle.get_position(axislist)
@@ -298,19 +300,17 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
             elif type(line) == dict:
                 line['function'](**line['args'])
         if not self.simulation:
+            # print(cmdmessage)
             self.handle.cmd_exe(cmdmessage, task=task)
         
     def LogData_Start(self, file='', points='', parameters='', interval='', task='', motionmode=''):
         if task == '':
             task = self.defaulttask
-        self.tasklog['task' + str(task)].append("""
-                     DATACOLLECT STOP
-                     DATACOLLECT ITEM RESET
-                     """)
+        self.tasklog['task' + str(task)].append('DATACOLLECT STOP\nDATACOLLECT ITEM RESET\n')
         index = 0
         for dim in parameters:
             if type(parameters[dim]) == list:
-                for element in parameter[dim]:
+                for element in parameters[dim]:
                     temp = 'DATACOLLECT ITEM %s, %s, DATAITEM_'%(str(index), dim)
                     if element[0] == 'p':
                         temp += 'Position'
@@ -329,18 +329,17 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
                         raise Exception(dim + str(element) + ' is an unknown parameter')
                     self.tasklog['task' + str(task)].append(temp + '\n')
                     index += 1
-            self.tasklog['task' + str(task)].append('$task[0] = FILEOPEN "%s" , 0\n' % (file))
-            self.tasklog['task' + str(task)].append('DATACOLLECT START $task[0], %s, %s\n' % (str(points), str(interval)))
-            self.fRun(motionmode, task)
-            return self.returnlog()
+        import os
+        filename = os.getcwd()+'\\' + file
+        self.tasklog['task' + str(task)].append('$task[0] = FILEOPEN "%s" , 0\n' % (filename))
+        self.tasklog['task' + str(task)].append('DATACOLLECT START $task[0], %s, %s\n' % (str(points), str(interval)))
+        self.fRun(motionmode, task)
+        return self.returnlog()
 
     def LogData_Stop(self, task='', motionmode=''):
         if task == '':
             task = self.defaulttask
-        self.tasklog['task' + str(task)].append("""
-                     DATACOLLECT STOP
-                     FILECLOSE $task[0]
-                     """)
+        self.tasklog['task' + str(task)].append('DATACOLLECT STOP\nFILECLOSE $task[0]\n')
         self.fRun(motionmode, task)
         return self.returnlog()
 

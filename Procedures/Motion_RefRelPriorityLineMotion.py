@@ -17,8 +17,7 @@ class Motion_RefRelPriorityLineMotion(Procedure):
         axismask = self.requirements['axismask']['value']
         priority= self.requirements['priority']['value']
         
-        motionname = self.apparatus.findDevice({'descriptors':'motion'})
-        move = self.apparatus.GetEproc(motionname, 'Move')       
+        motionname = self.apparatus.findDevice({'descriptors':'motion'})      
 
         #Assumes that reference points are in machine coordinates
         #Assumes that relative points are in tooltpath coordinates
@@ -50,4 +49,4 @@ class Motion_RefRelPriorityLineMotion(Procedure):
                     else:
                         realpoint[pdim]=refpoint[pdim]
             
-            move.Do({'point':realpoint, 'speed':speed})
+            self.DoEproc(motionname, 'Move', {'point': realpoint, 'speed': speed})

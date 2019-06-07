@@ -11,13 +11,10 @@ class Start(Procedure):
 
     def Plan(self):
         # Renaming useful pieces of informaiton
-        matList = list(self.apparatus['information']['materials'])
 
         # Retreiving necessary device names
         motionname = self.apparatus.findDevice({'descriptors': 'motion'})
 
-        # Getting necessary eprocs
-        runmove = self.apparatus.GetEproc(motionname, 'Run')
 
         # Assign apparatus addresses to procedures
         self.pmove.requirements['speed']['address'] = ['devices', motionname, 'default', 'speed']
@@ -26,4 +23,4 @@ class Start(Procedure):
         # Doing stuff
         self.motionset.Do({'Type': 'default'})
         self.pmove.Do({'priority': [['ZZ1', 'ZZ2', 'ZZ3', 'ZZ4'], ['X', 'Y']]})
-        runmove.Do()
+        self.DoEproc(motionname, 'Run', {})

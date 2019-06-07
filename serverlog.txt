@@ -1,9 +1,0 @@
-Sent {'subject': 'target', 'action': 'test_print', 'args': ['cal.json']}
-Handled {'subject': 'target', 'action': 'CMD_Apparatus', 'kwargs': {'command': 'getValue', 'information': {'infoAddress': ['information', 'calibrationfile']}}, 'ereply': {'subject': 'target', 'action': 'test_print', 'args': ['cal.json']}}
-Handled {'subject': 'node', 'action': 'close'}
-Sent {'subject': 'target', 'action': 'test_print', 'args': ['cal.json']}
-Handled {'subject': 'target', 'action': 'CMD_Apparatus', 'kwargs': {'command': 'getValue', 'information': {'infoAddress': ['information', 'calibrationfile']}}, 'ereply': {'subject': 'target', 'action': 'test_print', 'args': ['cal.json']}}
-Handled {'subject': 'node', 'action': 'close'}
-Sent {'subject': 'target', 'action': 'test_print', 'args': ['cal.json']}
-Handled {'subject': 'target', 'action': 'CMD_Apparatus', 'kwargs': {'command': 'getValue', 'information': {'infoAddress': ['information', 'calibrationfile']}}, 'ereply': {'subject': 'target', 'action': 'test_print', 'args': ['cal.json']}}
-Handled {'subject': 'node', 'action': 'close'}

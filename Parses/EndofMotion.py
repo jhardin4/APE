@@ -19,25 +19,22 @@ class EndofMotion(Procedure):
         motionname = self.apparatus.findDevice({'descriptors':'motion' })
         nozzlename = self.apparatus.findDevice({'descriptors':['nozzle', materialname] })
         
-        #Getting necessary eprocs
-        runmove = self.apparatus.GetEproc(motionname, 'Run')
-        move = self.apparatus.GetEproc(motionname, 'Move')
-        
         #Assign apparatus addresses to procedures
         self.pumpoff.requirements['pumpoff_time']['address']=['devices',pumpname,'pumpoff_time']
         self.pumpoff.requirements['mid_time']['address']=['devices',pumpname,'mid_time']
         ##Assumes that the +Z axis is the safe direction
-        axismask = self.apparatus['devices'][motionname][nozzlename]['axismask']
+        axismask = self.apparatus.getValue(['devices', motionname, nozzlename, 'axismask'])
         if 'Z' in axismask:
-            move.requirements['point']['address']=['information','alignments','safe'+axismask['Z']]
+            point = self.apparatus.getValue(['information','alignments','safe'+axismask['Z']])
         else:
-            self.move.requirements['spepoint']['address']=['information','alignments','safeZ']
-        move.requirements['speed']['address']=['devices',motionname, 'default', 'speed']
+            point = self.apparatus.getValue(['information','alignments','safeZ'])
+        speed = self.apparatus.getValue(['devices',motionname, 'default', 'speed'])
 
         # Doing stuff
-        runmove.Do()  # Run the motion up to this point
+        self.DoEproc(motionname, 'Run', {})  # Run the motion up to this point
         if pumpname != 'No devices met requirments':
             self.pumpoff.Do({'name': pumpname})
+        self.DoEproc(motionname, 'LogData_Stop', {})
         self.motionset.Do({'Type': 'default'})
-        move.Do()
-        runmove.Do()
+        self.DoEproc(motionname, 'Move', {'point': point, 'speed':speed})
+        self.DoEproc(motionname, 'Run', {})

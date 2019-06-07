@@ -10,13 +10,11 @@ class Pump_PumpOff(Procedure):
     
     def Plan(self):
         pumpname = self.requirements['name']['value']
-        pumpoff = self.apparatus.GetEproc(pumpname, 'Off')
-        systemname = self.apparatus.findDevice({'descriptors':'system'})
-        systemdwell = self.apparatus.GetEproc(systemname, 'Dwell')
-        
+        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+
         mid_time = self.requirements['mid_time']['value']
         pumpoff_time = self.requirements['pumpoff_time']['value']
-        
-        systemdwell.Do({'dtime':pumpoff_time})
-        pumpoff.Do()
-        systemdwell.Do({'dtime':mid_time})
+
+        self.DoEproc(systemname, 'Dwell', {'dtime': pumpoff_time})
+        self.DoEproc(pumpname, 'Off', {})
+        self.DoEproc(systemname, 'Dwell', {'dtime': mid_time})

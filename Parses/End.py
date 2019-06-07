@@ -15,9 +15,6 @@ class End(Procedure):
         # Retreiving necessary device names
         motionname = self.apparatus.findDevice({'descriptors': 'motion'})
 
-        # Getting necessary eprocs
-        runmove = self.apparatus.GetEproc(motionname, 'Run')
-
         # Assign apparatus addresses to procedures
         self.pmove.requirements['speed']['address'] = ['devices', motionname, 'default', 'speed']
         self.pmove.requirements['refpoint']['address'] = ['information', 'alignments', 'initial']
@@ -25,5 +22,4 @@ class End(Procedure):
         # Doing stuff
         self.motionset.Do({'Type': 'default'})
         self.pmove.Do({'priority': [['ZZ1', 'ZZ2', 'ZZ3', 'ZZ4'], ['X', 'Y']]})
-        runmove.Do()
-           
+        self.DoEproc(motionname, 'Run', {})

@@ -33,7 +33,7 @@ class User_InkCal_Calculate(Procedure):
         trace_height = self.apparatus.getValue(['devices', nozzle, 'trace_height'])
         pumpres_time = self.apparatus.getValue(['devices', pump, 'pumpres_time'])
         
-        if self.apparatus['information']['materials'][material]['calibrated']:
+        if self.apparatus.getValue(['information', 'materials', material, 'calibrated']):
             with open(cfilename, 'r') as caljson:
                 file_data = json.load(caljson)
     
@@ -57,6 +57,6 @@ class User_InkCal_Calculate(Procedure):
                 crossarea = trace_width * trace_height  # mm^2
                 targetspeed = vexrate/crossarea  # m/s            
             if do_speedcal:
-                self.apparatus['devices'][motion][nozzle]['speed'] = targetspeed
+                self.apparatus.setValue(['devices', motion, nozzle, 'speed'], targetspeed)
             if do_pumpcal:
-                self.apparatus['devices'][pump]['pumpon_time'] = pumpres_time + 1.5*trace_height / targetspeed
+                self.apparatus.setValue(['devices', pump, 'pumpon_time'], pumpres_time + 1.5*trace_height / targetspeed)
