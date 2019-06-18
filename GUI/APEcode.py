@@ -13,7 +13,7 @@ class APEGUI(QtWidgets.QMainWindow):
         super(APEGUI, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.blankapp.clicked.connect(self.blank)
+        self.ui.blankapp.clicked.connect(self.refresh)
         self.ui.tempapp.clicked.connect(self.temp)
         self.ui.copybtn.clicked.connect(self.enterreq)
         self.ui.fandrbutton.clicked.connect(self.fandr)
@@ -125,14 +125,15 @@ class APEGUI(QtWidgets.QMainWindow):
         # clears out all of the procedures
         self.ui.pbox.clear()
         # gets all procedure from folder
+        #self.procedurebox()
 
         self.appImage = self.apparatus.serialClone()
 
-    def blank(self):
+    def refresh(self):
         #How to pull old Appa so python doesnt crash
         
         # creates a blank apparatus
-        
+        self.apptype = 'blank'
         self.startover()
         # takes the structure of a blank apparatus and puts it in the qtreewidget
         for key, value in self.appImage.items():
@@ -232,6 +233,8 @@ class APEGUI(QtWidgets.QMainWindow):
                     self.fillitable(child)
         # gets the elementary procedures from the apparatus and puts them into the procedure qlistwidget
         # self.eprocbox()
+
+
         
     # fills the table with checked values
     def fillitable(self, item = ''):
@@ -346,17 +349,27 @@ class APEGUI(QtWidgets.QMainWindow):
         # logs the apparatus as a JSON
         Apparatus.logApparatus(filename)
         
+    def eprocbox(self):
+        #calls on interface using the procexec as the address
+        #self.ui.pbox.clear()
+        self.epl = self.executor.getDevices('procexec') 
+        
+        #for loop that goes through each device and eproc for that device and displays it in the procedure tab
+        
+        for m in range(len(self.epl)):  
+            self.eproclist=self.executor.getEprocs(str(self.epl[m]), 'procexec')
+            for n in range(len(self.eproclist)):
+                self.ui.pbox.addItem(self.epl[m] + ' ' + self.eproclist[n])
+                
     def connectall(self):
         self.apparatus.Connect_All(simulation = self.ui.simBox.isChecked())
+        self.eprocbox()
         
-#        for device in self.appImage['devices']:
-#            self.appImage['devices'][device]['Connected'] = 'True'
+        for device in self.appImage['devices']:
+            self.appImage['devices'][device]['Connected'] = 'True'
         
         self.ui.treeWidget.clear()
          # takes the structure of a blank apparatus and puts it in the qtreewidget
-       
-        #method refresh tree for below code 
-        
         for key, value in self.appImage.items():
             if type(value) is dict:
                 keyitem = self.fillchildren(key, value)
@@ -366,11 +379,8 @@ class APEGUI(QtWidgets.QMainWindow):
     
     def disconnectall(self):
         self.apparatus.Disconnect_All()
-       
-#        for device in self.appImage['devices']:
-#            self.appImage['devices'][device]['Connected'] = 'False'
-        
-        
+        for device in self.appImage['devices']:
+            self.appImage['devices'][device]['Connected'] = 'False'
         
         self.ui.treeWidget.clear()
          # takes the structure of a blank apparatus and puts it in the qtreewidget
@@ -384,34 +394,27 @@ class APEGUI(QtWidgets.QMainWindow):
     
     # imports the filenames from the procedures folder
     def procedurebox(self):
-        files = dir(Procedures)
-        procedurelist = []
-        for name in files:
-            if not '__' in name:
-                procedurelist.append(name)
-        # places the names into the qlistwidget
-        for p in range(len(procedurelist)):
-            self.ui.pbox.insertItem(p, procedurelist[p])
-            self.proclist = []
+        #print(self.apparatus.serialClone()['proclog'])
+        procs = self.apparatus.serialClone()['proclog']
+        for i, proc in enumerate(procs):
+            self.ui.pbox.insertItem(i, proc[1]['name'])
+        
+        
+        #only shows used not unused
+        
+        
+        #for p in range(len(self.apparatus.proclist)):
+            #self.ui.pbox.insertItem(p, self.apparatus.proclist[p])
+            #self.proclist = []
+     
+
      
     # gets eprocs from apparatus and puts them into the qlistwidget
     # this does not work anymore after we added multiprocessing because 
     # of the connect all function's change
     # once the eprocs populate in the apparatus this should work 
-    def eprocbox(self):
-        # gets the list of eprocs from the apparatus
-        self.epl = self.executor.devicelist
-        # somethingbad = self.MyApparatus['eproclist']
-        # gets the keys from these eprocs
-        self.stringlistofdevice = list(self.epl.keys())
-        # evaluates each individual eproc in the list
-        for m in range(len(self.epl)):
-            self.eprocmethods = self.epl[self.stringlistofdevice[m]]['Address'].requirements
-            for n in range(len(self.eprocmethods)):
-                self.listofeprocmethods = list(self.eprocmethods.keys())
-                self.ui.pbox.addItem(self.stringlistofdevice[m] + ' ' + self.listofeprocmethods[n])      
     
-    # adds the selected procedure to the proclist    
+  
     def addproc(self):
         newp = self.ui.pbox.currentItem()
         self.ui.pbox_2.addItem(newp.text())
@@ -435,7 +438,8 @@ class APEGUI(QtWidgets.QMainWindow):
     def removeproc(self):
         row = self.ui.pbox_2.currentRow()
         self.ui.pbox_2.takeItem(row)
-        self.proclist.pop(row)
+        
+        #self.proclist.pop(row)
         
      
     # gets the requirements from the selected procedure
@@ -471,11 +475,15 @@ class APEGUI(QtWidgets.QMainWindow):
         else:
             dname = name.split(' ')[0]
             ename = name.split(' ')[1]
-            reqs = list(self.epl[dname]['Address'].requirements[ename].keys())
+            
+            self.reqs = self.executor.getRequirements(dname, ename, 'procexec')
+            
+            #reqs = list(self.epl[dname]['Address'].requirements[ename].keys())
+           
             t = 0
-            for g in range(len(reqs)):
+            for g in range(len(self.reqs)):
                 self.ui.rbox.insertRow(t)
-                self.ui.rbox.setItem(t, 0, QTableWidgetItem(reqs[g]))
+                self.ui.rbox.setItem(t, 0, QTableWidgetItem(self.reqs[g]))
                 self.ui.rbox.setItem(t, 1, QTableWidgetItem(''))
                 self.ui.rbox.item(t, 0).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
             t = t + 1
@@ -517,25 +525,9 @@ class APEGUI(QtWidgets.QMainWindow):
     def fillrbox_2(self):
         # gets the corresponding requirements from the proclist
         pRow = self.ui.pbox_2.currentRow()
-        proc = self.proclist[pRow]
-        requirement = proc['requirements']
-        i = 0
-        for key in requirement:
-            self.ui.rbox_2.insertRow(i)
-            self.ui.rbox_2.setItem(i, 0, QTableWidgetItem(key))
-            # must set this to '' if you plan on adding text later
-            self.ui.rbox_2.setItem(i, 1, QTableWidgetItem(requirement[key]))
-            # must be able to select for the apparatus copy to requirements button to work
-            self.ui.rbox_2.item(i, 0).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            self.ui.rbox_2.item(i, 1).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            # value = reqs[key]['value']
-            value = requirement[key]
-            # if the value is empty, red --> otherwise, green
-            if value == '':
-                self.ui.rbox_2.item(i, 1).setBackground(Qt.red)
-            else:
-                self.ui.rbox_2.item(i, 1).setBackground(Qt.green)
-            i = i + 1
+        #proc = self.proclist[pRow]
+        #requirement = proc['requirements']
+
     # runs the selected procedure from pbox_2
     def runproc(self):
         # gets the current row to find the desired item in the proclist

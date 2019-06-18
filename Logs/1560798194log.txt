@@ -1,0 +1,92 @@
+Time: 1560798206.24
+gantry is connected
+
+Time: 1560798206.404
+Ultimus pump0 is connected on port 
+
+Time: 1560798206.56
+system is connected.
+
+Time: 1560798206.607
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560798224.662
+gantry is disconnected.
+
+
+Time: 1560798224.693
+pump0 is disconnected.
+
+
+Time: 1560798224.722
+aeropump0 is disconnected.
+
+
+Time: 1560798224.751
+system is disconnected.
+
+Time: 1560798235.608
+gantry is disconnected.
+
+
+Time: 1560798235.628
+pump0 is disconnected.
+
+
+Time: 1560798235.657
+aeropump0 is disconnected.
+
+
+Time: 1560798235.685
+system is disconnected.
+
+Time: 1560798239.349
+gantry is connected
+
+Time: 1560798239.49
+Ultimus pump0 is connected on port 
+
+Time: 1560798239.67
+system is connected.
+
+Time: 1560798239.717
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560798495.0
+gantry is connected
+
+Time: 1560798495.144
+system is connected.
+
+Time: 1560798831.059
+gantry is connected
+
+Time: 1560798831.205
+Ultimus pump0 is connected on port 
+
+Time: 1560798831.402
+system is connected.
+
+Time: 1560798831.449
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560798918.91
+gantry is connected
+
+Time: 1560798919.067
+Ultimus pump0 is connected on port 
+
+Time: 1560798919.264
+system is connected.
+
+Time: 1560798919.311
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+

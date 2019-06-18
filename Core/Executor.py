@@ -123,3 +123,14 @@ class Executor():
 
     def getDependencies(self, device):
         return self.devicelist[device]["Address"].getDependencies()
+    
+    def getDevices (self, address):
+        return list(self.devicelist)
+        
+    def getEprocs(self, device, address):
+        
+        return list(self.devicelist[device]['Address'].requirements)
+
+    def getRequirements(self, device, eproc, address):
+        return list(self.devicelist[device]['Address'].requirements[eproc])
+      

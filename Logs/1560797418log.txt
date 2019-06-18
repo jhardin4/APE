@@ -1,0 +1,115 @@
+Time: 1560797429.74
+gantry is connected
+
+Time: 1560797429.85
+Ultimus pump0 is connected on port 
+
+Time: 1560797430.006
+system is connected.
+
+Time: 1560797430.053
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560797443.051
+gantry is disconnected.
+
+
+Time: 1560797443.08
+pump0 is disconnected.
+
+
+Time: 1560797443.108
+aeropump0 is disconnected.
+
+
+Time: 1560797443.127
+system is disconnected.
+
+Time: 1560797447.223
+gantry is connected
+
+Time: 1560797447.392
+Ultimus pump0 is connected on port 
+
+Time: 1560797447.66
+system is connected.
+
+Time: 1560797447.752
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560797465.419
+gantry is connected
+
+Time: 1560797465.597
+Ultimus pump0 is connected on port 
+
+Time: 1560797465.782
+system is connected.
+
+Time: 1560797465.829
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560797472.787
+gantry is disconnected.
+
+
+Time: 1560797472.816
+pump0 is disconnected.
+
+
+Time: 1560797472.846
+aeropump0 is disconnected.
+
+
+Time: 1560797472.866
+system is disconnected.
+
+Time: 1560797480.489
+gantry is disconnected.
+
+
+Time: 1560797480.515
+pump0 is disconnected.
+
+
+Time: 1560797480.534
+aeropump0 is disconnected.
+
+
+Time: 1560797480.563
+system is disconnected.
+
+Time: 1560797489.612
+gantry is connected
+
+Time: 1560797489.769
+Ultimus pump0 is connected on port 
+
+Time: 1560797489.963
+system is connected.
+
+Time: 1560797490.01
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560797976.876
+gantry is connected
+
+Time: 1560797977.034
+Ultimus pump0 is connected on port 
+
+Time: 1560797977.222
+system is connected.
+
+Time: 1560797977.269
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+

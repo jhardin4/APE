@@ -82,6 +82,7 @@ class Ui_MainWindow(object):
         self.simBox = QtWidgets.QCheckBox(self.atab)
         self.simBox.setGeometry(QtCore.QRect(390, 110, 111, 31))
         self.simBox.setObjectName("simBox")
+        self.simBox.setChecked(True)
         self.tabWidget.addTab(self.atab, "")
         self.ptab = QtWidgets.QWidget()
         self.ptab.setObjectName("ptab")

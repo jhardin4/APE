@@ -1,0 +1,159 @@
+Time: 1560806863.459
+gantry is connected
+
+Time: 1560806863.598
+Ultimus pump0 is connected on port 
+
+Time: 1560806863.959
+system is connected.
+
+Time: 1560806864.05
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560806864.128
+Keyence Touchprobe using gantry using ZZ1 bit 0
+
+Time: 1560807132.153
+gantry is connected
+
+Time: 1560807132.331
+Ultimus pump0 is connected on port 
+
+Time: 1560807132.568
+system is connected.
+
+Time: 1560807132.658
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560807141.881
+gantry is disconnected.
+
+
+Time: 1560807141.912
+pump0 is disconnected.
+
+
+Time: 1560807141.941
+aeropump0 is disconnected.
+
+
+Time: 1560807141.972
+system is disconnected.
+
+Time: 1560807153.08
+gantry is connected
+
+Time: 1560807153.238
+Ultimus pump0 is connected on port 
+
+Time: 1560807153.502
+system is connected.
+
+Time: 1560807153.582
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560807169.292
+gantry is connected
+
+Time: 1560807169.49
+Ultimus pump0 is connected on port 
+
+Time: 1560807169.752
+system is connected.
+
+Time: 1560807169.832
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560807169.989
+gantry is connected
+
+Time: 1560807170.143
+Ultimus pump0 is connected on port 
+
+Time: 1560807170.411
+system is connected.
+
+Time: 1560807170.502
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560807475.521
+gantry is connected
+
+Time: 1560807475.662
+Ultimus pump0 is connected on port 
+
+Time: 1560807475.912
+system is connected.
+
+Time: 1560807475.975
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560807549.701
+gantry is connected
+
+Time: 1560807549.834
+system is connected.
+
+Time: 1560807592.521
+gantry is connected
+
+Time: 1560807592.674
+Ultimus pump0 is connected on port 
+
+Time: 1560807593.034
+system is connected.
+
+Time: 1560807593.116
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560807593.207
+Keyence Touchprobe using gantry using ZZ1 bit 0
+
+Time: 1560807618.421
+gantry is connected
+
+Time: 1560807618.583
+Ultimus pump0 is connected on port 
+
+Time: 1560807618.942
+system is connected.
+
+Time: 1560807619.033
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560807619.114
+Keyence Touchprobe using gantry using ZZ1 bit 0
+
+Time: 1560807711.48
+gantry is connected
+
+Time: 1560807711.628
+Ultimus pump0 is connected on port 
+
+Time: 1560807711.99
+system is connected.
+
+Time: 1560807712.083
+Ultimus/A3200 pump0/gantry aeropump0 is connected using ZZ1 bit 2
+Bit 2 on the ZZ1 set to 0
+aeropump0 is off.
+
+Time: 1560807712.175
+Keyence Touchprobe using gantry using ZZ1 bit 0
+

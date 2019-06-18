@@ -152,8 +152,9 @@ class ExecutorInterface():
         self.gotDescriptors = False
         self.node.send(address, message)
 
-    def getRequirements(self, device, eproc, address):
+     #def getRequirements(self, device, eproc, address):
         #Build expected reply
+        '''
         ereply = {}
         ereply['subject'] = 'target.executor.recv_value'
         ereply['args'] = ['gotRequirements', 'e_reply']
@@ -166,7 +167,7 @@ class ExecutorInterface():
         while not self.loopBlocks['gotRequirements']:
             self.node.listen(address)
         return self.returnedValue
-
+        '''
     def getDependence(self, device, address):
         #Build expected reply
         ereply = {}
@@ -198,3 +199,48 @@ class ExecutorInterface():
     def recv_value(self, target, value):
         self.loopBlocks[target] = True
         self.returnedValue = value
+        
+    def getRequirements(self, device, eproc, address):
+        #Build expected reply
+        ereply = {}
+        ereply['subject'] = 'target.executor.recv_value'
+        ereply['args'] = ['gotRequirements', 'e_reply']
+
+        # Build primary message
+        args = [device, eproc, address]
+        message = {'subject': 'target.executor.getRequirements', 'args':args, 'ereply': ereply}
+        self.loopBlocks['gotRequirements'] = False
+        self.node.send(address, message)
+        while not self.loopBlocks['gotRequirements']:
+            self.node.listen(address)
+        return self.returnedValue
+
+    def getDevices(self, address):
+        #Build expected reply
+        ereply = {}
+        ereply['subject'] = 'target.executor.recv_value'
+        ereply['args'] = ['gotDevices', 'e_reply']
+        
+        # Build primary message
+        args = [address] 
+        message = {'subject': 'target.executor.getDevices', 'args': args, 'ereply': ereply}
+        self.loopBlocks['gotDevices'] = False
+        self.node.send(address, message)
+        while not self.loopBlocks['gotDevices']:
+            self.node.listen(address)
+        return self.returnedValue
+
+    def getEprocs(self, device, address):
+        #Build expected reply
+        ereply = {}
+        ereply['subject'] = 'target.executor.recv_value'
+        ereply['args'] = ['gotEprocs', 'e_reply']
+
+        # Build primary message
+        args = [device, address]
+        message = {'subject': 'target.executor.getEprocs', 'args':args, 'ereply': ereply}
+        self.loopBlocks['gotEprocs'] = False
+        self.node.send(address, message)
+        while not self.loopBlocks['gotEprocs']:
+            self.node.listen(address)
+        return self.returnedValue

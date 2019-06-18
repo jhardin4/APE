@@ -1,0 +1,13 @@
+Time: 1560793165.801
+gantry is connected
+
+Time: 1560793166.008
+system is connected.
+
+Time: 1560793167.161
+gantry is disconnected.
+
+
+Time: 1560793167.191
+system is disconnected.
+
