@@ -1,5 +1,13 @@
+#add button to refresh eproc instead of refreshing in connect all
+#def creatEproc(device, method) 
+# class eproc(Procedure)
+#Prepare empty
+#Do eproc.. look at doeproc in apparatus sekf.requirements = reqs from copied procedure
+#neweproc= eproc(apparatus,executor)
+#returnneweproc
+
 import sys
-from GUI.APE2 import Ui_MainWindow
+from GUI.APE1 import Ui_MainWindow
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QTreeWidgetItem, QTreeWidgetItemIterator, QTableWidgetItem
@@ -24,15 +32,16 @@ class APEGUI(QtWidgets.QMainWindow):
         self.ui.saveasbtn.clicked.connect(self.saveas)
         self.ui.abtn.clicked.connect(self.addproc)
         self.ui.rbtn.clicked.connect(self.removeproc)
-        self.ui.pbox.itemClicked.connect(self.getreq)
+        self.ui.pbox.itemClicked.connect(self.getreq1)
         self.ui.upbtn.clicked.connect(self.up)
         self.ui.downbtn.clicked.connect(self.down)
         self.ui.rbox.itemChanged.connect(self.updaterbox)
         self.ui.RunListbtn.clicked.connect(self.runProcList)
         self.ui.runCurrentbtn.clicked.connect(self.runproc)
-        self.ui.pbox_2.itemClicked.connect(self.fillrbox_2)
+        self.ui.pbox_2.itemClicked.connect(self.getreq2)
         self.ui.connectbtn.clicked.connect(self.connectall)
         self.ui.disconnectbtn.clicked.connect(self.disconnectall)
+        self.ui.showeproc.clicked.connect(self.eprocbox)
         self.apparatus = ''
         self.executor = ''
         self.appImage = {}
@@ -154,7 +163,43 @@ class APEGUI(QtWidgets.QMainWindow):
             keyitem.addChild(valueitem)
         return keyitem
 
-        
+    def new_item(self, parent, text, val=None):
+        # creates a new option
+        child = QTreeWidgetItem([text])
+        # fills the option with the next value
+        self.fill_item(child, val)
+        # assigns the option to the parent variable
+        parent.addChild(child)
+        # sets the options to be close
+        child.setExpanded(False)
+
+    def fill_item(self, item, value):
+        # if this is the last value in that string, go to next
+        if value is None: 
+            # we only want to be able to edit the last value
+            # the set to edit function is placed here
+            item.setFlags(item.flags() | Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
+            if item != None:
+                item.setCheckState(0, Qt.Unchecked)
+            return
+            
+        # the value contains a dictionary
+        elif isinstance(value, dict):
+            for key, val in sorted(value.items()):
+                # add a new item for each key in the dictionary
+                self.new_item(item, key, val)
+        # the value is a tuple
+        elif isinstance(value, (list, tuple)):
+            # for every value in the tuple, make an item from the 
+            #item, text, and value
+            for val in value:
+                text = (str(val) if not isinstance(val, (dict, list, tuple))
+                        else '[%s]' % type(val).__name__)
+                self.new_item(item, text, val) 
+        # if the value is none of the other options add it as a string
+        else:
+            self.new_item(item, str(value))
+
     def temp(self, simulation = True):
         # Clear tree widget
         self.startover()
@@ -179,43 +224,9 @@ class APEGUI(QtWidgets.QMainWindow):
         self.appImage = self.apparatus.serialClone()
         # puts the apparatus in the qtreewidget
 
-        def fill_item(item, value):
-            def new_item(parent, text, val=None):
-                # creates a new option
-                child = QTreeWidgetItem([text])
-                # fills the option with the next value
-                fill_item(child, val)
-                # assigns the option to the parent variable
-                parent.addChild(child)
-                # sets the options to be close
-                child.setExpanded(False)
-            # if this is the last value in that string, go to next
-            if value is None: 
-                # we only want to be able to edit the last value
-                # the set to edit function is placed here
-                item.setFlags(item.flags() | Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
-                if item != None:
-                    item.setCheckState(0, Qt.Unchecked)
-                return
-            
-            # the value contains a dictionary
-            elif isinstance(value, dict):
-                for key, val in sorted(value.items()):
-                    # add a new item for each key in the dictionary
-                    new_item(item, key, val)
-            # the value is a tuple
-            elif isinstance(value, (list, tuple)):
-                # for every value in the tuple, make an item from the 
-                #item, text, and value
-                for val in value:
-                    text = (str(val) if not isinstance(val, (dict, list, tuple))
-                            else '[%s]' % type(val).__name__)
-                    new_item(item, text, val) 
-            # if the value is none of the other options add it as a string
-            else:
-                new_item(item, str(value))          
+                 
         # provides access to the top level items using recursive functions
-        fill_item(self.ui.treeWidget.invisibleRootItem(), self.appImage)
+        self.fill_item(self.ui.treeWidget.invisibleRootItem(), self.appImage)
         # list of things that need checked
         ithings = []
         
@@ -233,9 +244,7 @@ class APEGUI(QtWidgets.QMainWindow):
                     self.fillitable(child)
         # gets the elementary procedures from the apparatus and puts them into the procedure qlistwidget
         # self.eprocbox()
-
-
-        
+  
     # fills the table with checked values
     def fillitable(self, item = ''):
         # grab current item and get pathname
@@ -363,8 +372,7 @@ class APEGUI(QtWidgets.QMainWindow):
                 
     def connectall(self):
         self.apparatus.Connect_All(simulation = self.ui.simBox.isChecked())
-        self.eprocbox()
-        
+
         for device in self.appImage['devices']:
             self.appImage['devices'][device]['Connected'] = 'True'
         
@@ -441,15 +449,22 @@ class APEGUI(QtWidgets.QMainWindow):
         
         #self.proclist.pop(row)
         
-     
+    # used tp update rbox    
+    def getreq1(self):
+        self.getreq(self.ui.rbox, self.ui.pbox)
+    
+    # used to update rboc_2
+    def getreq2(self):
+        self.getreq(self.ui.rbox_2, self.ui.pbox_2)  
+    
     # gets the requirements from the selected procedure
-    def getreq(self):
-        row = self.ui.rbox.rowCount()
+    def getreq(self, rbox, pbox):
+        row = rbox.rowCount()
         # clears out qtablewidgets contents
         if row != 0:
             for r in range(row +1 ):
-                self.ui.rbox.removeRow(row-r)
-        name = self.ui.pbox.currentItem().text()
+                rbox.removeRow(row-r)
+        name = pbox.currentItem().text()
         # locates the selected procedure in the folder
         if name in dir(Procedures):
             # makes an instance of the selected procedure
@@ -459,18 +474,18 @@ class APEGUI(QtWidgets.QMainWindow):
             i = 0
             # places the requirements into the qtablewidget
             for key in reqs:
-                self.ui.rbox.insertRow(i)
-                self.ui.rbox.setItem(i, 0, QTableWidgetItem(key))
+                rbox.insertRow(i)
+                rbox.setItem(i, 0, QTableWidgetItem(key))
                 # must set this to '' if you plan on adding text later
-                self.ui.rbox.setItem(i, 1, QTableWidgetItem(''))
+                rbox.setItem(i, 1, QTableWidgetItem(''))
                 # must be able to select for the apparatus copy to requirements button to work
-                self.ui.rbox.item(i,0).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                rbox.item(i,0).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 value = reqs[key]['value']
                 # if the value is empty, red --> otherwise, green
                 if value == '':
-                    self.ui.rbox.item(i, 1).setBackground(Qt.red)
+                    rbox.item(i, 1).setBackground(Qt.red)
                 else:
-                    self.ui.rbox.item(i, 0).setBackground(Qt.green)
+                    rbox.item(i, 0).setBackground(Qt.green)
             i = i + 1
         else:
             dname = name.split(' ')[0]
@@ -482,12 +497,13 @@ class APEGUI(QtWidgets.QMainWindow):
            
             t = 0
             for g in range(len(self.reqs)):
-                self.ui.rbox.insertRow(t)
-                self.ui.rbox.setItem(t, 0, QTableWidgetItem(self.reqs[g]))
-                self.ui.rbox.setItem(t, 1, QTableWidgetItem(''))
-                self.ui.rbox.item(t, 0).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            t = t + 1
+                rbox.insertRow(t)
+                rbox.setItem(t, 0, QTableWidgetItem(self.reqs[g]))
+                rbox.setItem(t, 1, QTableWidgetItem(''))
+                rbox.item(t, 0).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+                t = t + 1
             # reqs = d[device]['address']['requirements'][method]
+        
             
     # moves the selected procedure up one row
     def up(self):
@@ -514,12 +530,23 @@ class APEGUI(QtWidgets.QMainWindow):
         citem = self.ui.rbox.currentItem()
         r = self.ui.rbox.currentRow()
         self.ui.rbox.resizeColumnsToContents()
-        if citem != None:
+        name = self.ui.pbox.currentItem().text()
+        if citem != None: 
             value = citem.text()
             if value == '':
                 self.ui.rbox.item(r, 1).setBackground(Qt.red)
             else:
                 self.ui.rbox.item(r, 1).setBackground(Qt.green)
+            # update the requirements in the executer
+            # gets the requirements
+            req = self.ui.rbox.itemAt(r,0)
+            dname = name.split(' ')[0]
+            ename = name.split(' ')[1]
+            #commented so code will run
+            #self.executor.setRequirements(dname, ename, req, value, 'procexec')
+                
+                
+        
                 
     # when a procedure from the proclist is selected, the corresponding requirements are visible
     def fillrbox_2(self):

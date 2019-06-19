@@ -124,6 +124,7 @@ class Executor():
     def getDependencies(self, device):
         return self.devicelist[device]["Address"].getDependencies()
     
+    #getDevices, getEprocs, and getRequirements return lists of te devices, eprocs, and requirements so the code can talk to the interface and the gui
     def getDevices (self, address):
         return list(self.devicelist)
         
