@@ -1,0 +1,51 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.2.3
+    hooks:
+      - id: check-ast
+      - id: check-byte-order-marker
+      - id: trailing-whitespace
+        exclude: '.*\.patch'
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-xml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: fix-encoding-pragma
+
+- repo: local
+  hooks:
+    -   id: black
+        name: Run black code formatter
+        description: This hook formats Python code.
+        entry: env LC_ALL=C.UTF-8 black -q
+        language: system
+        types: [python]
+
+    -   id: qmlfmt
+        name: Run qmlfmt
+        description: qmlfmt QML code formatter.
+        entry: qmlfmt -w -e
+        args: [-i 2, -t 2]
+        language: system
+        files: ^.*\.qml$
+
+    # -   id: docker-image-version
+    #     name: Check for current docker image version
+    #     description:  Fail if docker image is out of date and needs bump
+    #     entry: install_scripts/docker-dev.sh -B
+    #     language: system
+    #     # Always run, just once
+    #     exclude: ^.*$
+    #     always_run: true
+
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.2.3
+    hooks:
+      - id: flake8
+        # note: ignores and excluded files in .flake8
