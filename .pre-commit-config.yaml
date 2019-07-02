@@ -5,7 +5,11 @@ repos:
       - id: check-ast
       - id: check-byte-order-marker
       - id: trailing-whitespace
-        exclude: '.*\.patch'
+        exclude: >
+            (?x)^(
+                .*\.patch|
+                Logs/.*
+            )$
       - id: check-docstring-first
       - id: check-executables-have-shebangs
       - id: check-json
