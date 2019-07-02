@@ -16,7 +16,7 @@ import zmq
 import threading
 
 
-class zmqNode():
+class zmqNode:
     def __init__(self, name):
         self.name = name
         self.connections = {}
@@ -69,7 +69,7 @@ class zmqNode():
             message['ereply'] = ereply
         elif ereply != '':
             raise Exception('ereply did not contain and "e_reply" target.')
-        
+
         return message
 
     def findEReply(self, ereply):
@@ -99,7 +99,7 @@ class zmqNode():
 
     def close(self):
         self.listening = False
-        threading.Timer(2*self.heart_beat, self.close_all).start()
+        threading.Timer(2 * self.heart_beat, self.close_all).start()
 
     def close_all(self):
         for connection in self.connections:
@@ -119,7 +119,9 @@ class zmqNode():
         for connection in self.connections:
             self.listen(name=connection)
         if self.listening:
-            self.timer_listen = threading.Timer(self.heart_beat, self.listen_all).start()
+            self.timer_listen = threading.Timer(
+                self.heart_beat, self.listen_all
+            ).start()
         else:
             if type(self.timer_listen) == threading.Timer:
                 self.timer_listen.cancel()
@@ -139,7 +141,7 @@ class zmqNode():
         # targetMethod defaults to self
         targetMethod = self
         if 'subject' in message:
-                targetMethod = self.getMethod(message['subject'])
+            targetMethod = self.getMethod(message['subject'])
 
         # Pass the target method the correct data
         if targetMethod != '':
@@ -171,14 +173,16 @@ class zmqNode():
         madd_list = maddress.split('.')
         targetMethod = self
         for step in madd_list:
-            keys = step.replace(']','').replace('"','').split('[')
+            keys = step.replace(']', '').replace('"', '').split('[')
             if hasattr(targetMethod, keys[0]):
                 targetMethod = getattr(targetMethod, keys[0])
             else:
-                raise Exception('Failed to find ' + str(keys[0]) + ' of ' + str(maddress))
+                raise Exception(
+                    'Failed to find ' + str(keys[0]) + ' of ' + str(maddress)
+                )
             if len(keys) > 1:
                 for n in range(1, len(keys)):
-                    targetMethod = targetMethod[keys[n]] 
+                    targetMethod = targetMethod[keys[n]]
         return targetMethod
 
     def addlog(self, message):

@@ -3,7 +3,7 @@ import sys
 import Devices
 
 
-class Executor():
+class Executor:
     def __init__(self):
         self.devicelist = {}
         self.log = ''
@@ -16,7 +16,7 @@ class Executor():
         self.loopBlocks = {}
 
     def execute(self, eproclist):
-        # This could take a list of multiple lists of eprocs but typically it 
+        # This could take a list of multiple lists of eprocs but typically it
         # is only a list of a single eproc
         for line in eproclist:
             for eproc in line:
@@ -48,18 +48,20 @@ class Executor():
             ereply = {}
             ereply['subject'] = 'target.executor.recv_value'
             ereply['args'] = ['devMade', 'e_reply']
-    
+
             # Build primary message
             args = [devName, devType, exec_address, rel_address]
-            message = {'subject': 'target.executor.createDevice',
-                       'args':args,
-                       'ereply': ereply}
+            message = {
+                'subject': 'target.executor.createDevice',
+                'args': args,
+                'ereply': ereply,
+            }
             self.loopBlocks['devMade'] = False
             self.node.send(rel_address, message)
-            cur_connection  = self.node.cur_connection
+            cur_connection = self.node.cur_connection
             while not self.loopBlocks['devMade']:
                 self.node.listen(rel_address)
-            self.node.cur_connection  = cur_connection
+            self.node.cur_connection = cur_connection
 
     def Send(self, eproc):
         if self.devicelist[eproc['devices']]['AddressType'] == 'pointer':
@@ -67,11 +69,15 @@ class Executor():
                 try:
                     self.log += "Time: " + str(round(time.time(), 3)) + '\n'
                     if eproc['details'] == {}:
-                        self.log += getattr(self.devicelist[eproc['devices']]['Address'],
-                                            eproc['procedure'])()
+                        self.log += getattr(
+                            self.devicelist[eproc['devices']]['Address'],
+                            eproc['procedure'],
+                        )()
                     else:
-                        self.log += getattr(self.devicelist[eproc['devices']]['Address'],
-                                            eproc['procedure'])(**eproc['details'])
+                        self.log += getattr(
+                            self.devicelist[eproc['devices']]['Address'],
+                            eproc['procedure'],
+                        )(**eproc['details'])
 
                     self.log += '\n'
 
@@ -85,29 +91,35 @@ class Executor():
             else:
                 self.log += "Time: " + str(round(time.time(), 3)) + '\n'
                 if eproc['details'] == {}:
-                    self.log += getattr(self.devicelist[eproc['devices']]['Address'],
-                                        eproc['procedure'])()
+                    self.log += getattr(
+                        self.devicelist[eproc['devices']]['Address'], eproc['procedure']
+                    )()
                 else:
-                    self.log += getattr(self.devicelist[eproc['devices']]['Address'],
-                                        eproc['procedure'])(**eproc['details'])
+                    self.log += getattr(
+                        self.devicelist[eproc['devices']]['Address'], eproc['procedure']
+                    )(**eproc['details'])
 
                 self.log += '\n'
-                
-                self.logResponse(self.log)
 
+                self.logResponse(self.log)
 
         elif self.devicelist[eproc['devices']]['AddressType'] == 'zmqNode':
             self.ready4next = False
             self.prevDevice = self.devicelist[eproc['devices']]['Address']
             message = {}
-            message['subject'] = 'target.executor.devicelist["' + eproc['devices'] + '"]["Address"].' + eproc['procedure']
+            message['subject'] = (
+                'target.executor.devicelist["'
+                + eproc['devices']
+                + '"]["Address"].'
+                + eproc['procedure']
+            )
             message['kwargs'] = eproc['details']
             message['ereply'] = {}
             message['ereply']['subject'] = 'target.executor.logResponse'
             message['ereply']['args'] = ['e_reply']
             self.node.send(self.devicelist[eproc['devices']]['Address'], message)
             while not self.ready4next:
-                    self.node.listen(self.prevDevice)
+                self.node.listen(self.prevDevice)
 
     def logResponse(self, message):
         self.ready4next = True
@@ -123,14 +135,13 @@ class Executor():
 
     def getDependencies(self, device):
         return self.devicelist[device]["Address"].getDependencies()
-    
-    def getDevices (self, address):
+
+    def getDevices(self, address):
         return list(self.devicelist)
-        
+
     def getEprocs(self, device, address):
-        
+
         return list(self.devicelist[device]['Address'].requirements)
 
     def getRequirements(self, device, eproc, address):
         return list(self.devicelist[device]['Address'].requirements[eproc])
-      

@@ -1,4 +1,11 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QMainWindow, QGridLayout
+from PyQt5.QtWidgets import (
+    QApplication,
+    QWidget,
+    QPushButton,
+    QVBoxLayout,
+    QMainWindow,
+    QGridLayout,
+)
 from MultiProcess.Appa import Appa
 from MultiProcess.ProcExec import ProcExec
 import sys
@@ -40,12 +47,12 @@ class StartUp(QMainWindow):
         self.node.start_listening()
         # Set addresses
         port = 5575
-        self.L2A_address = "tcp://127.0.0.1:"+str(port)
-        self.L2PE_address = "tcp://127.0.0.1:"+str(port+1)
-        self.L2G_address = "tcp://127.0.0.1:"+str(port+2)
-        self.A2PE_address = "tcp://127.0.0.1:"+str(port+3)
-        self.A2G_address = "tcp://127.0.0.1:"+str(port+4)
-        self.G2PE_address = "tcp://127.0.0.1:"+str(port+5)
+        self.L2A_address = "tcp://127.0.0.1:" + str(port)
+        self.L2PE_address = "tcp://127.0.0.1:" + str(port + 1)
+        self.L2G_address = "tcp://127.0.0.1:" + str(port + 2)
+        self.A2PE_address = "tcp://127.0.0.1:" + str(port + 3)
+        self.A2G_address = "tcp://127.0.0.1:" + str(port + 4)
+        self.G2PE_address = "tcp://127.0.0.1:" + str(port + 5)
         self.connect2A()
         self.connect2PE()
         self.connect2G()
@@ -66,7 +73,7 @@ class StartUp(QMainWindow):
 
     # closes all connections when APE is closed
     def sendCloseAll(self):
-        
+
         for connection in self.node.connections:
             self.sendClose(connection)
         print('Close commands sent')
@@ -74,16 +81,21 @@ class StartUp(QMainWindow):
     def sendClose(self, connection):
         message = {'subject': 'close'}
         self.node.send(connection, message)
-        
+
     # starts the AP and E portion of the program
 
     def startAPE(self):
         # Experiment_MultiProcess.Start(self)
         # uncomment to show the communication between launcher and appa
         # print(self.apparatus.getValue(['information', 'calibrationfile']))
-        self.proc_Appa = Process(target=Appa, args=(self.L2A_address, self.A2PE_address, self.A2G_address,))
+        self.proc_Appa = Process(
+            target=Appa, args=(self.L2A_address, self.A2PE_address, self.A2G_address)
+        )
         self.proc_Appa.start()
-        self.proc_ProcExec = Process(target=ProcExec, args=(self.L2PE_address, self.A2PE_address, self.G2PE_address,))
+        self.proc_ProcExec = Process(
+            target=ProcExec,
+            args=(self.L2PE_address, self.A2PE_address, self.G2PE_address),
+        )
         self.proc_ProcExec.start()
         print('start APE')
         self.closeAPEbtn.setEnabled(True)
@@ -103,9 +115,13 @@ class StartUp(QMainWindow):
         self.startAPEbtn.setEnabled(True)
         self.startGUIbtn.setEnabled(False)
         self.closeLauncherbtn.setEnabled(True)
+
     # starts the User Interface
     def startGUI(self):
-        self.proc_GUI = Process(target=GUI_Node.GUI_Node, args=(self.L2G_address, self.A2G_address, self.G2PE_address,))
+        self.proc_GUI = Process(
+            target=GUI_Node.GUI_Node,
+            args=(self.L2G_address, self.A2G_address, self.G2PE_address),
+        )
         self.proc_GUI.start()
         print('start GUI')
         self.closeAPEbtn.setEnabled(False)
@@ -113,6 +129,7 @@ class StartUp(QMainWindow):
         self.startGUIbtn.setEnabled(False)
         self.closeGUIbtn.setEnabled(True)
         self.closeLauncherbtn.setEnabled(False)
+
     # closes the User Interface
     def closeGUI(self):
         self.sendClose('gui')
@@ -122,7 +139,7 @@ class StartUp(QMainWindow):
         self.startAPEbtn.setEnabled(False)
         self.closeGUIbtn.setEnabled(False)
         self.startGUIbtn.setEnabled(True)
-        
+
     def closeLauncher(self):
         self.node.close()
         self.closeAPEbtn.setEnabled(False)

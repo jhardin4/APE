@@ -5,7 +5,7 @@
 # within the methods.
 
 
-class Device():
+class Device:
     def __init__(self, name):
         # Set the default simulation state of the Device
         # For complex simulation behavor, this could have multiple components
@@ -14,7 +14,7 @@ class Device():
         self.connected = False
         # Sets the name of a this instance of the Device
         self.name = name
-        # Create and instance of the descriptor list.  These strings can be used 
+        # Create and instance of the descriptor list.  These strings can be used
         self.descriptors = []
         # Define if this device is a composite of other Devices
         self.dependent_device = False
@@ -37,7 +37,12 @@ class Device():
         # 'address' is typically an apparatus address for use when 'source' is
         # apparatus.
         # 'desc' is a description of what this information is.
-        self.requirements['Set']['setting'] = {'value': '', 'source': 'apparatus', 'address': '', 'desc': 'example setting'}
+        self.requirements['Set']['setting'] = {
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'example setting',
+        }
         self.requirements['Connect'] = {}
         self.requirements['Disconnect'] = {}
         # Initialize the log string
@@ -91,31 +96,40 @@ class Device():
         # Imports are 'hidden' in the methods to enabel independent function
         # This assume that this method is called from the root APE directory!
         from Core import Procedure
+
         for eleproc in self.requirements:
+
             class eproc(Procedure):
                 def Prepare(myself):
                     myself.device = self.name
                     myself.method = eleproc
                     myself.requirements = self.requirements[eleproc]
                     myself.executor = executor
-                    myself.name = 'eproc_'+myself.device+'_'+myself.method
+                    myself.name = 'eproc_' + myself.device + '_' + myself.method
 
                 def Plan(myself):
                     details = {}
                     for req in myself.requirements:
                         details[req] = myself.requirements[req]['value']
 
-                    myself.executor.execute([[{
-                            'devices': myself.device,
-                            'procedure': myself.method,
-                            'details': details
-                            }]])
+                    myself.executor.execute(
+                        [
+                            [
+                                {
+                                    'devices': myself.device,
+                                    'procedure': myself.method,
+                                    'details': details,
+                                }
+                            ]
+                        ]
+                    )
+
             # Create the entry used to to access the elemental procedure later
             eprocEntry = {
-                    'device': self.name,
-                    'method': eleproc,
-                    'handle': eproc(apparatus, executor)
-                    }
+                'device': self.name,
+                'method': eleproc,
+                'handle': eproc(apparatus, executor),
+            }
             apparatus['eproclist'].append(eprocEntry)
 
     def returnlog(self):
@@ -159,8 +173,7 @@ class Device():
             return self.executor.devicelist[name]['Address']
         else:
             return device
-            
-        
+
 
 # For testing and debuging
 if __name__ == '__main__':
@@ -183,4 +196,4 @@ if __name__ == '__main__':
     log += myDevice.Off()
     log += myDevice.Disconnect()
     print('... and the resulting log.')
-    print(log)    
+    print(log)

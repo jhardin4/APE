@@ -1,4 +1,4 @@
-# This Device represents a general G-Code motion system. 
+# This Device represents a general G-Code motion system.
 
 # Only import 'basic' python packages up here.  All others should be imported
 # within the methods.
@@ -32,47 +32,55 @@ class Motion(Device):
         # Defining the elemental procedures
         self.requirements['Move'] = {}
         self.requirements['Move']['point'] = {
-                'value': '',
-                'source': 'apparatus',
-                'address': '',
-                'desc': 'Dictionary with the motions sytem axes as keys and target values'}
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'Dictionary with the motions sytem axes as keys and target values',
+        }
         self.requirements['Move']['speed'] = {
-                'value': '',
-                'source': 'apparatus',
-                'address': '',
-                'desc': 'speed of motion, typicaly in mm/s'}
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'speed of motion, typicaly in mm/s',
+        }
         self.requirements['Move']['motiontype'] = {
-                'value': '',
-                'source': 'apparatus',
-                'address': '',
-                'desc': 'speed of motion, typicaly in mm/s'}
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'speed of motion, typicaly in mm/s',
+        }
         self.requirements['Move']['motionmode'] = {
-                'value': '',
-                'source': 'apparatus',
-                'address': '',
-                'desc': 'cmd or loadrun'}
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'cmd or loadrun',
+        }
 
         self.requirements['Set_Motion'] = {}
         self.requirements['Set_Motion']['RelAbs'] = {
-                'value': '',
-                'source': 'apparatus',
-                'address': '',
-                'desc': 'Relative or Absolute motion'}
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'Relative or Absolute motion',
+        }
         self.requirements['Set_Motion']['dmotionmode'] = {
-                'value': '',
-                'source': 'apparatus',
-                'address': '',
-                'desc': 'default motion mode'}
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'default motion mode',
+        }
         self.requirements['Set_Motion']['dmotiontype'] = {
-                'value': '',
-                'source': 'apparatus',
-                'address': '',
-                'desc': 'default motion type'}
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'default motion type',
+        }
         self.requirements['Set_Motion']['motionmode'] = {
-                'value': '',
-                'source': 'apparatus',
-                'address': '',
-                'desc': 'cmd or loadrun'}
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'cmd or loadrun',
+        }
 
     def Move(self, point={}, speed='', motiontype='', motionmode=''):
         # Move to a point at a speed in a manner dictated by the motiontype
@@ -152,6 +160,7 @@ class Motion(Device):
             message += line
 
         self.addlog(message)
+
 
 if __name__ == '__main__':
     myMotion = Motion('myMotion')

@@ -18,7 +18,7 @@ capacities.
 File naming convention:
 
 In general, the goal here is to reduce repetive development of interfaces with
-specific pieces of equipment.  This is, in part, accomplished through specific 
+specific pieces of equipment.  This is, in part, accomplished through specific
 file naming standards.  Try to stick with manufacturer descriptors whenever
 possible to preserve clarity.
 
@@ -41,8 +41,8 @@ All files should end with:
 # For testing and debuging
 if __name__ == '__main__':
     pass
-    
-In most cases, it would be helpful to put some illustrative examples in place 
+
+In most cases, it would be helpful to put some illustrative examples in place
 of "pass".
 
 Descriptors:
@@ -51,4 +51,4 @@ the right devices.  All elements of the file name should be in this list
 
 To add a new Device.
 Copy the new device file into the 'Devices' folder.  Add an entry into the
-__init__.py file. 
+__init__.py file.

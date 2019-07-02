@@ -1,5 +1,3 @@
-
-
 from MultiProcess.zmqNode import zmqNode
 from MultiProcess import APE_Interfaces
 from GUI import APEcode
@@ -7,8 +5,9 @@ import Devices
 from PyQt5.QtWidgets import QApplication
 import sys
 
-class GUI_Node():
-    def __init__(self,G2L_address, G2A_address, G2PE_address):
+
+class GUI_Node:
+    def __init__(self, G2L_address, G2A_address, G2PE_address):
         # Create the node
         self.node = zmqNode('gui')
         self.node.logging = True
@@ -28,8 +27,7 @@ class GUI_Node():
 
         self.node.start_listening()
         self.startGUI()
-        
-        
+
     # connects to all of the other nodes as client
     # server MUST be false for all of these (preset)
     def connect2A(self, G2A_address):
@@ -37,10 +35,10 @@ class GUI_Node():
 
     def connect2PE(self, G2PE_address):
         self.node.connect('procexec', G2PE_address)
-        
+
     def connect2L(self, G2L_address):
         self.node.connect('launcher', G2L_address)
-        
+
     # Creates the GUI
     def startGUI(self):
         app = QApplication(sys.argv)
@@ -56,7 +54,8 @@ def Start():
     global guinode
     guinode = GUI_Node()
 
+
 # closes the GUI
-    # does not disconnect any nodes
+# does not disconnect any nodes
 def Close():
     APEcode.Close(guinode)

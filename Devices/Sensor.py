@@ -1,4 +1,4 @@
-# This Device represents a general G-Code motion system. 
+# This Device represents a general G-Code motion system.
 
 # Only import 'basic' python packages up here.  All others should be imported
 # within the methods.

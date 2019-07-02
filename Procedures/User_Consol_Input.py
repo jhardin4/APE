@@ -4,10 +4,30 @@ from Core import Procedure
 class User_Consol_Input(Procedure):
     def Prepare(self):
         self.name = 'User_Consol_Input'
-        self.requirements['message'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'Message to be displayed'}
-        self.requirements['default'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'default response'}
-        self.requirements['target'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'AppAddress where the result is stored'}
-        self.requirements['target']['value'] = ['information','procedures','User_Consol_Input', 'result']
+        self.requirements['message'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'Message to be displayed',
+        }
+        self.requirements['default'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'default response',
+        }
+        self.requirements['target'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'AppAddress where the result is stored',
+        }
+        self.requirements['target']['value'] = [
+            'information',
+            'procedures',
+            'User_Consol_Input',
+            'result',
+        ]
         self.apparatus.createAppEntry(self.requirements['target']['value'])
         self.response = ''
 
@@ -28,8 +48,7 @@ class User_Consol_Input(Procedure):
 
         # Doing stuff
         'zmqNode_AppAddress'
-        details = {'message': message,
-                   'default': default}
+        details = {'message': message, 'default': default}
 
         if consoleType == 'pointer':
             details['address'] = target

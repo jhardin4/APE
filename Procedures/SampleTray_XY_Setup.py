@@ -4,17 +4,58 @@ from Core import Procedure
 class SampleTray_XY_Setup(Procedure):
     def Prepare(self):
         self.name = 'SampleTray_XY_Setup'
-        self.requirements['trayname'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of the tray'}
-        self.requirements['samplename'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'path to store image'}
-        self.requirements['xspacing'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'time to weight before taking picture'}
-        self.requirements['yspacing'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of the camera to be used'}
-        self.requirements['xsamples'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'time to weight before taking picture'}
-        self.requirements['ysamples'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of the camera to be used'}
-        self.requirements['xtray'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'time to weight before taking picture'}
-        self.requirements['ytray'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of the camera to be used'}
+        self.requirements['trayname'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'name of the tray',
+        }
+        self.requirements['samplename'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'path to store image',
+        }
+        self.requirements['xspacing'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'time to weight before taking picture',
+        }
+        self.requirements['yspacing'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'name of the camera to be used',
+        }
+        self.requirements['xsamples'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'time to weight before taking picture',
+        }
+        self.requirements['ysamples'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'name of the camera to be used',
+        }
+        self.requirements['xtray'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'time to weight before taking picture',
+        }
+        self.requirements['ytray'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'name of the camera to be used',
+        }
         # Setup Apparatus
-        self.apparatus.createAppEntry(['information','ProcedureData',self.name,'trays'])
-            
+        self.apparatus.createAppEntry(
+            ['information', 'ProcedureData', self.name, 'trays']
+        )
 
     def Plan(self):
         # Renaming useful pieces of informaiton
@@ -43,10 +84,14 @@ class SampleTray_XY_Setup(Procedure):
             raise Exception('Not enough information to construct tray.')
         if xinfo == 3:
             if xtray < xsamples * xspacing:
-                raise Exception('Tray length in X cannot contain requested number of samples at target spacing.')
+                raise Exception(
+                    'Tray length in X cannot contain requested number of samples at target spacing.'
+                )
         if yinfo == 3:
             if ytray < ysamples * yspacing:
-                raise Exception('Tray length in Y cannot contain requested number of samples at target spacing.')        
+                raise Exception(
+                    'Tray length in Y cannot contain requested number of samples at target spacing.'
+                )
         # Handle cases where spacing is not defined
         if xspacing == '':
             xspacing = xtray / xsamples
@@ -61,6 +106,14 @@ class SampleTray_XY_Setup(Procedure):
         for x in range(xsamples):
             for y in range(ysamples):
                 sample_designation = samplename + 'x' + str(x) + 'y' + str(y)
-                grid.append({'X': x * xspacing, 'Y': y * yspacing, 'sample': sample_designation, 'used': False})
-        self.apparatus.setValue(['information', 'ProcedureData', self.name, 'trays', trayname], grid)
-
+                grid.append(
+                    {
+                        'X': x * xspacing,
+                        'Y': y * yspacing,
+                        'sample': sample_designation,
+                        'used': False,
+                    }
+                )
+        self.apparatus.setValue(
+            ['information', 'ProcedureData', self.name, 'trays', trayname], grid
+        )

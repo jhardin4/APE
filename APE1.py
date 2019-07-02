@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -57,7 +58,9 @@ class Ui_MainWindow(object):
         self.copybtn.setObjectName("copybtn")
         self.itable = QtWidgets.QTableWidget(self.atab)
         self.itable.setGeometry(QtCore.QRect(470, 310, 331, 192))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(4)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.itable.sizePolicy().hasHeightForWidth())
@@ -173,7 +176,9 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Value"))
         self.saveasbtn.setText(_translate("MainWindow", "Save As"))
         self.connectbtn.setText(_translate("MainWindow", "Connect All Devices"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.atab), _translate("MainWindow", "Apparatus"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.atab), _translate("MainWindow", "Apparatus")
+        )
         item = self.rbox.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Requirement"))
         item = self.rbox.horizontalHeaderItem(1)
@@ -189,6 +194,9 @@ class Ui_MainWindow(object):
         self.abtn.setText(_translate("MainWindow", "Add"))
         self.runCurrentbtn.setText(_translate("MainWindow", "Run Current"))
         self.RunListbtn.setText(_translate("MainWindow", "Run List"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.ptab), _translate("MainWindow", "Procedure"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.utab), _translate("MainWindow", "Utilities"))
-
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.ptab), _translate("MainWindow", "Procedure")
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.utab), _translate("MainWindow", "Utilities")
+        )

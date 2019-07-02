@@ -3,7 +3,7 @@ from MultiProcess.zmqNode import zmqNode
 from MultiProcess import APE_Interfaces
 
 
-class ProcExec():
+class ProcExec:
     def __init__(self, PE2L_address, PE2A_address, PE2G_address):
         # Create the node and set its target to ProcExec
         self.node = zmqNode('procexec')
@@ -27,7 +27,7 @@ class ProcExec():
 
     def connect2A(self, PE2A_address):
         self.node.connect('appa', PE2A_address)
-    
+
     def connect2G(self, PE2G_address):
         self.node.connect('gui', PE2G_address, server=True)
 

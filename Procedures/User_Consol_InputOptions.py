@@ -4,11 +4,36 @@ from Core import Procedure
 class User_Consol_InputOptions(Procedure):
     def Prepare(self):
         self.name = 'User_Consol_InputOptions'
-        self.requirements['message'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'Message to be displayed'}
-        self.requirements['options'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'Possible answers'}
-        self.requirements['default'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'default response'}
-        self.requirements['target'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'AppAddress where the result is stored'}
-        self.requirements['target']['value'] = ['information','procedures','User_Consol_InputOptions', 'result']
+        self.requirements['message'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'Message to be displayed',
+        }
+        self.requirements['options'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'Possible answers',
+        }
+        self.requirements['default'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'default response',
+        }
+        self.requirements['target'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'AppAddress where the result is stored',
+        }
+        self.requirements['target']['value'] = [
+            'information',
+            'procedures',
+            'User_Consol_InputOptions',
+            'result',
+        ]
         self.apparatus.createAppEntry(self.requirements['target']['value'])
         self.response = ''
 
@@ -30,9 +55,7 @@ class User_Consol_InputOptions(Procedure):
 
         # Doing stuff
         'zmqNode_AppAddress'
-        details = {'message': message,
-                   'options': options,
-                   'default': default}
+        details = {'message': message, 'options': options, 'default': default}
 
         if consoleType == 'pointer':
             details['address'] = target

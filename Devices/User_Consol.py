@@ -13,20 +13,28 @@ class User_Consol(Sensor):
         Sensor.__init__(self, name)
         self.descriptors = [*self.descriptors, *['sensor', 'User', 'consol']]
         self.requirements['GetInput'] = {}
-        self.requirements['GetInput']['message'] = {'source': 'apparatus',
-                         'address': '',
-                         'value': '',
-                         'desc': 'Message to be displayed'}
-        self.requirements['GetInput']['options'] = {'source': 'apparatus',
-                         'address': '',
-                         'value': '',
-                         'desc': 'Possible answers'}
-        self.requirements['GetInput']['default'] = {'source': 'apparatus',
-                         'address': '',
-                         'value': '',
-                         'desc': 'default response'}
+        self.requirements['GetInput']['message'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'Message to be displayed',
+        }
+        self.requirements['GetInput']['options'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'Possible answers',
+        }
+        self.requirements['GetInput']['default'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'default response',
+        }
 
-    def GetInputOptions(self, message='', options='', default='', address='', addressType=''):
+    def GetInputOptions(
+        self, message='', options='', default='', address='', addressType=''
+    ):
         print(message)
         # Construct the list of options if options are given
         if options != '':
@@ -38,7 +46,7 @@ class User_Consol(Sensor):
                 option_string += option
                 if option == default:
                     option_string += ']'
-                if option != options[len(options)-1]:
+                if option != options[len(options) - 1]:
                     option_string += ', '
             option_string += ')'
             print(option_string)

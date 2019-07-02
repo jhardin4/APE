@@ -12,18 +12,38 @@ from importlib import import_module
 class System(Device):
     def __init__(self, name):
         # Run the Device initialization.
-        Device.__init__(self,name)
+        Device.__init__(self, name)
         # Run simulation is controlled by its own
         # Append relevant descriptors
         self.descriptors.append('system')
         # Defining the elemental procedures
         self.requirements['Dwell'] = {}
-        self.requirements['Dwell']['dtime'] = {'value': '', 'source': 'apparatus', 'address': '', 'desc': 'time to wait in seconds'}
+        self.requirements['Dwell']['dtime'] = {
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'time to wait in seconds',
+        }
 
         self.requirements['Run'] = {}
-        self.requirements['Run']['address'] = {'value': '', 'source': 'direct', 'address': '', 'desc': 'address of the program or pointer to it'}
-        self.requirements['Run']['addresstype'] = {'value': '', 'source': 'direct', 'address': '', 'desc': 'type of address'}
-        self.requirements['Run']['arguments'] = {'value': '', 'source': 'apparatus', 'address': '', 'desc': 'list of the arguments for the program in order. Will be decomposed with * operator'}
+        self.requirements['Run']['address'] = {
+            'value': '',
+            'source': 'direct',
+            'address': '',
+            'desc': 'address of the program or pointer to it',
+        }
+        self.requirements['Run']['addresstype'] = {
+            'value': '',
+            'source': 'direct',
+            'address': '',
+            'desc': 'type of address',
+        }
+        self.requirements['Run']['arguments'] = {
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'list of the arguments for the program in order. Will be decomposed with * operator',
+        }
 
     def Dwell(self, dtime=''):
         if not self.simulation and dtime != '':
@@ -53,6 +73,7 @@ class System(Device):
 
 
 if __name__ == '__main__':
+
     def testFunction(message):
         print(message)
 
@@ -61,7 +82,9 @@ if __name__ == '__main__':
     log = ''
     log += mySystem.Connect()
     log += mySystem.Dwell(dtime=1)
-    log += mySystem.Run(address=testFunction, addresstype='pointer', arguments=['test message'])
+    log += mySystem.Run(
+        address=testFunction, addresstype='pointer', arguments=['test message']
+    )
     log += mySystem.Disconnect()
     print('... and the resulting log.')
     print(log)
@@ -70,8 +93,9 @@ if __name__ == '__main__':
     log = ''
     log += mySystem.Connect()
     log += mySystem.Dwell(dtime=1)
-    log += mySystem.Run(address=testFunction, addresstype='pointer', arguments=['test message'])
+    log += mySystem.Run(
+        address=testFunction, addresstype='pointer', arguments=['test message']
+    )
     log += mySystem.Disconnect()
     print('... and the resulting log.')
     print(log)
-    
