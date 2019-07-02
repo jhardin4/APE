@@ -4,7 +4,6 @@ from enum import Enum
 import collections
 from multiprocessing import Queue, Process, Value
 
-
 _AXES = ['X', 'Y', 'ZZ1', 'ZZ2', 'ZZ3', 'ZZ4', 'R', 'I', 'J']
 _Z_AXES = ['ZZ1', 'ZZ2', 'ZZ3', 'ZZ4']
 _AXIS_INDEX = {'Y': 0, 'YY': 1, 'X': 2, 'ZZ1': 6, 'ZZ2': 7, 'ZZ3': 8, 'ZZ4': 9}
@@ -56,34 +55,34 @@ class Axis_Mask(Enum):
     '''
     Unimplemented axis_masks
 
-	AXISMASK_08 = (1 <<  8), #256
-	AXISMASK_09 = (1 <<  9), #512
+    AXISMASK_08 = (1 <<  8), #256
+    AXISMASK_09 = (1 <<  9), #512
 
-	AXISMASK_10 = (1 << 10), #1024
-	AXISMASK_11 = (1 << 11), #2048
-	AXISMASK_12 = (1 << 12),
-	AXISMASK_13 = (1 << 13),
-	AXISMASK_14 = (1 << 14),
-	AXISMASK_15 = (1 << 15),
-	AXISMASK_16 = (1 << 16),
-	AXISMASK_17 = (1 << 17),
-	AXISMASK_18 = (1 << 18),
-	AXISMASK_19 = (1 << 19),
+    AXISMASK_10 = (1 << 10), #1024
+    AXISMASK_11 = (1 << 11), #2048
+    AXISMASK_12 = (1 << 12),
+    AXISMASK_13 = (1 << 13),
+    AXISMASK_14 = (1 << 14),
+    AXISMASK_15 = (1 << 15),
+    AXISMASK_16 = (1 << 16),
+    AXISMASK_17 = (1 << 17),
+    AXISMASK_18 = (1 << 18),
+    AXISMASK_19 = (1 << 19),
 
-	AXISMASK_20 = (1 << 20),
-	AXISMASK_21 = (1 << 21),
-	AXISMASK_22 = (1 << 22),
-	AXISMASK_23 = (1 << 23),
-	AXISMASK_24 = (1 << 24),
-	AXISMASK_25 = (1 << 25),
-	AXISMASK_26 = (1 << 26),
-	AXISMASK_27 = (1 << 27),
-	AXISMASK_28 = (1 << 28),
-	AXISMASK_29 = (1 << 29),
+    AXISMASK_20 = (1 << 20),
+    AXISMASK_21 = (1 << 21),
+    AXISMASK_22 = (1 << 22),
+    AXISMASK_23 = (1 << 23),
+    AXISMASK_24 = (1 << 24),
+    AXISMASK_25 = (1 << 25),
+    AXISMASK_26 = (1 << 26),
+    AXISMASK_27 = (1 << 27),
+    AXISMASK_28 = (1 << 28),
+    AXISMASK_29 = (1 << 29),
 
-	AXISMASK_30 = (1 << 30),
-	AXISMASK_31 = (1 << 31),
-        '''
+    AXISMASK_30 = (1 << 30),
+    AXISMASK_31 = (1 << 31),
+    '''
 
     @classmethod
     def get_mask(cls, axes):
@@ -678,7 +677,7 @@ class A3200:
                 )
             return bool(success), str(cmd.value)
 
-    ######IO Functions ######
+    # #####IO Functions ######
 
     def AI(self, axis, channel, task=-1):
         '''
@@ -781,7 +780,7 @@ class A3200:
             else:
                 return self.A3200Lib.A3200IODigitalOutput(self.handle, task, c, a, v)
 
-    ##### Queue Functions #####
+    # #### Queue Functions #####
 
     def enable_queue_mode(self, task=-1):
         if task < 0:
@@ -846,7 +845,7 @@ class A3200:
             item_index = ct.c_int32(self.task)
             item_code = ct.c_int32(325)
             extra = ct.c_int32(0)
-            success = self.A3200Lib.A3200StatusGetItem(
+            _ = self.A3200Lib.A3200StatusGetItem(
                 self.handle, item_index, item_code, extra, ct.byref(count)
             )
             return int(count.value)
@@ -862,7 +861,7 @@ class A3200:
             task = self.task
         while self.queue_status[task] == 1:
             while not self.cmd_queue[task].empty():
-                cmd = self.cmd_queue[task].get(self.loop_delay)
+                _ = self.cmd_queue[task].get(self.loop_delay)
 
             success, depth = self.get_queue_depth(task)
             if success:
@@ -884,7 +883,7 @@ class A3200:
             task = self.task
         return bool(self.A3200Lib.A3200ProgramPause(self.handle, task))
 
-    ###### Status Functions ######
+    # ##### Status Functions ######
 
     def get_position(self, axes, return_type=list):
         '''
@@ -905,7 +904,7 @@ class A3200:
             else:
                 ax[axes] = name_to_index(axes)
 
-            n = ct.wintypes.DWORD(1)
+            _ = ct.wintypes.DWORD(1)
             s = 107
             item_code = ct.wintypes.DWORD(s)
             s = 0
