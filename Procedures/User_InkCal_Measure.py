@@ -52,7 +52,7 @@ class User_InkCal_Measure(Procedure):
         # FIND devices needed for procedure
         motion = self.apparatus.findDevice({'descriptors': ['motion']})
         system = self.apparatus.findDevice({'descriptors': ['system']})
-        nozzle = self.apparatus.findDevice({'descriptors': ['nozzle', material]})
+        _ = self.apparatus.findDevice({'descriptors': ['nozzle', material]})
         pump = self.apparatus.findDevice({'descriptors': ['pump', material]})
 
         self.pmotion.requirements['axismask']['address'] = [

@@ -41,7 +41,6 @@ class Aerotech_A3200_getPosition(Procedure):
 
         # Doing stuff
         details = {'axislist': axisList}
-        ppointer = [0]
         if motionType == 'pointer':
             details['address'] = target
             details['addresstype'] = 'pointer'

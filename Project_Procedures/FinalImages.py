@@ -56,7 +56,7 @@ class FinalImages(Core.Procedure):
         # Renaming information from requirements
         samplename = self.requirements['samplename']['value']
         nozzlename = self.requirements['nozzlename']['value']
-        offset = self.requirements['zOffset']['value']
+        _ = self.requirements['zOffset']['value']
 
         # Gathering required information
         cameraname = self.apparatus.findDevice({'descriptors': ['camera']})
@@ -67,7 +67,7 @@ class FinalImages(Core.Procedure):
         cam_axismask = self.apparatus.getValue(
             ['devices', motionname, cameraname, 'axismask']
         )
-        noz_refpoint = self.apparatus.getValue(
+        _ = self.apparatus.getValue(
             ['information', 'alignments', nozzlename + '@start']
         )
         cam_refpoint = self.apparatus.getValue(
@@ -91,7 +91,7 @@ class FinalImages(Core.Procedure):
 
         # Get image for acessing alignment at center of pillars
         # Get the values relvant to the sample from the toolpath parameters
-        leadin = self.apparatus.getValue(
+        _ = self.apparatus.getValue(
             ['information', 'toolpaths', 'parameters', 'leadin']
         )
         point1 = self.apparatus.getValue(

@@ -1,11 +1,4 @@
-from PyQt5.QtWidgets import (
-    QApplication,
-    QWidget,
-    QPushButton,
-    QVBoxLayout,
-    QMainWindow,
-    QGridLayout,
-)
+from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow
 from MultiProcess.Appa import Appa
 from MultiProcess.ProcExec import ProcExec
 import sys

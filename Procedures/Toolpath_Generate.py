@@ -50,7 +50,7 @@ class Toolpath_Generate(Procedure):
     def Plan(self):
         parameters = self.requirements['parameters']['value']
         generator = self.requirements['generator']['value']
-        target = self.requirements['target']['value']
+        _ = self.requirements['target']['value']
         dataArgs = self.requirements['dataArgs']['value']
 
         if dataArgs == '':

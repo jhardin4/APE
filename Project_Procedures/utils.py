@@ -1,10 +1,8 @@
 import csv
 import cv2
-import glob
 import numpy as np
 from skimage.morphology import medial_axis
 from matplotlib import pyplot as plt
-from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import minimum_spanning_tree
 
 
@@ -135,12 +133,12 @@ def showPolyOne(
 
     t = np.linspace(0, 1, 1000)
     u = np.array([end10 - end00, end11 - end01])
-    l = np.linalg.norm(u)
-    u /= l
+    lin = np.linalg.norm(u)
+    u /= lin
     v = np.array([-u[1], u[0]])
 
     coords = (
-        l * (t[:, None] * u[None, ::-1] + p(t)[:, None] * v[None, ::-1])
+        lin * (t[:, None] * u[None, ::-1] + p(t)[:, None] * v[None, ::-1])
         + np.array([end01, end00])[None, :]
     ).astype(np.int32)
 
@@ -208,11 +206,11 @@ def detectVerticalEdges(img, houghParam=500):
                         break
                 # If line can be added to an existing cluster, do it
                 if cluster_id is not None:
-                    l = len(line_clusters[cluster_id]['list'])
+                    le = len(line_clusters[cluster_id]['list'])
                     line_clusters[cluster_id]['list'].append((rho, theta))
                     line_clusters[cluster_id]['mean'] = (
-                        line_clusters[cluster_id]['mean'] * l + x
-                    ) / (l + 1)
+                        line_clusters[cluster_id]['mean'] * le + x
+                    ) / (le + 1)
                 # Otherwise, create a new cluster
                 else:
                     line_clusters.append({'list': [(rho, theta)], 'mean': x})
@@ -286,7 +284,7 @@ def reframe(img, lines, drawFrame=False):
     new_y1 = m
     new_x2 = new_x1
     new_y2 = 0
-    new_x3 = new_x0
+    # new_x3 = new_x0
     new_y3 = m
     new_frame = [(new_x0, new_y0), (new_x2, new_y2), (x1, new_y1), (x3, new_y3)]
     M = cv2.getPerspectiveTransform(
@@ -360,7 +358,7 @@ def getLongestPath(skel):
 
     n = max(explored, key=lambda k: explored[k][1])
     path = []
-    while n != None:
+    while n is not None:
         path.append(n)
         n = explored[n][0]
 
@@ -521,8 +519,8 @@ def fitPathOne(path, deg):
     # The points coordinates are divided by the distance from the end points of the path
     # so that the polynomial inputs go from 0 to 1
     u = path[:, -1] - path[:, 0]
-    l = np.linalg.norm(u)
-    u = u / (l * l)
+    lin = np.linalg.norm(u)
+    u = u / (lin * lin)
     v = np.array([-u[1], u[0]])
     xs = [np.dot(path[:, k] - path[:, 0], u) for k in range(path.shape[1])]
     ys = [np.dot(path[:, k] - path[:, 0], v) for k in range(path.shape[1])]
@@ -534,11 +532,11 @@ def fitPathOne(path, deg):
     t = np.linspace(0, 1, 1000)
 
     coords = (
-        l * l * (t[None, :] * u[::-1, None] + p(t)[None, :] * v[::-1, None])
+        lin * lin * (t[None, :] * u[::-1, None] + p(t)[None, :] * v[::-1, None])
         + path[::-1, 0:1]
     )
 
-    return z[::-1], coords, residual, l
+    return z[::-1], coords, residual, lin
 
 
 def printSkeleton(img, skel, c=(255, 255, 0)):

@@ -1,7 +1,6 @@
 from MultiProcess.zmqNode import zmqNode
 from MultiProcess import APE_Interfaces
 from GUI import APEcode
-import Devices
 from PyQt5.QtWidgets import QApplication
 import sys
 

@@ -7,7 +7,7 @@ Created on Mon May 27 07:41:08 2019
 
 # import json
 #
-## read file
+# read file
 # with open('C:/Users/casey/OneDrive/Desktop/APE GUI/Logs/copy.json', 'r') as myfile:
 #    data=myfile.read()
 

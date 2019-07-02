@@ -1,5 +1,4 @@
 from Core import Procedure
-import Procedures.User_InkCal_Calibrate
 
 
 class EndofLayer(Procedure):
@@ -15,5 +14,5 @@ class EndofLayer(Procedure):
 
     def Plan(self):
         # Renaming useful pieces of informaiton
-        matList = list(self.apparatus.getValue(['information', 'materials']))
-        lnumber = self.requirements['layernumber']['value']
+        _ = list(self.apparatus.getValue(['information', 'materials']))
+        _ = self.requirements['layernumber']['value']

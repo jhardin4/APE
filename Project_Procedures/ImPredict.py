@@ -1,5 +1,4 @@
 import Core
-import Procedures
 
 import Project_Procedures.MJfunctions as SpanML  # functions specifically for segmenting spanning segments + making class predictions
 

@@ -1,17 +1,13 @@
 import cv2
 import numpy as np
-import matplotlib
 from matplotlib import pyplot as plt
 import utils  # kevins utils
 import skimage
 import scipy
 import scipy.ndimage
 from skimage import morphology
-from skimage import feature
-from skimage.morphology import skeletonize
 from skimage.morphology import disk
 
-# from pyDOE import lhs
 import pickle
 import time
 import sys
@@ -26,7 +22,7 @@ def LABsegmenter(imgf, imgi, samplename, path, save):
     print('Beginning Initial Segmentation')
 
     # can also read in paths if we want
-    if path == True:
+    if path is True:
         # pathf = 'B:\\Lab\\Spanning\\Spanning Data\\2018_12_07\\Test 1\\samplex02y007final.tif'
         # pathi = 'B:\\Lab\\Spanning\\Spanning Data\\2018_12_07\\Test 1\\samplex02y007.tif'
         imgf = cv2.imread(imgf, cv2.IMREAD_COLOR)
@@ -78,7 +74,7 @@ def LABsegmenter(imgf, imgi, samplename, path, save):
 
     binary_img = subtracted
 
-    if save == True:
+    if save is True:
 
         plt.imsave(
             'Data\\' + str(round(time.time())) + samplename + '_LABseg' + '.tif',
@@ -96,7 +92,7 @@ def gap_finder(imgi, imgf, binary_img, gap_padding, samplename, path, save):
     try:
         print('Finding Gap Edges')
 
-        if path == True:
+        if path is True:
             pathf = imgf
             pathi = imgi
             # pathb = binary_img
@@ -139,7 +135,7 @@ def gap_finder(imgi, imgf, binary_img, gap_padding, samplename, path, save):
         )
 
         if gap_padding == 0:
-            gapPadded = gapThresh
+            _ = gapThresh  # TODO: use gapPadded
 
         elif gap_padding != 0:
             ind_mat = np.arange(0, gapThresh.shape[0] * gapThresh.shape[1]).reshape(
@@ -183,7 +179,7 @@ def gap_finder(imgi, imgf, binary_img, gap_padding, samplename, path, save):
 
             plt.imshow(binary_img.astype(np.uint8) * gapExpanded.astype(np.uint8))
 
-        if save == True:
+        if save is True:
             plt.imsave(
                 'Data\\'
                 + str(round(time.time()))
@@ -219,7 +215,7 @@ def gap_finder(imgi, imgf, binary_img, gap_padding, samplename, path, save):
 def resizer(img, scaling_factor, samplename, path, save):
     # this function takes in an image (probably binary for our cases) and reduces the dimensions by the scaling factor
 
-    if path == True:
+    if path is True:
         path = img
         img = cv2.imread(path, cv2.IMREAD_COLOR)
 
@@ -228,7 +224,7 @@ def resizer(img, scaling_factor, samplename, path, save):
 
     resized = skimage.transform.resize(img.astype(bool), (height, width))
 
-    if save == True:
+    if save is True:
         resized_path = (
             'Data\\'
             + str(round(time.time()))
@@ -244,13 +240,13 @@ def resizer(img, scaling_factor, samplename, path, save):
 def SpanningIP(imgf, imgi, samplename, path, save=True):
     # this function condenses the image processing into one place
     try:
-        if path == True:
+        if path is True:
             pathi = imgi
             pathf = imgf
             imgf = cv2.imread(pathf, cv2.IMREAD_COLOR)
             imgi = cv2.imread(pathi, cv2.IMREAD_COLOR)
 
-        #%matplotlib inline
+        # %matplotlib inline
         # plt.imshow(imgf)
         # plt.imshow(imgi)
 
@@ -264,7 +260,7 @@ def SpanningIP(imgf, imgi, samplename, path, save=True):
             imgi, imgf, binary_img, gap_padding, samplename, path=False, save=True
         )
 
-        binary_path = 'Data\\' + str(round(time.time())) + samplename + '_seg' + '.tif'
+        # binary_path = 'Data\\' + str(round(time.time())) + samplename + '_seg' + '.tif'
         # cv2.imwrite( binary_path, binary_img)
 
         gapped_path = (
@@ -463,7 +459,7 @@ def saveModel(model, filename):
     try:
         pickle.dump(model, open((filename + '.pkl'), 'wb'))
         print('Model Save Successful')
-    except:
+    except Exception:
         print('Model Save Unsuccesful!!!!!!!!!!!!!!!!!!!!')
 
 
@@ -474,8 +470,9 @@ def loadModel(filename):
         model = pickle.load(open((filename + '.pkl'), 'rb'))
         print('Model Load Successful')
         time.sleep(0.05)
-    except:
+    except Exception:
         print('Error Loading Model!!!!!!!!!!!!!!!!!!!!!!!')
+        return None
 
     return model
 
@@ -485,6 +482,7 @@ def LHCgenerator(Nparams, Nsamples, criterion):
     # Nparams = # parameteres
     # Nsamples = # samples
     # criterion tells us how to distribute the samples... Options : 'center', 'maximin', 'certermaximin', 'correlation'
+    from pyDOE import lhs
 
     samples = lhs(Nparams, Nsamples, criterion, iterations=50)
 

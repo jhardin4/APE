@@ -5,6 +5,8 @@
 
 # Handle the different relative locations for independently running and
 #
+import time
+
 from Devices import Sensor
 
 
@@ -149,8 +151,6 @@ class Keyence_GT2_A3200(Sensor):
         self.AIchannel = AIchannel
         self.systemname = systemname
         self.systemhandle = systemaddress
-        if not self.simulation:
-            import numpy as np
 
         self.addlog(
             'Keyence Touchprobe using '

@@ -84,10 +84,10 @@ class Ultimus_V_Pump:
             self.stop_on_errors = False
         if 'trigger' in kwargs:
             self.trigger = 'com'  # default to com
-            if kwargs['trigger'].lower() is 'do':
+            if kwargs['trigger'].lower() == 'do':
                 self.trigger = "DO"
                 try:
-                    from A3200 import A3200
+                    from A3200 import A3200  # noqa: F401
 
                     self.A3200 = kwargs['A3200']
                     self.trigger_bit = kwargs['bit']
@@ -330,7 +330,7 @@ class Ultimus_V_Pump:
             r = self.transmit_command(self.format_command("DI  "))
             if r == 1:
                 self.dispensing = not self.dispensing
-        if self.trigger is 'DO':
+        if self.trigger == 'DO':
             if self.dispensing:
                 if self.A3200.DO(self.trigger_bit, self.trigger_axis, False):
                     self.dispensing = False

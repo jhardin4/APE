@@ -40,7 +40,7 @@ class IDS_ueye(Sensor):
 
             try:
                 self.handle = camera.ueye()
-            except:
+            except Exception:
                 temp = input('Do you want to try to connect again?([y],n)')
                 if temp in ['', 'y', 'yes']:
                     self.handle = camera.ueye()
