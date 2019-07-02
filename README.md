@@ -18,5 +18,7 @@ pre-commit autoupdate
 For Python we can use [black](https://github.com/ambv/black):
 
 ```bash
-black .
+black -S .
 ```
+
+**NOTE:** The `-S` parameter prevents black from changing quotes.

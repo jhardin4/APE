@@ -14,9 +14,12 @@ repos:
       - id: check-xml
       - id: check-yaml
       - id: end-of-file-fixer
+        exclude: >
+            (?x)^(
+                Logs/.*
+            )$
       - id: mixed-line-ending
         args: [--fix=lf]
-      - id: fix-encoding-pragma
 
 - repo: local
   hooks:
@@ -25,6 +28,7 @@ repos:
         description: This hook formats Python code.
         entry: env LC_ALL=C.UTF-8 black -q
         language: system
+        args: [-S]
         types: [python]
 
     -   id: qmlfmt
