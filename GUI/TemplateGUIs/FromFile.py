@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QInputDialog, QLineEdit, QWidget, QFileDialog
+from PyQt5.QtWidgets import QFileDialog
 
 
 def FromFile():
