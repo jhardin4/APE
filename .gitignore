@@ -1,0 +1,8 @@
+.env/
+.idea/
+Logs/
+
+nodelog_appa.txt
+nodelog_procexec.txt
+nodelog_gui.txt
+nodelog_launcher.txt
