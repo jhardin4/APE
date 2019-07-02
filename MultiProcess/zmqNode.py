@@ -189,7 +189,7 @@ class zmqNode:
         if self.logging:
             try:
                 logfile = open(self.logfile, mode='a')
-            except:
+            except OSError:
                 logfile = open(self.logfile, mode='w')
             logfile.write(str(message) + '\n')
             logfile.close()

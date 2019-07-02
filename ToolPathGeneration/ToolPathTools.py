@@ -1,7 +1,6 @@
 import copy
 import math
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import csv
 import ToolPathGeneration.CompGeo as cg
 import json
@@ -247,7 +246,7 @@ def toolpcut(toolpath, boundry, keepoutside, distancetol, angletol):
                     del temppath1[line - cuts]
                     cuts = cuts + 1
                 # remove motions satisfying condition 3 (only applied when keeping inside)
-                elif keepoutside == False:
+                elif keepoutside is False:
                     # if one end is outside the region and the other is in the border though counted as being outside
                     if (point1all == 1 and point2all == 0) or (
                         point1all == 0 and point2all == 1
@@ -255,11 +254,11 @@ def toolpcut(toolpath, boundry, keepoutside, distancetol, angletol):
                         del temppath1[line - cuts]
                         cuts = cuts + 1
             # remove motions satisfy condition 2
-            if keepoutside == True:
-                if inregion1 == False and inregion2 == True and point1all == 1:
+            if keepoutside is True:
+                if inregion1 is False and inregion2 is True and point1all == 1:
                     del temppath1[line - cuts]
                     cuts = cuts + 1
-                if inregion1 == True and inregion2 == False and point2all == 1:
+                if inregion1 is True and inregion2 is False and point2all == 1:
                     del temppath1[line - cuts]
                     cuts = cuts + 1
                 '''
@@ -319,7 +318,7 @@ def toolpcut(toolpath, boundry, keepoutside, distancetol, angletol):
             )
             # check if motion starts in boundry or on edge then set starting state of motion
             # print(str(intersections[0]) +' ' + str(temppath1[line]['startpoint']))
-            if inregion1 == True or cg.ptalmostequal(
+            if inregion1 is True or cg.ptalmostequal(
                 intersections[0], temppath1[line]['startpoint'], distancetol
             ):
                 start = not keepoutside
@@ -329,7 +328,7 @@ def toolpcut(toolpath, boundry, keepoutside, distancetol, angletol):
             # print(intersections)
 
             # if the motion starts on
-            if start == True:
+            if start is True:
                 # add the start point to the pointlist
                 pointlist = [temppath1[line]['startpoint']]
             # if the motion starts off
@@ -700,7 +699,7 @@ def parse_endofmotion(toolpath, disttol):
 def firstmotion(toolpath, startindex):
     m = startindex
     motion = False
-    while motion == False:
+    while motion is False:
         linekeys = list(toolpath[m].keys())
         if 'startpoint' in linekeys:
             motion = True

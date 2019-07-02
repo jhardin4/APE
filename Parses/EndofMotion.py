@@ -37,7 +37,7 @@ class EndofMotion(Procedure):
             pumpname,
             'mid_time',
         ]
-        ##Assumes that the +Z axis is the safe direction
+        # Assumes that the +Z axis is the safe direction
         axismask = self.apparatus.getValue(
             ['devices', motionname, nozzlename, 'axismask']
         )

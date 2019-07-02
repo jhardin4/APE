@@ -21,7 +21,7 @@ class User_FlexPrinter_Alignments_Update(Procedure):
             ['information', 'alignments', alignmentname]
         )
 
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        _ = self.apparatus.findDevice({'descriptors': 'motion'})
 
         # Doing stuff
         input('Move to ' + alignmentname + ',and press ENTER when there.')

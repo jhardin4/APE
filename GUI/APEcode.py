@@ -1,20 +1,14 @@
 import sys
 from GUI.APE2 import Ui_MainWindow
-from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
-    QApplication,
-    QTreeWidgetItem,
-    QTreeWidgetItemIterator,
-    QTableWidgetItem,
-)
-from PyQt5.QtWidgets import QInputDialog, QLineEdit, QWidget
+from PyQt5.QtWidgets import QApplication, QTreeWidgetItem, QTableWidgetItem, QMainWindow
+from PyQt5.QtWidgets import QInputDialog, QLineEdit
 from Core import Apparatus, Executor
 import Procedures
 import GUI.TemplateGUIs as tGUIs
 
 
-class APEGUI(QtWidgets.QMainWindow):
+class APEGUI(QMainWindow):
     def __init__(self):
         super(APEGUI, self).__init__()
         self.ui = Ui_MainWindow()
@@ -69,7 +63,7 @@ class APEGUI(QtWidgets.QMainWindow):
     def add(self):
         # gets selected item and makes a child
         parent = self.ui.treeWidget.currentItem()
-        child = QtWidgets.QTreeWidgetItem()
+        child = QTreeWidgetItem()
         # adds to tree, expands, makes the child editable, and adds a checkbox
         parent.addChild(child)
         parent.setExpanded(True)
@@ -89,7 +83,7 @@ class APEGUI(QtWidgets.QMainWindow):
         item = self.ui.treeWidget.currentItem()
         parent = item.parent()
         # if item is not top level item, the item is removed
-        if parent != None:
+        if parent is None:
             parent.removeChild(item)
         # this will need to remove the appa node's value
 
@@ -115,7 +109,7 @@ class APEGUI(QtWidgets.QMainWindow):
                 Child = child.text(0)
                 # prints the magical string that took me 15 hours
                 # makes a list of the parents in reverse order
-                while (child.parent()) != None:
+                while child.parent() is not None:
                     getParent = child.parent()
                     Parent = getParent.text(0)
                     child = getParent
@@ -153,17 +147,17 @@ class APEGUI(QtWidgets.QMainWindow):
             if type(value) is dict:
                 keyitem = self.fillchildren(key, value)
             else:
-                keyitem = QtWidgets.QTreeWidgetItem([key])
+                keyitem = QTreeWidgetItem([key])
             self.ui.treeWidget.addTopLevelItem(keyitem)
 
     # fill in the children of the tree using reccursion
     def fillchildren(self, key, value):
-        keyitem = QtWidgets.QTreeWidgetItem([key])
+        keyitem = QTreeWidgetItem([key])
         if type(value) is dict:
             for k, v in value.items():
                 keyitem.addChild(self.fillchildren(k, v))
         else:
-            valueitem = QtWidgets.QTreeWidgetItem([str(value)])
+            valueitem = QTreeWidgetItem([str(value)])
             keyitem.addChild(valueitem)
         return keyitem
 
@@ -186,9 +180,7 @@ class APEGUI(QtWidgets.QMainWindow):
             args, kwargs = tGUI()
         except AttributeError:
             message = 'That template was not found.'
-            tName, ok = QInputDialog.getText(
-                None, 'Input', message, QLineEdit.Normal, default
-            )
+            tName, ok = QInputDialog.getText(None, 'Input', message, QLineEdit.Normal)
         self.apparatus.applyTemplate(tName, args=args, kwargs=kwargs)
         self.appImage = self.apparatus.serialClone()
         # puts the apparatus in the qtreewidget
@@ -214,7 +206,7 @@ class APEGUI(QtWidgets.QMainWindow):
                     | Qt.ItemIsEnabled
                     | Qt.ItemIsUserCheckable
                 )
-                if item != None:
+                if item is not None:
                     item.setCheckState(0, Qt.Unchecked)
                 return
 
@@ -267,14 +259,14 @@ class APEGUI(QtWidgets.QMainWindow):
             value = item
             # gets the pathname of the value
             path = ''
-            while item.parent() != None:
+            while item.parent() is not None:
                 parent = item.parent()
                 path = parent.text(0) + ' ' + path
                 item = parent
             # checks to see if this value already exists in the table
             if (
                 len(self.ui.itable.findItems(path, Qt.MatchExactly | Qt.MatchRecursive))
-                is 0
+                == 0
             ):
                 # if it is not already in the table, it adds it to the bottom
                 k = self.ui.itable.rowCount()
@@ -299,14 +291,14 @@ class APEGUI(QtWidgets.QMainWindow):
     def removefromitable(self, item=''):
         path = ''
         # loop creates the pathname of the selected item
-        while item.parent() != None:
+        while item.parent() is not None:
             parent = item.parent()
             path = parent.text(0) + ' ' + path
             item = parent
         # finds items in the qtablewidget of important values that match the pathname
         ibox = self.ui.itable.findItems(path, Qt.MatchExactly | Qt.MatchRecursive)
         # if there is a match in the qtablewidget, this removes the row of the matched qtablewidgetitem
-        if not len(ibox) is 0:
+        if not len(ibox) == 0:
             self.ui.itable.removeRow(ibox[0].row())
 
     # updates the qtreewidget and apparatus if the value in the qtablewidget (important valeus) is changed
@@ -314,7 +306,7 @@ class APEGUI(QtWidgets.QMainWindow):
         newvalue = self.ui.itable.currentItem()
         # this eliminates going through the process during start up
         # otherwise it will update every value in the qtreewidget which is not needed
-        if newvalue != None:
+        if newvalue is not None:
             row = self.ui.itable.currentRow()
             # gets pathname from left column
             newkey = self.ui.itable.item(row, 0)
@@ -322,7 +314,7 @@ class APEGUI(QtWidgets.QMainWindow):
             pathn = path.split(' ')
             # removes last item of the pathname
             pathn.pop()
-            if newvalue != None:
+            if newvalue is not None:
                 # this has to be 1 because of how pathn is created
                 key = pathn[len(pathn) - 1]
                 # finds item in the qtreewidget with the same pathname
@@ -358,8 +350,8 @@ class APEGUI(QtWidgets.QMainWindow):
                 parent = self.ui.treeWidget.topLevelItem(k)
                 pathn = []
                 i = 0
-                if (parent.child(0)) != None:
-                    while (parent.child(0)) != None:
+                if parent.child(0) is not None:
+                    while parent.child(0) is not None:
                         child = parent.child(0)
                         Parent = parent.text(0)
                         # makes a list of the parents in reverse order
@@ -405,7 +397,7 @@ class APEGUI(QtWidgets.QMainWindow):
             if type(value) is dict:
                 keyitem = self.fillchildren(key, value)
             else:
-                keyitem = QtWidgets.QTreeWidgetItem([key])
+                keyitem = QTreeWidgetItem([key])
             self.ui.treeWidget.addTopLevelItem(keyitem)
 
     def disconnectall(self):
@@ -419,7 +411,7 @@ class APEGUI(QtWidgets.QMainWindow):
             if type(value) is dict:
                 keyitem = self.fillchildren(key, value)
             else:
-                keyitem = QtWidgets.QTreeWidgetItem([key])
+                keyitem = QTreeWidgetItem([key])
             self.ui.treeWidget.addTopLevelItem(keyitem)
 
     # --------------------- Procedures Tab ---------------------
@@ -546,7 +538,7 @@ class APEGUI(QtWidgets.QMainWindow):
         citem = self.ui.rbox.currentItem()
         r = self.ui.rbox.currentRow()
         self.ui.rbox.resizeColumnsToContents()
-        if citem != None:
+        if citem is not None:
             value = citem.text()
             if value == '':
                 self.ui.rbox.item(r, 1).setBackground(Qt.red)
@@ -556,7 +548,7 @@ class APEGUI(QtWidgets.QMainWindow):
     # when a procedure from the proclist is selected, the corresponding requirements are visible
     def fillrbox_2(self):
         # gets the corresponding requirements from the proclist
-        pRow = self.ui.pbox_2.currentRow()
+        _ = self.ui.pbox_2.currentRow()
         # proc = self.proclist[pRow]
         # requirement = proc['requirements']
 

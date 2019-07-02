@@ -3,6 +3,7 @@ import math
 from ToolPathGeneration import CompGeo as cg
 from ToolPathGeneration import ToolPathTools as tpt
 
+
 # -----------------------------FUNCTIONS---------------------------------#
 def basearray(apara, bpara, cpara, mmax, nmax):
     # point_array is a symmetric hexagonal lattice with side length of apara,
@@ -285,7 +286,7 @@ def helixpath(
         / len(perimeter),
     }
     # print(str(center))
-    if cg.pointinregion(center, perimeter, distancetol, angletol) == False:
+    if cg.pointinregion(center, perimeter, distancetol, angletol) is False:
         return 'Too concave'
 
     # find the maximum distance between the center and a point on the perimeter
