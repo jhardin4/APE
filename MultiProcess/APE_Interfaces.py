@@ -152,7 +152,22 @@ class ExecutorInterface():
         self.gotDescriptors = False
         self.node.send(address, message)
 
+     #def getRequirements(self, device, eproc, address):
+        #Build expected reply
+        '''
+        ereply = {}
+        ereply['subject'] = 'target.executor.recv_value'
+        ereply['args'] = ['gotRequirements', 'e_reply']
 
+        # Build primary message
+        args = [eproc]
+        message = {'subject': 'target.executor.devicelist["' + device + '"]["Address"].getRequirements', 'args':args, 'ereply': ereply}
+        self.loopBlocks['gotRequirements'] = False
+        self.node.send(address, message)
+        while not self.loopBlocks['gotRequirements']:
+            self.node.listen(address)
+        return self.returnedValue
+        '''
     def getDependence(self, device, address):
         #Build expected reply
         ereply = {}
@@ -186,7 +201,6 @@ class ExecutorInterface():
         self.returnedValue = value
         
     def getRequirements(self, device, eproc, address):
-        #requires in the apecode to have self.getRequirements(device, eproc, address) where address is usually 'procexec'
         #Build expected reply
         ereply = {}
         ereply['subject'] = 'target.executor.recv_value'
@@ -202,15 +216,12 @@ class ExecutorInterface():
         return self.returnedValue
 
     def getDevices(self, address):
-        #requires the 'procexec' as the address when this function is called upon
-        #or another address
         #Build expected reply
         ereply = {}
         ereply['subject'] = 'target.executor.recv_value'
         ereply['args'] = ['gotDevices', 'e_reply']
         
         # Build primary message
-        #allows the code to work with an address
         args = [address] 
         message = {'subject': 'target.executor.getDevices', 'args': args, 'ereply': ereply}
         self.loopBlocks['gotDevices'] = False
@@ -220,10 +231,8 @@ class ExecutorInterface():
         return self.returnedValue
 
     def getEprocs(self, device, address):
-        #requires a device and an address when called upon
         #Build expected reply
         ereply = {}
-        #recv_value is important because it loops this code back around to make the .loopBlock True and to break the while loop. 
         ereply['subject'] = 'target.executor.recv_value'
         ereply['args'] = ['gotEprocs', 'e_reply']
 

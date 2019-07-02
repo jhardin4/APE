@@ -20,7 +20,7 @@ class ProcExec():
         self.connect2A(PE2A_address)
         self.connect2G(PE2G_address)
         self.node.start_listening()
-        #need a def creatproc(name, filename/path)
+
     # connects to G as server, L and A as client
     def connect2L(self, PE2L_address):
         self.node.connect('launcher', PE2L_address)
