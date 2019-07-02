@@ -3,6 +3,7 @@ import math
 # Set of simple 2D computational geometry functions for working with lines defined by two points
 # Point-to-point comparisons are made somwhat fuzzy by a tolerance value in the ptalmostequal function
 
+
 # -----------------------------FUNCTIONS---------------------------------#
 def almostequal(num1, num2, tol):
     # num1 and num2 are numbers
@@ -17,25 +18,16 @@ def almostequal(num1, num2, tol):
 def ptalmostequal(pt1, pt2, tol):
     # pt1 and pt2 can be of any dimensional points
     # tol is the resolution limit for discerning two points
-    # If pt1 and pt2 are within (exclusive) tol of eachother then it returns TRUE.
+    # If pt1 and pt2 are within (exclusive) tol of each other then it returns TRUE.
     # Calculate distance between points and compare to tolerance
     sumsqr = 0
     for dim in pt1:
         try:
             sumsqr += (pt2[dim] - pt1[dim]) ** 2
-        except:
-            try:
-                print('dimension ' + dim)
-            except:
-                pass
-            try:
-                print('Point1 ' + str(pt1))
-            except:
-                pass
-            try:
-                print('Point1 ' + str(pt2))
-            except:
-                pass
+        except Exception:
+            print('dimension {}'.format(dim))
+            print('Point1 {}'.format(pt1))
+            print('Point1 {}'.format(pt2))
             raise Exception('exit')
     if sumsqr < tol ** 2:
         return True
@@ -49,19 +41,10 @@ def linelength(pt1, pt2):
     for dim in pt1:
         try:
             linelength2 += (pt1[dim] - pt2[dim]) ** 2
-        except:
-            try:
-                print('dimension ' + dim)
-            except:
-                pass
-            try:
-                print('Point1 ' + str(pt1))
-            except:
-                pass
-            try:
-                print('Point1 ' + str(pt2))
-            except:
-                pass
+        except Exception:
+            print('dimension {}'.format(dim))
+            print('Point1 {}'.format(pt1))
+            print('Point1 {}'.format(pt2))
             raise Exception('exit')
     linelength = linelength2 ** 0.5
     return linelength
@@ -73,15 +56,9 @@ def pointline2vector(line):
 
         try:
             vector[dim] = line[1][dim] - line[0][dim]
-        except:
-            try:
-                print('dimension ' + dim)
-            except:
-                pass
-            try:
-                print('line ' + str(line))
-            except:
-                pass
+        except Exception:
+            print('dimension {}'.format(dim))
+            print('line {}'.format(line))
             raise Exception('exit')
     return vector
 
@@ -95,19 +72,10 @@ def scalarproduct(line1, line2):
     for dim in vector1:
         try:
             dotproduct += vector1[dim] * vector2[dim]
-        except:
-            try:
-                print('dimension ' + dim)
-            except:
-                pass
-            try:
-                print('line ' + str(vector1))
-            except:
-                pass
-            try:
-                print('line ' + str(vector2))
-            except:
-                pass
+        except Exception:
+            print('dimension {}'.format(dim))
+            print('line {}'.format(vector1))
+            print('line {}'.format(vector2))
             raise Exception('exit')
 
     return dotproduct
@@ -171,7 +139,7 @@ def LineIntersect2D(line1, line2, angletol):
         yint = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / (
             (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
         )
-    except:
+    except Exception:
         print(str(line1))
         print(str(line2))
         raise Exception('exit')
@@ -214,7 +182,7 @@ def LineSegIntersect2D(line1, line2, distancetol, angletol):
                                 inter = 'colinear'
                             else:
                                 return 'none'
-            except:
+            except Exception:
                 print(str(line1))
                 print(str(line2))
                 raise Exception('exit')
@@ -248,7 +216,7 @@ def LineSegIntersect2D(line1, line2, distancetol, angletol):
                 inter = 'colinear'
             else:
                 return 'none'
-        except:
+        except Exception:
             print('line1 ' + str(line1))
             print('line2 ' + str(line2))
             raise Exception('exit')
@@ -379,7 +347,7 @@ def pointinregion(point, region, distancetol, angletol):
         dimlist = list(point.keys())
         dimx = dimlist[0]
         dimy = dimlist[1]
-    except:
+    except Exception:
         print(str(point))
         raise Exception('exit')
     # define bounding box
@@ -389,7 +357,7 @@ def pointinregion(point, region, distancetol, angletol):
         maxx = max([region[g][dimx] for g in range(0, len(region))])
         miny = min([region[g][dimy] for g in range(0, len(region))])
         maxy = max([region[g][dimy] for g in range(0, len(region))])
-    except:
+    except Exception:
         print(str(region))
         raise Exception('exit')
 

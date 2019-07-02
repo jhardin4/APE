@@ -5,7 +5,7 @@ class Procedure:
         self.executor = executor
         self.name = 'Undefined Name'
         # dictionary of entries for the form
-        #'requirement':{'desc':'Describe the requirement', 'source':'apparatus' or 'direct', 'value':14 or '', 'address'= ApparatusAdress }
+        # 'requirement':{'desc':'Describe the requirement', 'source':'apparatus' or 'direct', 'value':14 or '', 'address'= ApparatusAdress }
         self.Prepare(**kwargs)
 
     def Prepare(self, **kwargs):

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QInputDialog, QLineEdit, QWidget
+from PyQt5.QtWidgets import QInputDialog, QLineEdit
 
 
 def FlexPrinterGUI():

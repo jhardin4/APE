@@ -1,8 +1,8 @@
 import ctypes
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.image import imsave
-import os
 
 
 class IDS_Camera:
@@ -65,10 +65,10 @@ class IDS_Camera:
 
     def snapshot(self):
         if self.connected:
-            ErrChk = self.uEyeDll.is_FreezeVideo(
+            _ = self.uEyeDll.is_FreezeVideo(
                 self.cam, ctypes.c_int(0x8000)
             )  # IS_DONT_WAIT  = 0x0000, or IS_GET_LIVE = 0x8000
-            ErrChk = self.uEyeDll.is_CopyImageMem(
+            _ = self.uEyeDll.is_CopyImageMem(
                 self.cam, self.pcImgMem, self.pid, self.ImageData.ctypes.data
             )
             self.im = self.ax.imshow(self.ImageData)
@@ -86,7 +86,8 @@ class IDS_Camera:
 
         buf = self.ImageData.tobytes()
 
-        import zlib, struct
+        import zlib
+        import struct
 
         width_byte_4 = width * 4
         raw_data = b''.join(

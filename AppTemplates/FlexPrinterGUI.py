@@ -1,6 +1,3 @@
-import json
-
-
 def FlexPrinterGUI(apparatus, materials, tools):
 
     # General Printer settings

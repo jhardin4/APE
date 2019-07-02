@@ -1,3 +1,5 @@
+from re import split
+
 error_codes = '''#define IS_NO_SUCCESS                        -1   // function call failed
                 #define IS_SUCCESS                            0   // function call succeeded
                 #define IS_INVALID_CAMERA_HANDLE              1   // camera handle is not valid or zero
@@ -325,19 +327,17 @@ gain_modes = '''
                 #define IS_MAX_GAIN                         100
                 '''
 
-from re import split
-
 
 def get_codes(c_defines):
-    lines = split('\n', c_defines)
+    lines = split(r'\n', c_defines)
     codes_py = {}
     for line in lines:
         temp = split('#define', line)
         if len(temp) > 1:
             temp2 = temp[1].split()
             try:
-                if r'(' in temp2[1]:
-                    codes_py[temp2[0]] = int(split('\(', temp2[1])[1])
+                if '(' in temp2[1]:
+                    codes_py[temp2[0]] = int(split(r'\(', temp2[1])[1])
                 else:
                     codes_py[temp2[0]] = int(temp2[1])
             except ValueError:

@@ -16,7 +16,7 @@ class Aerotech_A3200_Set(Procedure):
         motionname = self.apparatus.findDevice({'descriptors': 'motion'})
         settinglist = {}
         settingTypes = self.apparatus.getValue(['devices', motionname])
-        if not motionType in settingTypes:
+        if motionType not in settingTypes:
             raise Exception(str(motionType) + ' not found under ' + motionname)
         setReqs = self.executor.devicelist[motionname]['Address'].getRequirements(
             'Set_Motion'
