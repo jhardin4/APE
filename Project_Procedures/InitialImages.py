@@ -1,0 +1,122 @@
+import Core
+import Procedures
+import time
+
+
+class InitialImages(Core.Procedure):
+	def Prepare(self):
+		self.name = 'InitialImage'
+		self.requirements['samplename'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of this sample for logging purposes'}
+		self.requirements['nozzlename'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of the nozzle'}
+		self.requirements['zOffset'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'z offset of nozzle during alignment pictures'}
+		self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
+		self.move = Procedures.Motion_RefRelLinearMotion(self.apparatus, self.executor)
+		self.pmove = Procedures.Motion_RefRelPriorityLineMotion(self.apparatus, self.executor)
+		self.image = Procedures.Camera_Capture_Image(self.apparatus, self. executor)
+		self.getPos = Procedures.Aerotech_A3200_getPosition(self.apparatus, self. executor)
+		self.apparatus.createAppEntry(['information','ProcedureData','SpanningSample','cur_parameters', 'StartAlignFile'])
+		self.apparatus.createAppEntry(['information','ProcedureData','SpanningSample','cur_parameters', 'StartAlignPosition'])
+		self.apparatus.createAppEntry(['information','ProcedureData','SpanningSample','cur_parameters', 'EndAlignFile'])
+		self.apparatus.createAppEntry(['information','ProcedureData','SpanningSample','cur_parameters', 'EndAlignPosition'])
+		self.apparatus.createAppEntry(['information','ProcedureData','SpanningSample','cur_parameters', 'InitialFile'])
+		self.apparatus.createAppEntry(['information','ProcedureData','SpanningSample','cur_parameters', 'InitialPosition'])
+		
+	def Plan(self):
+		# Renaming information from requirements
+		samplename = self.requirements['samplename']['value']
+		nozzlename = self.requirements['nozzlename']['value']
+		offset = self.requirements['zOffset']['value']
+
+		# Gathering required information
+		cameraname = self.apparatus.findDevice({'descriptors': ['camera']})
+		motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+		noz_axismask = self.apparatus.getValue(['devices', motionname, nozzlename, 'axismask'])
+		cam_axismask = self.apparatus.getValue(['devices', motionname, cameraname, 'axismask'])
+		noz_refpoint = self.apparatus.getValue(['information', 'alignments', nozzlename+'@start'])
+		cam_refpoint = self.apparatus.getValue(['information', 'alignments', cameraname+'@start'])
+		axislist = ['X', 'Y', noz_axismask['Z'], cam_axismask['Z']]
+		
+		# Assign addresses to procedures
+		self.pmove.requirements['speed']['address'] = ['devices',motionname, 'default', 'speed']
+		self.move.requirements['speed']['address'] = ['devices',motionname, 'default', 'speed']
+
+		# Get image for acessing alignment at center of pillars
+		# Get the values relvant to the sample from the toolpath parameters
+		leadin = self.apparatus.getValue(['information', 'toolpaths', 'parameters', 'leadin'])
+		point1 = self.apparatus.getValue(['information', 'toolpaths', 'parameters', 'point1'])
+		point2 = self.apparatus.getValue(['information', 'toolpaths', 'parameters', 'point2'])
+
+		# Set the motion behavior
+		self.motionset.Do({'Type': 'default'})
+
+		# Calculate the relevant geometries
+		movedir = (point2['Y'] - point1['Y']) / abs(point2['Y'] - point1['Y'])
+		relpoint = {'Y': -movedir * leadin + point1['Y'], 'Z': offset + point1['Z']}
+		prevpoint = {'Y': movedir * leadin + point2['Y'], 'Z': offset + point2['Z']}
+		priority = [['X','Y'],['Z']]
+		
+		# Move to the first pillar and take picture
+		# First move the nozzle into position
+		self.pmove.Do({'refpoint': noz_refpoint, 'relpoint': relpoint, 'priority': priority, 'axismask':noz_axismask})
+		self.DoEproc(motionname, 'Run', {})
+		# Move camera into postion, but only the z component
+		relpoint = {'Y': -movedir * leadin + point1['Y'], 'Z': offset + point1['Z']}
+		priority = [['Z']]
+		self.pmove.Do({'refpoint': cam_refpoint, 'relpoint': relpoint, 'priority': priority, 'axismask':cam_axismask})
+		self.DoEproc(motionname, 'Run', {})
+		
+		# Take a picture
+		filename = 'Data\\' + str(round(time.time())) + samplename + '_startnozalign' + '.tif'
+		self.apparatus.setValue(['information','ProcedureData','SpanningSample','cur_parameters', 'StartAlignFile'], filename)
+		self.image.Do({'file': filename, 'camera_name': cameraname, 'settle_time': 1})
+		temp = [0]
+		self.getPos.Do({'axisList':axislist, 'target':temp})
+		self.apparatus.setValue(['information','ProcedureData','SpanningSample','cur_parameters', 'StartAlignPosition'], temp[0])
+
+		# Move nozzle to safe position           
+		refpoint = self.apparatus.getValue(['information', 'alignments', 'safe'+noz_axismask['Z']])
+		self.move.Do({'refpoint': refpoint, 'axismaks':noz_axismask})
+		self.DoEproc(motionname, 'Run', {})
+
+		# Move to the second pillar and take picture
+		# First move the nozzle into position
+		priority = [['X','Y'],['Z']]
+		self.pmove.Do({'refpoint': noz_refpoint, 'relpoint': prevpoint, 'priority': priority, 'axismask':noz_axismask})
+		self.DoEproc(motionname, 'Run', {})
+		# Move camera into postion, but only the z component
+		relpoint = {'Y': -movedir * leadin + point2['Y'], 'Z': offset + point2['Z']}
+		priority = [['Z']]
+		self.pmove.Do({'refpoint': cam_refpoint, 'relpoint': relpoint, 'priority': priority, 'axismask':cam_axismask})
+		self.DoEproc(motionname, 'Run', {})
+		
+		# Take a picture
+		filename = 'Data\\' + str(round(time.time())) + samplename + '_endnozalign' + '.tif'
+		self.apparatus.setValue(['information','ProcedureData','SpanningSample','cur_parameters', 'EndAlignFile'], filename)
+		self.image.Do({'file': filename, 'camera_name': cameraname, 'settle_time': 1})
+		temp = [0]
+		self.getPos.Do({'axisList':axislist, 'target':temp})
+		self.apparatus.setValue(['information','ProcedureData','SpanningSample','cur_parameters', 'EndAlignPosition'], temp[0])
+		
+		# Move nozzle to safe position          
+		refpoint = self.apparatus.getValue(['information', 'alignments', 'safe'+noz_axismask['Z']])
+		self.move.Do({'refpoint': refpoint, 'axismaks':noz_axismask})
+		self.DoEproc(motionname, 'Run', {})
+		 
+		#Get image at center of range
+		relpoint = {}
+		for dim in point1:
+			relpoint[dim] = (point1[dim] + point2[dim])/2
+		priority = [['Z']]
+		self.move.Do({'refpoint': cam_refpoint, 'relpoint': relpoint, 'priority': priority, 'axismask':cam_axismask})
+		self.DoEproc(motionname, 'Run', {})
+		filename = 'Data\\' + str(round(time.time())) + samplename + '_initial' + '.tif'
+		self.image.Do({'file': filename, 'camera_name': cameraname, 'settle_time': 1})
+		self.apparatus.setValue(['information','ProcedureData','SpanningSample','cur_parameters', 'InitialFile'], filename)
+		temp = [0]
+		self.getPos.Do({'axisList':axislist, 'target':temp})
+		self.apparatus.setValue(['information','ProcedureData','SpanningSample','cur_parameters', 'InitialPosition'], temp[0])
+
+		refpoint = self.apparatus.getValue(['information', 'alignments', 'safe'+cam_axismask['Z']])
+		self.move.Do({'refpoint': refpoint, 'axismask':cam_axismask})
+		self.DoEproc(motionname, 'Run', {})
+ 

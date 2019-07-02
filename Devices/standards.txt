@@ -1,0 +1,54 @@
+Device files serve as independent objects that can interface with a physical
+or computational tool as well is with the APE framework.  Each file should
+include a minal number of devices to keep interactions clearer.
+
+The drivers folder is a repository for poorly commented or partially functional
+Python wrappers.
+
+To connect with the APE framework:
+
+1.  Elemental procdures for the Device need to be set up
+2.  Each elemental procedure must return a logginging string
+3.  Importing libraries should be done as close to its need as reasonable
+
+Simulation mode is a critical part of debugging both the Device and how APE
+interfaces with APE so take the time to set up informative simulation
+capacities.
+
+File naming convention:
+
+In general, the goal here is to reduce repetive development of interfaces with
+specific pieces of equipment.  This is, in part, accomplished through specific 
+file naming standards.  Try to stick with manufacturer descriptors whenever
+possible to preserve clarity.
+
+Abstract Device concepts like Device, System, and Sensor are simply the name of
+the device.
+
+Manufacturer-specific Devices are named by:
+<manufacturer name>_<specific product>
+example:  aerotech_A3200.py  nordson_UltimusV.py
+
+Increase specificity as needed with underscores seperating levels
+
+Since languages are often living things but the specific version used by a
+specfic device, do NOT use these as part of the file name
+
+Since descriptive terms are not specific, avoid these terms when possible
+
+All files should end with:
+
+# For testing and debuging
+if __name__ == '__main__':
+    pass
+    
+In most cases, it would be helpful to put some illustrative examples in place 
+of "pass".
+
+Descriptors:
+These are strings like 'motion', 'pump', or 'system' that help Procedures find
+the right devices.  All elements of the file name should be in this list
+
+To add a new Device.
+Copy the new device file into the 'Devices' folder.  Add an entry into the
+__init__.py file. 
