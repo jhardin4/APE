@@ -8,4 +8,4 @@ services:
 install: true
 
 script:
-- ./install_scripts/docker-dev.sh /bin/bash --login -c "pytest ."
+- ./install_scripts/docker-dev.sh /bin/bash --login -c "pytest . && pre-commit run --all-files"
