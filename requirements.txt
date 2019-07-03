@@ -1,3 +1,6 @@
+numpy
+scipy
+scikit-image
 PyQt5
 zmq
 opencv
