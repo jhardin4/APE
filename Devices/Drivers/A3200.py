@@ -311,13 +311,14 @@ class A3200:
 
         returns true (1) if successful.
         '''
-        if self.A3200_is_Open:
-            # sum the axes
-            ax_mask = Axis_Mask.get_mask(axes)
-            if task < 0:
-                return self.A3200Lib.A3200MotionEnable(self.handle, self.task, ax_mask)
-            else:
-                return self.A3200Lib.A3200MotionEnable(self.handle, task, ax_mask)
+        if not self.A3200_is_Open:
+            return None
+        # sum the axes
+        ax_mask = Axis_Mask.get_mask(axes)
+        if task < 0:
+            return self.A3200Lib.A3200MotionEnable(self.handle, self.task, ax_mask)
+        else:
+            return self.A3200Lib.A3200MotionEnable(self.handle, task, ax_mask)
 
     def disable(self, axes, task=-1):
         '''
@@ -328,9 +329,10 @@ class A3200:
 
         returns true (1) if successful.
         '''
-        if self.A3200_is_Open:
-            # sum the axes
-            ax_mask = Axis_Mask.get_mask(axes)
+        if not self.A3200_is_Open:
+            return None
+        # sum the axes
+        ax_mask = Axis_Mask.get_mask(axes)
         if task < 0:
             return self.A3200Lib.A3200MotionDisable(self.handle, self.task, ax_mask)
         else:
