@@ -7,6 +7,10 @@ from multiprocessing import Process
 from MultiProcess.zmqNode import zmqNode
 from GUI import GUI_Node
 
+import logging
+
+logger = logging.getLogger("startup")
+
 
 class StartUp(QMainWindow):
     def __init__(self):
@@ -69,7 +73,7 @@ class StartUp(QMainWindow):
 
         for connection in self.node.connections:
             self.sendClose(connection)
-        print('Close commands sent')
+        logger.debug('Close commands sent')
 
     def sendClose(self, connection):
         message = {'subject': 'close'}
@@ -90,7 +94,7 @@ class StartUp(QMainWindow):
             args=(self.L2PE_address, self.A2PE_address, self.G2PE_address),
         )
         self.proc_ProcExec.start()
-        print('start APE')
+        logger.debug('start APE')
         self.closeAPEbtn.setEnabled(True)
         self.startAPEbtn.setEnabled(False)
         self.startGUIbtn.setEnabled(True)
@@ -103,7 +107,7 @@ class StartUp(QMainWindow):
         self.proc_Appa.join()
         self.sendClose('procexec')
         self.proc_ProcExec.join()
-        print('close APE')
+        logger.debug('close APE')
         self.closeAPEbtn.setEnabled(False)
         self.startAPEbtn.setEnabled(True)
         self.startGUIbtn.setEnabled(False)
@@ -116,7 +120,7 @@ class StartUp(QMainWindow):
             args=(self.L2G_address, self.A2G_address, self.G2PE_address),
         )
         self.proc_GUI.start()
-        print('start GUI')
+        logger.debug('start GUI')
         self.closeAPEbtn.setEnabled(False)
         self.startAPEbtn.setEnabled(False)
         self.startGUIbtn.setEnabled(False)
@@ -127,7 +131,7 @@ class StartUp(QMainWindow):
     def closeGUI(self):
         self.sendClose('gui')
         self.proc_GUI.join()
-        print('close GUI')
+        logger.debug('close GUI')
         self.closeAPEbtn.setEnabled(True)
         self.startAPEbtn.setEnabled(False)
         self.closeGUIbtn.setEnabled(False)
@@ -135,13 +139,12 @@ class StartUp(QMainWindow):
 
     def closeLauncher(self):
         self.node.close()
-        self.closeAPEbtn.setEnabled(False)
-        self.startAPEbtn.setEnabled(False)
-        self.closeGUIbtn.setEnabled(False)
-        self.startGUIbtn.setEnabled(False)
+        self.close()
 
 
 if __name__ == '__main__':
+    # enable application debug logging
+    logging.basicConfig(level=logging.DEBUG)
     # this is important to avoid forking in UNIX operating systems
     multiprocessing.set_start_method('spawn')
     # make a QApplication to run pyqt5
