@@ -192,18 +192,6 @@ else
         echo "Please add your hardware to the '$0' script"
         ;;
     esac
-
-    # - EtherCAT
-    if test -e /dev/EtherCAT0; then
-        for node in /dev/EtherCAT*; do
-            DOCKER_DEV_OPTS+=(-v $node:$node)
-        done
-        HAVE_REAL_HARDWARE=${HAVE_REAL_HARDWARE:-true}
-        echo "Detected EtherCAT hardware"
-    else
-        HAVE_REAL_HARDWARE=${HAVE_REAL_HARDWARE:-false}
-        echo "Failed to detect EtherCAT hardware; default to sim mode"
-    fi
 fi
 
 if tty -s; then
