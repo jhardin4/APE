@@ -1,0 +1,12 @@
+sudo: required
+
+language: python
+
+services:
+  - docker
+
+before_install:
+- ./install_scripts/docker-dev.sh
+
+script:
+- pytest .
