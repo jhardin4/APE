@@ -5,5 +5,7 @@ language: python
 services:
   - docker
 
+install: true
+
 script:
 - ./install_scripts/docker-dev.sh /bin/bash --login -c "pytest ."
