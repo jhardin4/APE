@@ -460,7 +460,7 @@ def saveModel(model, filename):
         pickle.dump(model, open((filename + '.pkl'), 'wb'))
         print('Model Save Successful')
     except Exception:
-        print('Model Save Unsuccesful!!!!!!!!!!!!!!!!!!!!')
+        print('Model Save Unsuccessful!!!!!!!!!!!!!!!!!!!!')
 
 
 def loadModel(filename):
