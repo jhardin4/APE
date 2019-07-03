@@ -18,12 +18,12 @@ fi
 
 # Select wrapper script
 if test "$ENV_COOKIE" != docker-run; then
-    WRAPPER=./install_scripts/docker-dev.sh
+    WRAPPER="./install_scripts/docker-dev.sh /bin/bash --login -c"
 else
     WRAPPER=
 fi
 
 PRE_COMMIT=./.git/hooks/pre-commit-run
 
-${WRAPPER} ${PRE_COMMIT} | ${CLEAN}
+${WRAPPER} "${PRE_COMMIT}" | ${CLEAN}
 exit ${PIPESTATUS[0]}
