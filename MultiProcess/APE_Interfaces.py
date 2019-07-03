@@ -105,7 +105,11 @@ class ApparatusInterface:
             self.node.listen('appa')
         return self.returnedValue
 
-    def applyTemplate(self, tName, args=[], kwargs={}):
+    def applyTemplate(self, tName, args=None, kwargs=None):
+        if kwargs is None:
+            kwargs = {}
+        if args is None:
+            args = []
         margs = [tName]
         mkwargs = {'args': args, 'kwargs': kwargs}
         message = {

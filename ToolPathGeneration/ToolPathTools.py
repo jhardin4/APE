@@ -637,7 +637,9 @@ def pntplot2D(points, pcolor='k', newplot=True):
             plt.scatter(element[0], element[1], color=pcolor)
 
 
-def pntlabel2D(points, index=[], newplot=True):
+def pntlabel2D(points, index=None, newplot=True):
+    if index is None:
+        index = []
     if newplot:
         plt.figure()
     for m in range(0, len(points)):

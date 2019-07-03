@@ -82,9 +82,11 @@ class Motion(Device):
             'desc': 'cmd or loadrun',
         }
 
-    def Move(self, point={}, speed='', motiontype='', motionmode=''):
+    def Move(self, point=None, speed='', motiontype='', motionmode=''):
         # Move to a point at a speed in a manner dictated by the motiontype
         # Use default settings for motiontype and speed
+        if point is None:
+            point = {}
         if speed == '':
             speed = self.motionsetting['speed']
         if motiontype == '':

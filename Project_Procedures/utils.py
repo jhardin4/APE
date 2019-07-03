@@ -6,7 +6,9 @@ from matplotlib import pyplot as plt
 from scipy.sparse.csgraph import minimum_spanning_tree
 
 
-def getParameters(test_nbs=[1, 2, 3, 4, 5]):
+def getParameters(test_nbs=None):
+    if test_nbs is None:
+        test_nbs = [1, 2, 3, 4, 5]
     params = {}
     name_col = 0
     tip_height_col = 7

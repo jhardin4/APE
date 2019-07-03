@@ -229,7 +229,9 @@ class Apparatus(dict):
                 return 'Invalid ApparatusAddress'
         level[lastlevel] = value
 
-    def findDevices(self, key, value=[]):
+    def findDevices(self, key, value=None):
+        if value is None:
+            value = []
         foundDevices = []
 
         for device in self['devices']:
@@ -414,7 +416,11 @@ class Apparatus(dict):
         if AppAddress[len(AppAddress) - 1] not in target:
             target[AppAddress[len(AppAddress) - 1]] = {}
 
-    def applyTemplate(self, template, args=[], kwargs={}):
+    def applyTemplate(self, template, args=None, kwargs=None):
+        if kwargs is None:
+            kwargs = {}
+        if args is None:
+            args = []
         if template == 'blank':
             self['devices'] = {}
             self['information'] = {}

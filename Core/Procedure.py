@@ -18,7 +18,9 @@ class Procedure:
         # Get the procedures that you want
         pass
 
-    def Do(self, values={}):
+    def Do(self, values=None):
+        if values is None:
+            values = {}
         self.GetRequirements(values)
         # self.CheckRequirements()
         self.Report(string='start')

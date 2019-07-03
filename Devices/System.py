@@ -52,13 +52,15 @@ class System(Device):
 
         return self.returnlog()
 
-    def Run(self, address='', addresstype='pointer', arguments=[]):
+    def Run(self, address='', addresstype='pointer', arguments=None):
         # This elemental procedure runs a function but does not capture its
         # return.
         # The address and address type allow targeting a specific function.
         # The arguments are decomposed from a list, therefore, there is order
         # dependence.
         # THESE WILL RUN IN SIMULATION MODE!!
+        if arguments is None:
+            arguments = []
         if addresstype == 'pointer':
             addList = address.split('.')
             base = import_module(addList[0])
