@@ -1,5 +1,5 @@
-from zmqNode import zmqNode
 import APE
+from MultiProcess.zmqNode import zmqNode
 from multiprocessing import Process
 
 

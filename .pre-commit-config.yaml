@@ -57,3 +57,4 @@ repos:
     hooks:
       - id: flake8
         # note: ignores and excluded files in .flake8
+        additional_dependencies: [pep8-naming]
