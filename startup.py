@@ -15,6 +15,9 @@ logger = logging.getLogger("startup")
 class StartUp(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.proc_Appa = None
+        self.proc_ProcExec = None
+        self.proc_GUI = None
         self.initUI()
 
     def initUI(self):
