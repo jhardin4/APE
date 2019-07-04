@@ -33,8 +33,8 @@ class APEGUI(QMainWindow):
         self.ui.pbox_2.itemClicked.connect(self.fillrbox_2)
         self.ui.connectbtn.clicked.connect(self.connectall)
         self.ui.disconnectbtn.clicked.connect(self.disconnectall)
-        self.apparatus = ''
-        self.executor = ''
+        self.apparatus = None
+        self.executor = None
         self.appImage = {}
 
     # --------------------- Apparatus Tab ---------------------
@@ -181,6 +181,8 @@ class APEGUI(QMainWindow):
         except AttributeError:
             message = 'That template was not found.'
             tName, ok = QInputDialog.getText(None, 'Input', message, QLineEdit.Normal)
+            args = ()
+            kwargs = dict()
         self.apparatus.applyTemplate(tName, args=args, kwargs=kwargs)
         self.appImage = self.apparatus.serialClone()
         # puts the apparatus in the qtreewidget
@@ -253,7 +255,7 @@ class APEGUI(QMainWindow):
         # self.eprocbox()
 
     # fills the table with checked values
-    def fillitable(self, item=''):
+    def fillitable(self, item):
         # grab current item and get pathname
         if item.checkState(0) == Qt.Checked:
             value = item
@@ -288,7 +290,7 @@ class APEGUI(QMainWindow):
     # if a qtreewidgetitems checkbox is unchecked, it will be removed from the qtablewidget
     # to do this the item must be selected when the check box is changed
     # this is because there is not signal for a check box in a qtreewidget
-    def removefromitable(self, item=''):
+    def removefromitable(self, item):
         path = ''
         # loop creates the pathname of the selected item
         while item.parent() is not None:
@@ -534,7 +536,7 @@ class APEGUI(QMainWindow):
         # move the item in self.proclist also
 
     # when a new item is selected the requirements are changed to match that procedure
-    def updaterbox(self, value=''):
+    def updaterbox(self, _value=''):
         citem = self.ui.rbox.currentItem()
         r = self.ui.rbox.currentRow()
         self.ui.rbox.resizeColumnsToContents()
@@ -571,14 +573,14 @@ class APEGUI(QMainWindow):
 # -------------- Functions for the startup window to start and close --------------
 
 # allows for the start up window to set up this GUI
-def Start(self):
+def Start():
     global GUIwindow
     GUIwindow = APEGUI()
     GUIwindow.show()
 
 
 # closes the GUI from the start up window
-def Close(self):
+def Close():
     GUIwindow.close()
 
 

@@ -19,7 +19,7 @@ class GUI_Node:
         self.connect2A(G2A_address)
         self.connect2PE(G2PE_address)
         self.connect2L(G2L_address)
-        self.GUI = ''
+        self.GUI = None
         # sets the target to be the GUI
         self.node.target = self
         # sets the interface apparatus to the apparatus in the GUI
