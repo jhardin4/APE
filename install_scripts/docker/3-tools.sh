@@ -13,7 +13,8 @@ pip install \
     black \
     pre-commit \
     flake8 \
-    pep8-naming
+    pep8-naming \
+    python-qt-live-coding
 
 apt-get install -y \
     cmake \
@@ -29,7 +30,6 @@ cd "${QMLFMT_BUILD_DIR}"
 cmake .
 make -j$(nproc)
 make install
-
 
 ###########################
 # Clean up

@@ -168,6 +168,7 @@ else
     "NVIDIA Corporation"::*) # Alexander's NVidia w/proprietary drivers
         echo "Detected NVIDIA graphics card"
         DOCKER_DEV_OPTS+=(
+            --privileged
             --runtime=nvidia
             -e NVIDIA_VISIBLE_DEVICES=all
             -e NVIDIA_DRIVER_CAPABILITIES=graphics

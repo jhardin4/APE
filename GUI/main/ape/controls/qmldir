@@ -1,0 +1,6 @@
+Icon 1.0 Icon.qml
+Tester 1.0 Tester.qml
+Spacer 1.0 Spacer.qml
+HorizontalFiller 1.0 HorizontalFiller.qml
+VerticalFiller 1.0 VerticalFiller.qml
+ScaleContainer 1.0 ScaleContainer.qml

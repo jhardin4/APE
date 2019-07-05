@@ -57,8 +57,8 @@ class StartUp(QMainWindow):
         self.connect2PE()
         self.connect2G()
         # Process holders
-        self.proc_Appa = ''
-        self.proc_ProcExec = ''
+        self.proc_Appa = None
+        self.proc_ProcExec = None
 
     # connects to all three of the nodes as server
     # server MUST be true for all of these

@@ -9,6 +9,10 @@ nodelog_launcher.txt
 ### IDEs
 .idea/
 
+### Qt
+*.qmlc
+*.jsc
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
