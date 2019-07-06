@@ -5,6 +5,7 @@ import QtQuick.Window 2.0
 import Qt.labs.settings 1.0
 import ape 1.0
 import ape.handlers 1.0
+import ape.screens 1.0
 
 ApplicationWindow {
   visible: true
@@ -16,7 +17,7 @@ ApplicationWindow {
     nodeHandler.stopAPE()
   }
 
-  MainPanel {
+  MainScreen {
     anchors.fill: parent
   }
 

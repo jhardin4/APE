@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 
 from qtpy.QtCore import QObject, Slot, Property, Signal
@@ -8,7 +7,6 @@ from MultiProcess.Appa import Appa
 from multiprocessing import Process
 
 from .launcher import Launcher
-from .gui_node import GUI_Node
 
 logger = logging.getLogger('AppNode')
 
@@ -106,20 +104,3 @@ class ProcExecNode(Node):
     @Slot()
     def stop(self):
         self._stop_process('procexec')
-
-
-class GuiNode(Node):
-    @Slot()
-    def start(self):
-        self._start_process(
-            target=GUI_Node,
-            args=(
-                self._launcher.l2gAddress,
-                self._launcher.a2gAddress,
-                self._launcher.g2peAddress,
-            ),
-        )
-
-    @Slot()
-    def stop(self):
-        self._stop_process('gui')

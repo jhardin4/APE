@@ -1,12 +1,10 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
-import ape 1.0
 import ape.controls 1.0
 
 Item {
   id: root
-
   ColumnLayout {
     anchors.fill: parent
 
