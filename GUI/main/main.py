@@ -30,9 +30,11 @@ class APE(QObject):
         else:
             import ape
             import ape.nodes
+            import ape.apparatus
 
             ape.register_types()
             ape.nodes.register_types()
+            ape.apparatus.register_types()
             qml_main = os.path.join(PROJECT_PATH, "main.qml")
             self._engine.load(qml_main)
 
