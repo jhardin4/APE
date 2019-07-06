@@ -12,6 +12,10 @@ ApplicationWindow {
   height: 480
   title: qsTr("APE")
 
+  onClosing: {
+    nodeHandler.stopAPE()
+  }
+
   MainPanel {
     anchors.fill: parent
   }

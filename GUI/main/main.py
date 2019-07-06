@@ -4,6 +4,7 @@ import os
 import sys
 import signal
 import argparse
+import traceback
 
 from qtpy.QtGui import QGuiApplication
 from qtpy.QtCore import QObject, QTimer
@@ -15,6 +16,7 @@ PROJECT_PATH = os.path.dirname(os.path.realpath(__name__))
 class APE(QObject):
     def __init__(self, live, parent=None):
         super(APE, self).__init__(parent)
+        sys.excepthook = self._log_error
 
         self._engine = QQmlApplicationEngine()
         self._engine.addImportPath(PROJECT_PATH)
@@ -40,6 +42,11 @@ class APE(QObject):
         self._timer = QTimer()
         self._timer.timeout.connect(lambda: None)
         self._timer.start(100)
+
+    @staticmethod
+    def _log_error(etype, evalue, etraceback):
+        tb = ''.join(traceback.format_exception(etype, evalue, etraceback))
+        logging.fatal("An unexpected error occurred:\n{}\n\n{}\n".format(evalue, tb))
 
 
 if __name__ == "__main__":
@@ -68,4 +75,5 @@ if __name__ == "__main__":
 
     gui = APE(live=args.live)
 
-    sys.exit(app.exec_())
+    exit_code = app.exec_()
+    sys.exit(exit_code)

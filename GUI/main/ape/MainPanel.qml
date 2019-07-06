@@ -18,19 +18,31 @@ Item {
 
       Button {
         text: qsTr("Start APE")
-        visible: !nodeHandler.running
-        onClicked: nodeHandler.appaNode.start()
+        visible: !nodeHandler.apeRunning
+
+        onClicked: nodeHandler.startAPE()
       }
 
       Button {
         text: qsTr("Stop APE")
-        visible: nodeHandler.running
-        onClicked: nodeHandler.appaNode.stop()
+        visible: nodeHandler.apeRunning
+
+        onClicked: nodeHandler.stopAPE()
       }
 
       Button {
         text: qsTr("Start GUI")
-        enabled: nodeHandler.running
+        enabled: nodeHandler.apeRunning
+        visible: !nodeHandler.guiRunning
+
+        onClicked: nodeHandler.startGUI()
+      }
+
+      Button {
+        text: qsTr("Stop GUI")
+        visible: nodeHandler.guiRunning
+
+        onClicked: nodeHandler.stopGUI()
       }
     }
 

@@ -25,8 +25,9 @@ ApplicationWindow {
     }
   }
 
-  Component.onDestruction: {
-    windowSettings.screen = root.screen.serialNumber
+  onClosing: {
+    nodeHandler.stopAPE()
+    windowSettings.screen = String(root.screen.serialNumber)
   }
 
   LiveCodingPanel {
