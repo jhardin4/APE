@@ -45,6 +45,7 @@ class zmqNode:
 
     def disconnect(self, name=''):
         self.connections[name].close()
+        del self.connections[name]
 
     def build_message(self, subject='', action='', args='', kwargs='', ereply=''):
         message = {}
@@ -102,7 +103,7 @@ class zmqNode:
         threading.Timer(2 * self.heart_beat, self.close_all).start()
 
     def close_all(self):
-        for connection in self.connections:
+        for connection in list(self.connections.keys()):
             self.disconnect(connection)
         self.context.term()
 
