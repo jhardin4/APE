@@ -14,7 +14,8 @@ pip install \
     pre-commit \
     flake8 \
     pep8-naming \
-    python-qt-live-coding
+    python-qt-live-coding \
+    pytest-qt
 
 apt-get install -y \
     cmake \
