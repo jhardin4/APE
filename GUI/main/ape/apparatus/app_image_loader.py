@@ -14,7 +14,6 @@ class AppImageLoader(QObject):
     def __init__(self, parent=None):
         super(AppImageLoader, self).__init__(parent)
 
-        print('created', id(self), parent)
         self._gui_node = None
         self._app_image = {}
 
