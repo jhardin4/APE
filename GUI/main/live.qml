@@ -11,7 +11,7 @@ ApplicationWindow {
   visible: true
   width: 640
   height: 480
-  title: qsTr("APE Live Coding")
+  title: qsTr("APE GUI Live Coding")
   flags: liveCoding.flags
   visibility: liveCoding.visibility
 
@@ -25,14 +25,25 @@ ApplicationWindow {
     }
   }
 
-  onClosing: {
-    nodeHandler.stopAPE()
-    windowSettings.screen = String(root.screen.serialNumber)
+  QtObject {
+    id: d
+    function prepareClose() {
+      nodeHandler.stopGUI()
+      windowSettings.screen = String(root.screen.serialNumber)
+    }
+  }
+
+  onClosing: d.prepareClose()
+
+  Connections {
+    target: appHelper
+    onAboutToQuit: d.prepareClose()
   }
 
   LiveCodingPanel {
     id: liveCoding
     anchors.fill: parent
+    additionalNameFilters: ["*.txt"]
   }
 
   Settings {

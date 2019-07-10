@@ -1,25 +1,34 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
-import sys
 import signal
-import argparse
+import sys
 import traceback
 
-from qtpy.QtGui import QGuiApplication
-from qtpy.QtCore import QObject, QTimer
+from qtpy.QtWidgets import QApplication
+from qtpy.QtCore import QObject, QTimer, Signal
 from qtpy.QtQml import QQmlApplicationEngine
 
-PROJECT_PATH = os.path.dirname(os.path.realpath(__name__))
+PROJECT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
-class APE(QObject):
+class AppHelper(QObject):
+    aboutToQuit = Signal()
+
+    def __init__(self, parent=None):
+        super(AppHelper, self).__init__(parent)
+
+
+class MainGui(QObject):
     def __init__(self, live, parent=None):
-        super(APE, self).__init__(parent)
+        super(MainGui, self).__init__(parent)
         sys.excepthook = self._log_error
 
         self._engine = QQmlApplicationEngine()
         self._engine.addImportPath(PROJECT_PATH)
+        self._app_helper = AppHelper()
+        self._engine.rootContext().setContextProperty("appHelper", self._app_helper)
+
         if live:
             from livecoding import start_livecoding_gui
 
@@ -28,13 +37,11 @@ class APE(QObject):
                 self._engine, PROJECT_PATH, __file__, live_qml=qml_main
             )  # live_qml is optional and can be used to customize the live coding environment
         else:
-            import ape
-            import ape.nodes
-            import ape.apparatus
+            from .ape import nodes
+            from .ape import apparatus
 
-            ape.register_types()
-            ape.nodes.register_types()
-            ape.apparatus.register_types()
+            nodes.register_types()
+            apparatus.register_types()
             qml_main = os.path.join(PROJECT_PATH, "main.qml")
             self._engine.load(qml_main)
 
@@ -45,37 +52,21 @@ class APE(QObject):
         self._timer.timeout.connect(lambda: None)
         self._timer.start(100)
 
+    def shutdown(self):
+        self._app_helper.aboutToQuit.emit()
+        QApplication.quit()
+
     @staticmethod
     def _log_error(etype, evalue, etraceback):
         tb = ''.join(traceback.format_exception(etype, evalue, etraceback))
         logging.fatal("An unexpected error occurred:\n{}\n\n{}\n".format(evalue, tb))
 
+    @staticmethod
+    def start(live=False):
+        app = QApplication(sys.argv)
+        app.setApplicationName("APE Main GUI")
 
-if __name__ == "__main__":
-    signal.signal(signal.SIGINT, lambda *args: QGuiApplication.quit())
+        gui = MainGui(live=live)
+        signal.signal(signal.SIGINT, lambda *args: gui.shutdown())
 
-    parser = argparse.ArgumentParser(
-        description="""
-            Example App
-            """
-    )
-    parser.add_argument(
-        "-l",
-        "--live",
-        help="The live coding version of this application",
-        action="store_true",
-    )
-    parser.add_argument(
-        "-d", "--debug", help="Enable debug messages", action="store_true"
-    )
-    args = parser.parse_args()
-
-    # enable application debug logging
-    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
-
-    app = QGuiApplication(sys.argv)
-
-    gui = APE(live=args.live)
-
-    exit_code = app.exec_()
-    sys.exit(exit_code)
+        sys.exit(app.exec_())
