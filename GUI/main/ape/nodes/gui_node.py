@@ -5,31 +5,64 @@ from qtpy.QtCore import QObject, Slot, Signal, Property
 from MultiProcess.APE_Interfaces import ApparatusInterface, ExecutorInterface
 from MultiProcess.zmqNode import zmqNode
 
-from .launcher import Launcher
-
 logger = logging.getLogger('GuiNode')
 
 
 class GuiNode(QObject):
-    launcherChanged = Signal(Launcher)
     runningChanged = Signal(bool)
+    a2gAddressChanged = Signal(str)
+    g2peAddressChanged = Signal(str)
+    l2gAddressChanged = Signal(str)
 
     def __init__(self, parent=None):
         super(GuiNode, self).__init__(parent)
 
         self._running = False
-        self._launcher = None
         self._node = None
         self._apparatus = None
         self._executor = None
+
+        self._a2g_address = ''
+        self._g2pe_address = ''
+        self._l2g_address = ''
+
+    @Property(str, notify=a2gAddressChanged)
+    def a2gAddress(self):
+        return self._a2g_address
+
+    @a2gAddress.setter
+    def a2gAddress(self, value):
+        if value == self._a2g_address:
+            return
+        self._a2g_address = value
+        self.a2gAddressChanged.emit(value)
+
+    @Property(str, notify=g2peAddressChanged)
+    def g2peAddress(self):
+        return self._g2pe_address
+
+    @g2peAddress.setter
+    def g2peAddress(self, value):
+        if value == self._g2pe_address:
+            return
+        self._g2pe_address = value
+        self.g2peAddressChanged.emit(value)
+
+    @Property(str, notify=l2gAddressChanged)
+    def l2gAddress(self):
+        return self._l2g_address
+
+    @l2gAddress.setter
+    def l2gAddress(self, value):
+        if value == self._l2g_address:
+            return
+        self._l2g_address = value
+        self.l2gAddressChanged.emit(value)
 
     @Slot()
     def start(self):
         if self._running:
             logger.debug('already running')
-            return
-        if not self._launcher:
-            logger.error('need a launcher to start')
             return
 
         # Create the node
@@ -41,9 +74,9 @@ class GuiNode(QObject):
         self._apparatus = ApparatusInterface(self._node)
         self._executor = ExecutorInterface(self._node)
         # connect to launcher, apparatus, and procexec
-        self._node.connect('appa', self._launcher.a2gAddress)
-        self._node.connect('procexec', self._launcher.g2peAddress)
-        self._node.connect('launcher', self._launcher.l2gAddress)
+        self._node.connect('appa', self._a2g_address)
+        self._node.connect('procexec', self._g2pe_address)
+        self._node.connect('launcher', self._l2g_address)
         # sets the target to be the GUI
         self._node.target = self
         # sets the interface apparatus to the apparatus in the GUI
@@ -58,11 +91,7 @@ class GuiNode(QObject):
         if not self._running:
             logger.debug('already stopped')
             return
-        if not self._launcher:
-            logger.error('need a launcher to stop')
-            return
 
-        self._launcher.send_close('gui')
         self._node.close()
         self._node = None
         self._apparatus = None
@@ -70,17 +99,6 @@ class GuiNode(QObject):
 
         self._running = False
         self.runningChanged.emit(False)
-
-    @Property(Launcher, notify=launcherChanged)
-    def launcher(self):
-        return self._launcher
-
-    @launcher.setter
-    def launcher(self, value):
-        if value == self._launcher:
-            return
-        self._launcher = value
-        self.launcherChanged.emit(value)
 
     @Property(bool, notify=runningChanged)
     def running(self):

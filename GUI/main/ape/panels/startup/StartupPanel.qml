@@ -15,22 +15,7 @@ Item {
       Layout.alignment: Qt.AlignHCenter
 
       Button {
-        text: qsTr("Start APE")
-        visible: !nodeHandler.apeRunning
-
-        onClicked: nodeHandler.startAPE()
-      }
-
-      Button {
-        text: qsTr("Stop APE")
-        visible: nodeHandler.apeRunning
-
-        onClicked: nodeHandler.stopAPE()
-      }
-
-      Button {
         text: qsTr("Start GUI")
-        enabled: nodeHandler.apeRunning
         visible: !nodeHandler.guiRunning
 
         onClicked: nodeHandler.startGUI()
