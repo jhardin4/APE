@@ -34,7 +34,7 @@ class MainGui(QObject):
 
             qml_main = os.path.join(PROJECT_PATH, "live.qml")
             start_livecoding_gui(
-                self._engine, PROJECT_PATH, __file__, live_qml=qml_main
+                self._engine, PROJECT_PATH, main_file=sys.argv[0], live_qml=qml_main
             )  # live_qml is optional and can be used to customize the live coding environment
         else:
             from .ape import nodes
