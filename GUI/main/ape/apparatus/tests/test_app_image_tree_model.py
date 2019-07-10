@@ -1,7 +1,12 @@
 import pytest
-from PyQt5.QtCore import QModelIndex
+from qtpy.QtCore import QModelIndex, Signal, QObject
 
 from GUI.main.ape.apparatus import AppImageTreeModel
+
+
+@pytest.fixture
+def empty_app_image():
+    return {'devices': {}, 'information': {}, 'eproclist': [], 'proclog': []}
 
 
 @pytest.fixture
@@ -9,27 +14,39 @@ def simple_app_image():
     return {
         'devices': {'jealous': 23, 'director': "foo"},
         'information': {'chest': {'polish': 331.11}},
-        'eproclist': {'spin': "QT7C"},
-        'proclog': {},
+        'eproclist': [],
+        'proclog': [],
     }
 
 
-@pytest.fixture
-def gui_node(simple_app_image):
-    class Apparatus:
-        def serialClone(self):
-            return simple_app_image
+def create_loader(app_image):
+    class Loader(QObject):
+        dataChanged = Signal()
 
-    class GuiNode:
-        def __init__(self):
-            self.apparatus = Apparatus()
+        @property
+        def data(self):
+            return app_image
 
-    return GuiNode()
+    return Loader()
 
 
-def test_creating_model_from_simple_app_image_works(gui_node):
+def test_creating_model_from_empty_app_image_works(empty_app_image):
     model = AppImageTreeModel()
-    model.guiNode = gui_node
+    model.loader = create_loader(empty_app_image)
+
+    model.refresh()
+
+    assert model.rowCount(QModelIndex()) == 4
+    assert model.columnCount(QModelIndex()) == 2
+    index = model.index(0, 0, QModelIndex())
+    assert model.rowCount(index) == 0
+    assert index.data(model.NameRole) == 'devices'
+    assert index.data(model.ValueRole == '')
+
+
+def test_creating_model_from_simple_app_image_works(simple_app_image):
+    model = AppImageTreeModel()
+    model.loader = create_loader(simple_app_image)
 
     model.refresh()
 
@@ -37,17 +54,22 @@ def test_creating_model_from_simple_app_image_works(gui_node):
     assert model.columnCount(QModelIndex()) == 2
     index = model.index(0, 0, QModelIndex())
     assert model.rowCount(index) == 2
-    assert model.data(index, model.NameRole) == 'devices'
-    assert model.data(index, model.ValueRole == '')
+    assert index.data(model.NameRole) == 'devices'
+    assert index.data(model.ValueRole == '')
     index = model.index(0, 0, index)
     assert model.rowCount(index) == 0
-    assert model.data(index, model.NameRole) == 'jealous'
-    assert model.data(index, model.ValueRole) == '23'
+    assert index.data(model.NameRole) == 'jealous'
+    assert index.data(model.ValueRole) == '23'
+    index = model.index(2, 0, QModelIndex())
+    assert model.rowCount(index) == 0
+    assert index.data(model.NameRole) == 'eproclist'
+    assert index.data(model.ValueRole) == ''
 
 
-def test_app_image_tree_model_implementation(gui_node, qtmodeltester):
+def test_app_image_tree_model_implementation(simple_app_image, qtmodeltester):
     model = AppImageTreeModel()
     qtmodeltester.data_display_may_return_none = True
 
-    model.guiNode = gui_node
+    model.loader = create_loader(simple_app_image)
+    model.refresh()
     qtmodeltester.check(model)

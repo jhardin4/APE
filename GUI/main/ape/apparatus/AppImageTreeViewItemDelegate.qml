@@ -7,7 +7,7 @@ Item {
     anchors.fill: parent
     //spacing
     Text {
-      text: name
+      text: styleData.value
     }
   }
 }

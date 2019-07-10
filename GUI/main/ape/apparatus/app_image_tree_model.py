@@ -1,4 +1,5 @@
 import logging
+from collections import UserList
 
 from qtpy.QtCore import (
     Property,
@@ -10,61 +11,74 @@ from qtpy.QtCore import (
     QModelIndex,
 )
 
-from GUI.main.ape.nodes import GuiNode
+from .app_image_loader import AppImageLoader
 
 logger = logging.getLogger('AppImageTreeModel')
 
 
-class AppImageTreeModelRoles(object):
+class AppImageTreeModelRoles:
     NameRole = Qt.UserRole
     ValueRole = Qt.UserRole + 1
 
     @staticmethod
     def role_names():
         return {
-            AppImageTreeModelRoles.NameRole: 'name',
-            AppImageTreeModelRoles.ValueRole: 'value',
+            AppImageTreeModelRoles.NameRole: b'name',
+            AppImageTreeModelRoles.ValueRole: b'value',
         }
 
 
-class AppImageData(list):
-    def __init__(self, name='', value=None, parent=None):
+class AppImageData(UserList):
+    def __init__(self, name='', value='', parent=None):
         super(AppImageData, self).__init__()
         self.name = name
         self.value = value
         self.parent = parent
 
+    def __str__(self):
+        return f'{self.name}: {super().__str__()}'
+
+    def __repr__(self):
+        return f'{self.name}: {super().__repr__()}'
+
 
 class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
-    guiNodeChanged = Signal()
 
     Q_ENUMS(AppImageTreeModelRoles)
+
+    loaderChanged = Signal()
 
     def __init__(self, parent=None):
         super(AppImageTreeModel, self).__init__(parent)
 
-        self._gui_node = None
         self._app_image = None
         self._data = AppImageData()
+        self._loader = None
 
-    @Property(GuiNode, notify=guiNodeChanged)
-    def guiNode(self):
-        return self._gui_node
+    @Property(AppImageLoader, notify=loaderChanged)
+    def loader(self):
+        return self._loader
 
-    @guiNode.setter
-    def guiNode(self, value):
-        if value == self._gui_node:
+    @loader.setter
+    def loader(self, new_loader):
+        if new_loader == self._loader:
             return
-        self._gui_node = value
-        self.guiNodeChanged.emit()
+        old_loader = self._loader
+        self._loader = new_loader
+        self.loaderChanged.emit()
+
+        if old_loader:
+            old_loader.dataChanged.disconnect(self.refresh)
+        if new_loader:
+            new_loader.dataChanged.connect(self.refresh)
 
     @Slot()
     def refresh(self):
-        if not self._gui_node:
-            logger.warning('cannot refresh without a gui node')
+        if not self._loader:
+            logger.warning('cannot refresh without a loader')
             return
 
-        self._app_image = self._gui_node.apparatus.serialClone()
+        app_image = self._loader.data
 
         def create_data_item(key, value):
             item = AppImageData(name=key)
@@ -73,11 +87,15 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
                     child = create_data_item(k, v)
                     child.parent = item
                     item.append(child)
+            elif isinstance(value, list):
+                item.value = ''
             else:
-                item.value = str(value)
+                item.value = value
             return item
 
-        self._data = create_data_item('root', self._app_image)
+        self.beginResetModel()
+        self._data = create_data_item('root', app_image)
+        self.endResetModel()
 
     def data(self, index, role):
         if not index.isValid():
@@ -87,10 +105,11 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         switch = {
             Qt.DisplayRole: lambda: item.name,
             self.NameRole: lambda: item.name,
-            self.ValueRole: lambda: item.value,
+            self.ValueRole: lambda: str(item.value),
         }
 
-        return switch.get(role, lambda: None)()
+        data = switch.get(role, lambda: None)()
+        return data
 
     def roleNames(self):
         return self.role_names()
@@ -100,6 +119,12 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
             return Qt.NoItemFlags
 
         return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+    def headerData(self, _section, orientation, role=Qt.DisplayRole):
+        if not orientation == Qt.Horizontal:
+            return None
+
+        return self.role_names().get(role, '').title()
 
     def _get_item(self, index):
         if index and index.isValid():
@@ -128,10 +153,10 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         child_item = index.internalPointer()
         parent_item = child_item.parent
 
-        if parent_item is self._data:
+        if parent_item == self._data:
             return QModelIndex()
 
-        row = parent_item.parent.children.index(parent_item)
+        row = parent_item.parent.index(parent_item)
         return self.createIndex(row, 0, parent_item)
 
     def columnCount(self, _parent=QModelIndex()):
