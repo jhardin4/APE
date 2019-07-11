@@ -48,13 +48,8 @@ class GUI_Node:
         sys.exit(app.exec_())
 
 
-# makes node connections and starts the GUI
-def Start():
-    global guinode
-    guinode = GUI_Node()
-
-
-# closes the GUI
-# does not disconnect any nodes
-def Close():
-    APEcode.Close(guinode)
+if __name__ == '__main__':
+    gui_node = GUI_Node(
+        "tcp://127.0.0.1:5577", "tcp://127.0.0.1:5579", "tcp://127.0.0.1:5580"
+    )
+    gui_node.startGUI()
