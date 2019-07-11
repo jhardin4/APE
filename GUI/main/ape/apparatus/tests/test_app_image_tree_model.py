@@ -2,6 +2,7 @@ import pytest
 from qtpy.QtCore import QModelIndex, Signal, QObject
 
 from GUI.main.ape.apparatus import AppImageTreeModel
+from GUI.main.ape.apparatus.app_image_tree_model import AppImageData, AppImageDataWalker
 
 
 @pytest.fixture
@@ -73,3 +74,39 @@ def test_app_image_tree_model_implementation(simple_app_image, qtmodeltester):
     model.loader = create_loader(simple_app_image)
     model.refresh()
     qtmodeltester.check(model)
+
+
+def test_app_image_data_walker_walks_over_item_tree_bfs(simple_app_image):
+    data = AppImageData.from_dict(simple_app_image, 'root')
+
+    unfolded = [image.name for image in AppImageDataWalker(data)]
+
+    assert unfolded == [
+        'root',
+        'devices',
+        'jealous',
+        'director',
+        'information',
+        'chest',
+        'polish',
+        'eproclist',
+        'proclog',
+    ]
+
+
+def test_app_image_data_walker_walks_over_item_tree_dfs(simple_app_image):
+    data = AppImageData.from_dict(simple_app_image, 'root')
+
+    unfolded = [image.name for image in AppImageDataWalker(data, dfs=True)]
+
+    assert unfolded == [
+        'jealous',
+        'director',
+        'devices',
+        'polish',
+        'chest',
+        'information',
+        'eproclist',
+        'proclog',
+        'root',
+    ]

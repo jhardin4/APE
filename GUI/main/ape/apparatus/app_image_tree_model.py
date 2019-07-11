@@ -41,6 +41,49 @@ class AppImageData(UserList):
     def __repr__(self):
         return f'{self.name}: {super().__repr__()}'
 
+    @staticmethod
+    def from_dict(dict_, name):
+        def create_data_item(key, value):
+            item = AppImageData(name=key)
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    child = create_data_item(k, v)
+                    child.parent = item
+                    item.append(child)
+            elif isinstance(value, list):
+                item.value = ''
+            else:
+                item.value = value
+            return item
+
+        return create_data_item(name, dict_)
+
+
+class AppImageDataWalker:
+    """
+    The walker performs a breath first search on the given item. The behavior
+    can be changed by supplying the optional dfs parameter to depth first search.
+    """
+
+    def __init__(self, item, dfs=False):
+        self.item = item
+        self.dfs = dfs
+
+    @staticmethod
+    def _walk(item, dfs):
+        # if item is None:
+        #     return
+        if not dfs:
+            yield item
+        for child in item:
+            for walked in AppImageDataWalker._walk(child, dfs):
+                yield walked
+        if dfs:
+            yield item
+
+    def __iter__(self):
+        return AppImageDataWalker._walk(self.item, self.dfs)
+
 
 class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
 
@@ -78,26 +121,22 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
             logger.warning('cannot refresh without a loader')
             return
 
-        app_image = self._loader.data
-
-        def create_data_item(key, value):
-            item = AppImageData(name=key)
-            if isinstance(value, dict):
-                for k, v in value.items():
-                    child = create_data_item(k, v)
-                    child.parent = item
-                    item.append(child)
-            elif isinstance(value, list):
-                item.value = ''
-            else:
-                item.value = value
-            return item
-
         self.beginResetModel()
-        self._data = create_data_item('root', app_image)
+        self._data = AppImageData.from_dict(self._loader.data, 'root')
         self.endResetModel()
 
-    def data(self, index, role):
+    @Slot(str, str, result=int)
+    def findAndReplace(self, find, replace):
+        self.beginResetModel()
+        count = 0
+        for item in AppImageDataWalker(self._data):
+            if item.value == find:
+                item.value = replace
+                count += 1
+        self.endResetModel()
+        return count
+
+    def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
             return None
 
