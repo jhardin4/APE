@@ -11,11 +11,11 @@ Item {
 
   AppImageTreeModel {
     id: treeModel
-    loader: appImageLoader
+    appInterface: appInterface
   }
 
-  AppImageLoader {
-    id: appImageLoader
+  AppInterface {
+    id: appInterface
     guiNode: nodeHandler.guiNode
   }
 
@@ -23,14 +23,14 @@ Item {
     target: nodeHandler.guiNode
     onRunningChanged: {
       if (nodeHandler.guiRunning) {
-        appImageLoader.refresh()
+        appInterface.refresh()
       }
     }
   }
 
   Component.onCompleted: {
     if (nodeHandler.guiRunning) {
-      appImageLoader.refresh()
+      appInterface.refresh()
     }
   }
 
@@ -42,11 +42,11 @@ Item {
       RowLayout {
         Button {
           text: qsTr("Template")
-          //onClicked: appImageLoader.refresh()
+          //onClicked: appInterface.refresh()
         }
         Button {
           text: qsTr("Refresh")
-          onClicked: appImageLoader.refresh()
+          onClicked: appInterface.refresh()
         }
       }
 
@@ -64,16 +64,20 @@ Item {
         title: qsTr("Find and Replace")
         GridLayout {
           columns: 2
+
           Label {
             text: qsTr("Find")
           }
+
           Label {
             text: qsTr("Replace")
           }
+
           TextField {
             id: findTextField
             selectByMouse: true
           }
+
           TextField {
             id: replaceTextField
           }
@@ -83,8 +87,12 @@ Item {
             Layout.fillWidth: true
             enabled: findTextField.text && replaceTextField.text
             text: qsTr("Execute")
-            onClicked: treeModel.findAndReplace(findTextField.text,
-                                                replaceTextField.text)
+            onClicked: {
+              appInterface.findAndReplace(findTextField.text,
+                                          replaceTextField.text)
+              findTextField.text = ""
+              replaceTextField.text = ""
+            }
           }
         }
       }
