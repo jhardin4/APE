@@ -1,5 +1,5 @@
 import logging
-from collections import UserList
+from collections import OrderedDict
 from qtpy.QtCore import QObject, Signal, Property, Slot
 
 from ..nodes import GuiNode
@@ -7,7 +7,7 @@ from ..nodes import GuiNode
 logger = logging.getLogger('AppInterface')
 
 
-class AppImageData(UserList):
+class AppImageData(OrderedDict):
     def __init__(self, name='', value='', parent=None):
         super(AppImageData, self).__init__()
         self.name = name
@@ -28,7 +28,7 @@ class AppImageData(UserList):
                 for k, v in value.items():
                     child = create_data_item(k, v)
                     child.parent = item
-                    item.append(child)
+                    item[k] = child
             else:
                 item.value = value
             return item
@@ -52,7 +52,7 @@ class AppImageDataWalker:
         #     return
         if not dfs:
             yield item
-        for child in item:
+        for child in item.values():
             for walked in AppImageDataWalker._walk(child, dfs):
                 yield walked
         if dfs:
@@ -64,6 +64,7 @@ class AppImageDataWalker:
 
 class AppInterface(QObject):
 
+    _gui_node: GuiNode
     guiNodeChanged = Signal()
     appImageChanged = Signal()
 
@@ -110,3 +111,18 @@ class AppInterface(QObject):
                 count += 1
         self.appImageChanged.emit()
         return count
+
+    @Slot(bool)
+    def connectAll(self, simulation):
+        self._gui_node.apparatus.Connect_All(simulation=simulation)
+
+        for device in self._app_image['devices'].keys():
+            self._app_image['devices'][device]['Connected'].value = 'True'
+        self.appImageChanged.emit()
+
+    @Slot()
+    def disconnectAll(self):
+        self._gui_node.apparatus.Disconnect_All()
+        for device in self._app_image['devices'].keys():
+            self._app_image['devices'][device]['Connected'].value = 'False'
+        self.appImageChanged.emit()

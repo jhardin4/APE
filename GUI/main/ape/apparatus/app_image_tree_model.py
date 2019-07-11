@@ -110,7 +110,7 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
 
         parent_item = self._get_item(parent)
         try:
-            child_item = parent_item[row]
+            child_item = list(parent_item.values())[row]
         except IndexError:
             return QModelIndex()
         else:
@@ -126,7 +126,7 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         if parent_item == self._data:
             return QModelIndex()
 
-        row = parent_item.parent.index(parent_item)
+        row = list(parent_item.parent.values()).index(parent_item)
         return self.createIndex(row, 0, parent_item)
 
     def columnCount(self, _parent=QModelIndex()):

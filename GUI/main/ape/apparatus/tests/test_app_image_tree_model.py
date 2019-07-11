@@ -2,7 +2,7 @@ import pytest
 from qtpy.QtCore import QModelIndex, Signal, QObject
 
 from GUI.main.ape.apparatus import AppImageTreeModel
-from GUI.main.ape.apparatus.app_image_tree_model import AppImageData, AppImageDataWalker
+from GUI.main.ape.apparatus.app_interface import AppImageData, AppImageDataWalker
 
 
 @pytest.fixture
@@ -20,20 +20,24 @@ def simple_app_image():
     }
 
 
-def create_loader(app_image):
+def create_interface(app_image):
     class Loader(QObject):
-        dataChanged = Signal()
+        appImageChanged = Signal()
+
+        def __init__(self, parent=None):
+            super(Loader, self).__init__(parent)
+            self._app_image = AppImageData.from_dict(app_image, 'root')
 
         @property
-        def data(self):
-            return app_image
+        def app_image(self):
+            return self._app_image
 
     return Loader()
 
 
 def test_creating_model_from_empty_app_image_works(empty_app_image):
     model = AppImageTreeModel()
-    model.loader = create_loader(empty_app_image)
+    model.appInterface = create_interface(empty_app_image)
 
     model.refresh()
 
@@ -47,7 +51,7 @@ def test_creating_model_from_empty_app_image_works(empty_app_image):
 
 def test_creating_model_from_simple_app_image_works(simple_app_image):
     model = AppImageTreeModel()
-    model.loader = create_loader(simple_app_image)
+    model.appInterface = create_interface(simple_app_image)
 
     model.refresh()
 
@@ -64,14 +68,14 @@ def test_creating_model_from_simple_app_image_works(simple_app_image):
     index = model.index(2, 0, QModelIndex())
     assert model.rowCount(index) == 0
     assert index.data(model.NameRole) == 'eproclist'
-    assert index.data(model.ValueRole) == ''
+    assert index.data(model.ValueRole) == '[]'
 
 
 def test_app_image_tree_model_implementation(simple_app_image, qtmodeltester):
     model = AppImageTreeModel()
     qtmodeltester.data_display_may_return_none = True
 
-    model.loader = create_loader(simple_app_image)
+    model.appInterface = create_interface(simple_app_image)
     model.refresh()
     qtmodeltester.check(model)
 

@@ -99,10 +99,12 @@ Item {
 
       Button {
         text: qsTr("Connect All Devices")
+        onClicked: appInterface.connectAll(true)
       }
 
       Button {
         text: qsTr("Disconnect All Devices")
+        onClicked: appInterface.disconnectAll()
       }
 
       VerticalFiller {
