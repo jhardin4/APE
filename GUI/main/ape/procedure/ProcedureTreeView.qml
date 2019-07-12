@@ -41,9 +41,6 @@ C1.TreeView {
     onTriggered: d.expandAll()
   }
 
-
-  /*itemDelegate: AppImageTreeViewItemDelegate {
-  }*/
   C1.TableViewColumn {
     title: qsTr("Procedure")
     role: "display"

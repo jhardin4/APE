@@ -14,15 +14,54 @@ Item {
     appInterface: nodeHandler.appInterface
   }
 
-  RowLayout {
+  ColumnLayout {
     anchors.fill: parent
 
-    ColumnLayout {
+    RowLayout {
       ProcedureTreeView {
         id: treeView
         Layout.fillWidth: true
         Layout.fillHeight: true
         model: procedureModel
+      }
+
+      ColumnLayout {
+        Button {
+          text: qsTr("Create")
+        }
+      }
+
+      RequirementsTableView {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+      }
+    }
+
+    RowLayout {
+
+      C1.TableView {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+      }
+
+      ColumnLayout {
+        Button {
+          text: qsTr("Add")
+        }
+        Button {
+          text: qsTr("Remove")
+        }
+        Button {
+          text: qsTr("Move Up")
+        }
+        Button {
+          text: qsTr("Move Down")
+        }
+      }
+
+      RequirementsTableView {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
       }
     }
   }

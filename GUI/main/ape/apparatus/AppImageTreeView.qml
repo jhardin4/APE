@@ -53,13 +53,13 @@ C1.TreeView {
     title: qsTr("Apparatus")
     role: "name"
     width: root.width / 2
-    resizable: false
+    resizable: true
   }
 
   C1.TableViewColumn {
     title: qsTr("Content")
     role: "value"
     width: root.width / 2 - 3
-    resizable: false
+    resizable: true
   }
 }

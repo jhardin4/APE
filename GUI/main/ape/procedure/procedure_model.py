@@ -48,3 +48,7 @@ class ProcedureModel(QStandardItemModel):
             for eproc in eprocs[device]:
                 eproc_item = QStandardItem(eproc)
                 device_item.appendRow(eproc_item)
+
+    @Slot(result=str)
+    def getProecedureName(self, index):
+        pass
