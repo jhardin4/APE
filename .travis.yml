@@ -7,5 +7,9 @@ services:
 
 install: true
 
+env:
+  - SHELL="./install_scripts/docker-dev.sh /bin/bash --login -c"
+
 script:
-- ./install_scripts/docker-dev.sh /bin/bash --login -c "pytest . && pre-commit run --all-files"
+- $SHELL "python -m pytest"
+- $SHELL "pre-commit run --all-files"
