@@ -2,36 +2,16 @@ import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Controls 1.4 as C1
 import QtQuick.Layouts 1.3
+import ape.core 1.0
 import ape.controls 1.0
 import ape.apparatus 1.0
-import ape.core 1.0
 
 Item {
   id: root
 
   AppImageTreeModel {
     id: treeModel
-    appInterface: appInterface
-  }
-
-  AppInterface {
-    id: appInterface
-    guiNode: nodeHandler.guiNode
-  }
-
-  Connections {
-    target: nodeHandler.guiNode
-    onRunningChanged: {
-      if (nodeHandler.guiRunning) {
-        appInterface.refresh()
-      }
-    }
-  }
-
-  Component.onCompleted: {
-    if (nodeHandler.guiRunning) {
-      appInterface.refresh()
-    }
+    appInterface: nodeHandler.appInterface
   }
 
   RowLayout {
@@ -99,12 +79,15 @@ Item {
 
       Button {
         text: qsTr("Connect All Devices")
-        onClicked: appInterface.connectAll(true)
+        onClicked: {
+          nodeHandler.appInterface.connectAll(true)
+          nodeHandler.appInterface.refreshEprocs()
+        }
       }
 
       Button {
         text: qsTr("Disconnect All Devices")
-        onClicked: appInterface.disconnectAll()
+        onClicked: nodeHandler.appInterface.disconnectAll()
       }
 
       VerticalFiller {

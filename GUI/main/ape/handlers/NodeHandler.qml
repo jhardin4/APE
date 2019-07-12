@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import ape.nodes 1.0
+import ape.apparatus 1.0
 
 QtObject {
   id: root
@@ -22,5 +23,23 @@ QtObject {
     g2peAddress: "tcp://127.0.0.1:5580"
 
     Component.onCompleted: startGUI()
+
+    onRunningChanged: {
+      if (running) {
+        appInterface.refresh()
+      }
+    }
   }
+
+  readonly property AppInterface appInterface: AppInterface {
+    id: appInterface
+    guiNode: root.guiNode
+  }
+
+
+  /*Component.onCompleted: {
+    if (nodeHandler.guiRunning) {
+      appInterface.refresh()
+    }
+  }*/
 }

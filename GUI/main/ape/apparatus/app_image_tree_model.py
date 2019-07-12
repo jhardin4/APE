@@ -10,7 +10,8 @@ from qtpy.QtCore import (
     QModelIndex,
 )
 
-from .app_interface import AppInterface, AppImageData
+from .app_interface import AppInterface
+from GUI.main.ape.apparatus.app_image_data import AppImageData
 
 logger = logging.getLogger('AppImageTreeModel')
 
@@ -38,33 +39,34 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
 
         self._app_image = None
         self._data = AppImageData()
-        self._appInterface = None
+        self._app_interface = None
 
     @Property(AppInterface, notify=appInterfaceChanged)
     def appInterface(self):
-        return self._appInterface
+        return self._app_interface
 
     @appInterface.setter
     def appInterface(self, new_interface):
-        if new_interface == self._appInterface:
+        if new_interface == self._app_interface:
             return
-        old_interface = self._appInterface
-        self._appInterface = new_interface
+        old_interface = self._app_interface
+        self._app_interface = new_interface
         self.appInterfaceChanged.emit()
 
         if old_interface:
             old_interface.appImageChanged.disconnect(self.refresh)
         if new_interface:
             new_interface.appImageChanged.connect(self.refresh)
+            self.refresh()
 
     @Slot()
     def refresh(self):
-        if not self._appInterface:
+        if not self._app_interface:
             logger.warning('cannot refresh without an appInterface')
             return
 
         self.beginResetModel()
-        self._data = self._appInterface.app_image
+        self._data = self._app_interface.app_image
         self.endResetModel()
 
     def data(self, index, role=Qt.DisplayRole):

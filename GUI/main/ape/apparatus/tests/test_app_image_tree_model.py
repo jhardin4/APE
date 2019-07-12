@@ -2,7 +2,7 @@ import pytest
 from qtpy.QtCore import QModelIndex, Signal, QObject
 
 from GUI.main.ape.apparatus import AppImageTreeModel
-from GUI.main.ape.apparatus.app_interface import AppImageData, AppImageDataWalker
+from GUI.main.ape.apparatus.app_image_data import AppImageData, AppImageDataWalker
 
 
 @pytest.fixture

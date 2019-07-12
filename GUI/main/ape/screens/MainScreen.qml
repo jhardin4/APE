@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.3
 import ape.controls 1.0
 import ape.panels.startup 1.0
 import ape.panels.apparatus 1.0
+import ape.panels.procedure 1.0
+import Qt.labs.settings 1.0
 
 Item {
   id: root
@@ -42,6 +44,10 @@ Item {
     }
   }
 
+  Settings {
+    property alias tabIndex: bar.currentIndex
+  }
+
   StackLayout {
     anchors.left: parent.left
     anchors.right: parent.right
@@ -53,8 +59,7 @@ Item {
     ApparatusPanel {
     }
 
-    Item {
-      id: discoverTab
+    ProcedurePanel {
     }
 
     Item {
