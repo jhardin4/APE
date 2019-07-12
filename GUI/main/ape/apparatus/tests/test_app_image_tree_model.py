@@ -21,18 +21,18 @@ def simple_app_image():
 
 
 def create_interface(app_image):
-    class Loader(QObject):
+    class InterfaceMock(QObject):
         appImageChanged = Signal()
 
         def __init__(self, parent=None):
-            super(Loader, self).__init__(parent)
+            super(InterfaceMock, self).__init__(parent)
             self._app_image = AppImageData.from_dict(app_image, 'root')
 
         @property
         def app_image(self):
             return self._app_image
 
-    return Loader()
+    return InterfaceMock()
 
 
 def test_creating_model_from_empty_app_image_works(empty_app_image):

@@ -56,7 +56,7 @@ Item {
     anchors.bottom: parent.bottom
     anchors.top: topBar.bottom
     currentIndex: bar.currentIndex
-    visible: nodeHandler.guiRunning && container.target === stack
+    visible: nodeHandler.guiRunning // && container.target === stack
 
     ApparatusPanel {
       id: apparatusPanel
@@ -65,9 +65,9 @@ Item {
     ProcedurePanel {
       id: procedurePanel
     }
-    Rectangle {
+
+    Item {
       id: utilitiesPanel
-      //color: "red"
     }
   }
   //  Item {

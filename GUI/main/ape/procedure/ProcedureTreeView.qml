@@ -5,11 +5,16 @@ import ape.procedure 1.0
 C1.TreeView {
   id: root
 
+  property var selectedProcedure: []
+
   selectionMode: C1.SelectionMode.SingleSelection
   headerVisible: true
   backgroundVisible: false
 
   Component.onCompleted: delayTimer.start()
+
+  onCurrentIndexChanged: root.selectedProcedure = model.getProcedureName(
+                           currentIndex)
 
   QtObject {
     id: d

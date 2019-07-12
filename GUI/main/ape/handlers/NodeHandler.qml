@@ -35,11 +35,4 @@ QtObject {
     id: appInterface
     guiNode: root.guiNode
   }
-
-
-  /*Component.onCompleted: {
-    if (nodeHandler.guiRunning) {
-      appInterface.refresh()
-    }
-  }*/
 }

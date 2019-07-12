@@ -1,6 +1,6 @@
 import logging
 
-from qtpy.QtCore import Property, Signal, Slot
+from qtpy.QtCore import Property, Signal, Slot, QModelIndex
 from qtpy.QtGui import QStandardItemModel, QStandardItem
 
 from ..apparatus.app_interface import AppInterface
@@ -49,6 +49,15 @@ class ProcedureModel(QStandardItemModel):
                 eproc_item = QStandardItem(eproc)
                 device_item.appendRow(eproc_item)
 
-    @Slot(result=str)
-    def getProecedureName(self, index):
-        pass
+    @Slot(QModelIndex, result=list)
+    def getProcedureName(self, index):
+        if not index.isValid():
+            return []
+
+        if not index.parent().isValid():
+            return []
+
+        device = self.data(index.parent())
+        proc = self.data(index)
+
+        return [device, proc]

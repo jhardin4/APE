@@ -1,6 +1,8 @@
 import logging
 from qtpy.QtCore import QObject, Signal, Property, Slot
 
+import Procedures
+
 from .app_image_data import AppImageData, AppImageDataWalker
 from ..nodes import GuiNode
 
@@ -65,6 +67,9 @@ class AppInterface(QObject):
 
     @Slot(bool)
     def connectAll(self, simulation):
+        if not self._gui_node:
+            logger.warning('Cannot connectAll without guiNode')
+
         self._gui_node.apparatus.Connect_All(simulation=simulation)
         for device in self._app_image['devices'].values():
             device.set_key('Connected', True)
@@ -72,6 +77,9 @@ class AppInterface(QObject):
 
     @Slot()
     def disconnectAll(self):
+        if not self._gui_node:
+            logger.warning('Cannot disconnectAll without guiNode')
+
         self._gui_node.apparatus.Disconnect_All()
         for device in self._app_image['devices'].values():
             device.set_key('Connected', False)
@@ -79,6 +87,9 @@ class AppInterface(QObject):
 
     @Slot()
     def refreshEprocs(self):
+        if not self._gui_node:
+            logger.warning('Cannot fetch eprocs without guiNode')
+
         logger.debug('fetching EProcs')
         epl_dict = {}
         epl = self._gui_node.executor.getDevices('procexec')
@@ -88,3 +99,20 @@ class AppInterface(QObject):
         logger.debug(f'Eprocs fetched {epl_dict}')
         self._eprocs = epl_dict
         self.eprocsChanged.emit()
+
+    @Slot(str, str, result=list)
+    def getRequirements(self, device, procedure):
+        if not self._gui_node:
+            logger.warning('Cannot fetch requirements without guiNode')
+
+        name = f'{device}_{procedure}'
+        if name in dir(Procedures):
+            f = getattr(Procedures, name)(
+                self._gui_node.apparatus, self._gui_node.executor
+            )
+            return [{'key': k, "value": v} for k, v in f.requirements.items()]
+        else:
+            reqs = self._gui_node.executor.getRequirements(
+                device, procedure, 'procexec'
+            )
+            return [{'key': k, 'value': ''} for k in reqs]
