@@ -39,9 +39,11 @@ class MainGui(QObject):
         else:
             from .ape import nodes
             from .ape import apparatus
+            from .ape import procedure
 
             nodes.register_types()
             apparatus.register_types()
+            procedure.register_types()
             qml_main = os.path.join(PROJECT_PATH, "main.qml")
             self._engine.load(qml_main)
 
