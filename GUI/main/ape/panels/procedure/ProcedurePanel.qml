@@ -42,15 +42,12 @@ Item {
 
       ColumnLayout {
         Button {
-          text: qsTr("Create")
-          enabled: false
-        }
-        Button {
           text: qsTr("Add")
           enabled: treeView.selectedProcedure.length > 0
           onClicked: {
             procList.addProcedure(treeView.selectedProcedure.join('_'),
                                   procReqView.model)
+            tableView.currentRow = -1
           }
         }
       }
@@ -63,6 +60,7 @@ Item {
         onValueUpdate: {
           var newModel = JSON.parse(JSON.stringify(model))
           newModel[row]["value"] = value
+          newModel[row]["modified"] = true
           model = newModel
         }
       }
@@ -87,36 +85,50 @@ Item {
         Button {
           text: qsTr("Remove")
           enabled: tableView.currentRow > -1
+          onClicked: {
+            procList.remove(tableView.currentRow)
+            tableView.currentRow = -1
+          }
         }
         Button {
           text: qsTr("Move Up")
           enabled: tableView.currentRow > 0
-          onClicked: procList.moveUp()
+          onClicked: {
+            var row = tableView.currentRow
+            procList.moveUp(row)
+            tableView.selection.clear()
+            tableView.selection.select(row - 1)
+            tableView.currentRow = row - 1
+          }
         }
         Button {
           text: qsTr("Move Down")
           enabled: (tableView.currentRow > -1)
                    && (tableView.currentRow < tableView.rowCount - 1)
-          onClicked: procList.moveDown()
+          onClicked: {
+            var row = tableView.currentRow
+            procList.moveDown(row)
+            tableView.selection.clear()
+            tableView.selection.select(row + 1)
+            tableView.currentRow = row + 1
+          }
         }
       }
 
       RequirementsTableView {
+        id: reqTableView
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-
-        /* model: [{
-            "key": "foo",
-            "value": "bar"
-          }, {
-            "key": "asd",
-            "value": "fasd"
-          }]*/
         onValueUpdate: {
-          var newModel = JSON.parse(JSON.stringify(model))
-          newModel[row]["value"] = value
-          model = newModel
+          var tableRow = tableView.currentRow
+          var reqs = reqTableView.model
+          reqs[row]["value"] = value
+          reqs[row]["modified"] = true
+          procList.updateRequirements(tableView.currentRow, reqs)
+          tableView.selection.clear()
+          tableView.selection.select(tableRow)
+          tableView.currentRow = tableRow
         }
 
         model: (tableView.currentRow

@@ -5,6 +5,8 @@ QtObject {
   id: root
 
   readonly property color white1: "white"
+  readonly property color green1: "green"
+  readonly property color blue1: "blue"
 
   //readonly property string font1: bebas.name
 

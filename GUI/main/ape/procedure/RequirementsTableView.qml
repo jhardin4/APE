@@ -4,17 +4,37 @@ import ape.core 1.0
 
 C1.TableView {
   id: root
+  property int editingRow: -1
 
   selectionMode: C1.SelectionMode.SingleSelection
 
   signal valueUpdate(int row, string key, string value)
 
+  onDoubleClicked: root.editingRow = row
+  onModelChanged: root.editingRow = -1
+  onCurrentRowChanged: root.editingRow = -1
+
   QtObject {
     id: d
 
-    function selectRow(row) {
-      root.selection.clear()
-      root.selection.select(row)
+    function valueUpdate(row, key, value) {
+      updateTimer.row = row
+      updateTimer.key = key
+      updateTimer.value = value
+      updateTimer.start()
+    }
+  }
+
+  Timer {
+    id: updateTimer
+    property int row: 0
+    property string key: ""
+    property string value: ""
+    interval: 50
+    repeat: false
+
+    onTriggered: {
+      root.valueUpdate(row, key, value)
     }
   }
 
@@ -32,41 +52,35 @@ C1.TableView {
     resizable: true
 
     delegate: Item {
-      property bool editing: false
-
-      MouseArea {
-        anchors.fill: parent
-        visible: !editing
-        onClicked: d.selectRow(styleData.row)
-        onDoubleClicked: {
-          d.selectRow(styleData.row)
-          editing = true
-        }
-      }
-
+      id: item
+      property bool editing: root.editingRow === styleData.row
+      property bool modified: root.model ? (root.model[styleData.row] ? Boolean(
+                                                                          root.model[styleData.row]["modified"]) : false) : false
       Text {
         anchors.fill: parent
         anchors.leftMargin: Style.singleMargin
         verticalAlignment: Text.AlignVCenter
-        text: String(styleData.value)
+        text: textInput.text
         elide: styleData.elideMode
-        visible: !editing
-        color: styleData.textColor
+        visible: !item.editing
+        color: modified ? Style.green1 : styleData.textColor
       }
 
       TextInput {
+        id: textInput
         anchors.fill: parent
         anchors.leftMargin: Style.singleMargin
         verticalAlignment: Text.AlignVCenter
         text: String(styleData.value)
         selectByMouse: true
-        visible: editing
-        color: "red"
+        visible: item.editing
+        enabled: visible
+        color: Style.blue1
 
         onEditingFinished: {
-          editing = false
+          root.editingRow = -1
           var key = root.model[styleData.row]["key"]
-          root.valueUpdate(styleData.row, key, text)
+          d.valueUpdate(styleData.row, key, text)
         }
 
         onVisibleChanged: {

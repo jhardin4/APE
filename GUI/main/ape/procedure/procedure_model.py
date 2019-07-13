@@ -37,6 +37,8 @@ class ProcedureModel(QStandardItemModel):
 
     @Slot()
     def refresh(self):
+        self.clear()
+
         if not self._app_interface:
             logger.warning('cannot refresh without an appInterface')
             return
