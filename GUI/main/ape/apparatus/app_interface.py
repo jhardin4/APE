@@ -1,7 +1,10 @@
 import logging
+
+from qtpy.QtWidgets import QInputDialog, QLineEdit
 from qtpy.QtCore import QObject, Signal, Property, Slot
 
 import Procedures
+import GUI.TemplateGUIs as tGUIs
 
 from .app_image_data import AppImageData, AppImageDataWalker
 from ..nodes import GuiNode
@@ -116,3 +119,32 @@ class AppInterface(QObject):
                 device, procedure, 'procexec'
             )
             return [{'key': k, 'value': ''} for k in reqs]
+
+    @Slot()
+    @Slot(bool)
+    def startTemplate(self, simulation=True):
+        if not self._gui_node:
+            logger.warning('Cannot start template without guiNode')
+        # Get list of templates
+        files = dir(tGUIs)
+        GUIlist = []
+        for name in files:
+            if '__' not in name:
+                GUIlist.append(name)
+        # Ask user to select template
+        message = 'Name of the Template to be used.'
+        d = 0
+        options = GUIlist
+        tName, ok = QInputDialog.getItem(None, 'Input', message, options, d, False)
+        if not ok:
+            return
+        try:
+            tGUI = getattr(tGUIs, tName)
+            args, kwargs = tGUI()
+        except AttributeError:
+            message = 'That template was not found.'
+            tName, ok = QInputDialog.getText(None, 'Input', message, QLineEdit.Normal)
+            args = ()
+            kwargs = dict()
+        self._gui_node.apparatus.applyTemplate(tName, args=args, kwargs=kwargs)
+        self.refresh()

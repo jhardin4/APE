@@ -22,11 +22,11 @@ Item {
       RowLayout {
         Button {
           text: qsTr("Template")
-          //onClicked: appInterface.refresh()
+          onClicked: nodeHandler.appInterface.startTemplate(false)
         }
         Button {
           text: qsTr("Refresh")
-          onClicked: appInterface.refresh()
+          onClicked: nodeHandler.appInterface.refresh()
         }
       }
 
