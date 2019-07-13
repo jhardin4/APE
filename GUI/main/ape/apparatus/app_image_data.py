@@ -19,7 +19,7 @@ class AppImageData(OrderedDict):
         item = self
         for level in levels:
             if item.get(level) is None:
-                item[level] = AppImageData(name=level)
+                item[level] = AppImageData(name=level, parent=item)
             item = item[level]
         item.value = value
 
