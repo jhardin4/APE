@@ -39,6 +39,7 @@ Item {
     }
 
     ColumnLayout {
+      Layout.fillWidth: false
 
       GroupBox {
         title: qsTr("Find and Replace")
@@ -77,17 +78,61 @@ Item {
         }
       }
 
-      Button {
-        text: qsTr("Connect All Devices")
-        onClicked: {
-          nodeHandler.appInterface.connectAll(true)
-          nodeHandler.appInterface.refreshEprocs()
+      RowLayout {
+        Button {
+          text: qsTr("Connect All Devices")
+          onClicked: {
+            nodeHandler.appInterface.connectAll(true)
+            nodeHandler.appInterface.refreshEprocs()
+          }
+        }
+
+        Button {
+          text: qsTr("Disconnect All Devices")
+          onClicked: nodeHandler.appInterface.disconnectAll()
         }
       }
 
-      Button {
-        text: qsTr("Disconnect All Devices")
-        onClicked: nodeHandler.appInterface.disconnectAll()
+      GroupBox {
+        title: qsTr("Save")
+        RowLayout {
+          Layout.fillWidth: true
+          Text {
+            text: qsTr("Path:")
+          }
+          TextField {
+            Layout.fillWidth: true
+          }
+          Button {
+            Layout.fillWidth: false
+            text: "..."
+          }
+          Button {
+            text: qsTr("Save")
+          }
+        }
+      }
+
+      GroupBox {
+        Layout.fillWidth: true
+        title: qsTr("Watches")
+
+        C1.TableView {
+          id: tableView
+          anchors.fill: parent
+
+          C1.TableViewColumn {
+            title: qsTr("Key")
+            width: tableView.width / 2
+            resizable: true
+          }
+
+          C1.TableViewColumn {
+            title: qsTr("Value")
+            width: tableView.width / 2 - 2
+            resizable: true
+          }
+        }
       }
 
       VerticalFiller {

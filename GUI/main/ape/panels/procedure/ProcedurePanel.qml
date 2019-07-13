@@ -68,16 +68,31 @@ Item {
 
     RowLayout {
 
-      C1.TableView {
-        id: tableView
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-        model: procList.procList
+      ColumnLayout {
 
-        C1.TableViewColumn {
-          title: qsTr("Procedures")
-          role: "name"
-          width: tableView.width
+        C1.TableView {
+          id: tableView
+          Layout.fillHeight: true
+          Layout.fillWidth: true
+          model: procList.procList
+
+          C1.TableViewColumn {
+            title: qsTr("Procedures")
+            role: "name"
+            width: tableView.width - 2
+          }
+        }
+        RowLayout {
+          Button {
+            text: qsTr("Execute")
+            Layout.fillWidth: true
+            enabled: tableView.currentRow > -1
+          }
+          Button {
+            text: qsTr("Execute All")
+            Layout.fillWidth: true
+            enabled: tableView.rowCount > 0
+          }
         }
       }
 
@@ -124,7 +139,6 @@ Item {
           var tableRow = tableView.currentRow
           var reqs = reqTableView.model
           reqs[row]["value"] = value
-          reqs[row]["modified"] = true
           procList.updateRequirements(tableView.currentRow, reqs)
           tableView.selection.clear()
           tableView.selection.select(tableRow)

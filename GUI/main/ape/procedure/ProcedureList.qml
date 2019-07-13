@@ -3,16 +3,17 @@ import QtQuick 2.0
 QtObject {
   id: root
 
-  property var procList: [{
-      "name": "system_On",
-      "requirements": [{
-          "key": "foo",
-          "value": "bar"
-        }]
-    }, {
-      "name": "gantry_Run",
-      "requirements": []
-    }]
+  //  readonly property var procList: [{
+  //      "name": "system_On",
+  //      "requirements": [{
+  //          "key": "foo",
+  //          "value": "bar"
+  //        }]
+  //    }, {
+  //      "name": "gantry_Run",
+  //      "requirements": []
+  //    }]
+  property var procList: []
 
   function addProcedure(name, rawReqs) {
     var list = root.procList
