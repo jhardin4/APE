@@ -8,6 +8,8 @@ import ape.apparatus 1.0
 
 Item {
   id: root
+  Layout.fillWidth: true
+  Layout.fillHeight: true
 
   AppImageTreeModel {
     id: treeModel

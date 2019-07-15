@@ -8,6 +8,8 @@ import ape.procedure 1.0
 
 Item {
   id: root
+  Layout.fillWidth: true
+  Layout.fillHeight: true
 
   ProcedureModel {
     id: procedureModel
