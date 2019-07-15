@@ -80,6 +80,7 @@ Item {
 
       RowLayout {
         Button {
+          Layout.fillWidth: true
           text: qsTr("Connect All Devices")
           onClicked: {
             nodeHandler.appInterface.connectAll(true)
@@ -88,6 +89,7 @@ Item {
         }
 
         Button {
+          Layout.fillWidth: true
           text: qsTr("Disconnect All Devices")
           onClicked: nodeHandler.appInterface.disconnectAll()
         }
@@ -120,15 +122,18 @@ Item {
         C1.TableView {
           id: tableView
           anchors.fill: parent
+          model: treeModel.watched
 
           C1.TableViewColumn {
             title: qsTr("Key")
+            role: "key"
             width: tableView.width / 2
             resizable: true
           }
 
           C1.TableViewColumn {
             title: qsTr("Value")
+            role: "value"
             width: tableView.width / 2 - 2
             resizable: true
           }

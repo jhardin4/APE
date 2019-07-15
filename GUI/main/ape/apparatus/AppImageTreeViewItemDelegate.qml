@@ -8,6 +8,7 @@ Item {
     //spacing
     Text {
       text: styleData.value
+      elide: styleData.elideMode
     }
   }
 }

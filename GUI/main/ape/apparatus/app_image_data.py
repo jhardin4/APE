@@ -2,11 +2,12 @@ from collections import OrderedDict
 
 
 class AppImageData(OrderedDict):
-    def __init__(self, name='', value='', parent=None):
+    def __init__(self, name='', value='', parent=None, watch=False):
         super(AppImageData, self).__init__()
         self.name = name
         self.value = value
         self.parent = parent
+        self.watch = watch
 
     def __str__(self):
         return f'{self.name}: {super().__str__()}'
@@ -31,6 +32,16 @@ class AppImageData(OrderedDict):
             if item is None:
                 return None
         return item
+
+    @property
+    def key(self):
+        name = []
+        item = self
+        while item is not None:
+            name.append(item.name)
+            item = item.parent
+
+        return '/'.join(reversed(name))
 
     @staticmethod
     def from_dict(dict_, name):

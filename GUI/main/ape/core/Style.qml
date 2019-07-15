@@ -5,6 +5,7 @@ QtObject {
   id: root
 
   readonly property color white1: "white"
+  readonly property color white2: "#F3F3F3"
   readonly property color green1: "green"
   readonly property color blue1: "blue"
 

@@ -11,7 +11,7 @@ from qtpy.QtCore import (
 )
 
 from .app_interface import AppInterface
-from GUI.main.ape.apparatus.app_image_data import AppImageData
+from .app_image_data import AppImageData, AppImageDataWalker
 
 logger = logging.getLogger('AppImageTreeModel')
 
@@ -19,12 +19,14 @@ logger = logging.getLogger('AppImageTreeModel')
 class AppImageTreeModelRoles:
     NameRole = Qt.UserRole
     ValueRole = Qt.UserRole + 1
+    WatchRole = Qt.UserRole + 2
 
     @staticmethod
     def role_names():
         return {
             AppImageTreeModelRoles.NameRole: b'name',
             AppImageTreeModelRoles.ValueRole: b'value',
+            AppImageTreeModelRoles.WatchRole: b'watch',
         }
 
 
@@ -33,6 +35,7 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
     Q_ENUMS(AppImageTreeModelRoles)
 
     appInterfaceChanged = Signal()
+    watchedChanged = Signal()
 
     def __init__(self, parent=None):
         super(AppImageTreeModel, self).__init__(parent)
@@ -40,6 +43,7 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         self._app_image = None
         self._data = AppImageData()
         self._app_interface = None
+        self._watched = []
 
     @Property(AppInterface, notify=appInterfaceChanged)
     def appInterface(self):
@@ -59,6 +63,10 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
             new_interface.appImageChanged.connect(self.refresh)
             self.refresh()
 
+    @Property(list, notify=watchedChanged)
+    def watched(self):
+        return self._watched
+
     @Slot()
     def refresh(self):
         if not self._app_interface:
@@ -69,6 +77,11 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         self._data = self._app_interface.app_image
         self.endResetModel()
 
+        for item in AppImageDataWalker(self._data):
+            if item.watch:
+                self.watched.append({"key": item.key, "value": str(item.value)})
+        self.watchedChanged.emit()
+
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
             return None
@@ -78,10 +91,34 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
             Qt.DisplayRole: lambda: item.name,
             self.NameRole: lambda: item.name,
             self.ValueRole: lambda: str(item.value),
+            self.WatchRole: lambda: item.watch,
         }
 
         data = switch.get(role, lambda: None)()
         return data
+
+    def setData(self, index, value, role=Qt.EditRole):
+        item = index.internalPointer()
+        if role in (Qt.EditRole, self.NameRole):
+            item.name = value
+            return True
+        elif role == self.ValueRole:
+            item.value = value
+            return True
+        elif role == self.WatchRole:
+            item.watch = value
+            key = item.key
+            if value:
+                self.watched.append({"key": key, "value": item.value})
+            else:
+                for entry in self.watched:
+                    if entry["key"] == key:
+                        self.watched.remove(entry)
+                        break
+            self.watchedChanged.emit()
+            return True
+        else:
+            return False
 
     def roleNames(self):
         return self.role_names()
@@ -90,7 +127,12 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         if not index.isValid():
             return Qt.NoItemFlags
 
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        item = index.internalPointer()
+        if item.value:
+            flags |= Qt.ItemIsEditable
+
+        return flags
 
     def headerData(self, _section, orientation, role=Qt.DisplayRole):
         if not orientation == Qt.Horizontal:
