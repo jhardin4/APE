@@ -36,4 +36,4 @@ def test_getting_app_image_key_returns_child_value(simple_app_image):
 def test_key_returns_full_app_image_key(simple_app_image):
     child = simple_app_image['promise']['industry']
 
-    assert child.key == 'root/promise/industry'
+    assert child.key == 'promise/industry'

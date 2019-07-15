@@ -48,14 +48,14 @@ C1.TreeView {
   }
 
   C1.TableViewColumn {
-    title: qsTr("Apparatus")
+    title: qsTr("Key")
     role: "name"
     width: root.width / 2 - 50
     resizable: true
   }
 
   C1.TableViewColumn {
-    title: qsTr("Content")
+    title: qsTr("Value")
     role: "value"
     width: root.width / 2 - 3
     resizable: true

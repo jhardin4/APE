@@ -19,123 +19,58 @@ Item {
     anchors.margins: Style.singleMargin
 
     ColumnLayout {
-      RowLayout {
-        Button {
-          text: qsTr("Template")
-          onClicked: nodeHandler.appInterface.startTemplate(false)
-        }
-        Button {
-          text: qsTr("Refresh")
-          onClicked: nodeHandler.appInterface.refresh()
-        }
-      }
 
-      AppImageTreeView {
-        id: treeView
+      GroupBox {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        model: treeModel
+        title: qsTr("Apparatus")
+
+        AppImageTreeView {
+          id: treeView
+          anchors.fill: parent
+          model: treeModel
+        }
       }
     }
 
     ColumnLayout {
       Layout.fillWidth: false
 
-      GroupBox {
-        title: qsTr("Find and Replace")
-        GridLayout {
-          columns: 2
-
-          Label {
-            text: qsTr("Find")
-          }
-
-          Label {
-            text: qsTr("Replace")
-          }
-
-          TextField {
-            id: findTextField
-            selectByMouse: true
-          }
-
-          TextField {
-            id: replaceTextField
-          }
-
-          Button {
-            Layout.columnSpan: 2
-            Layout.fillWidth: true
-            enabled: findTextField.text && replaceTextField.text
-            text: qsTr("Execute")
-            onClicked: {
-              appInterface.findAndReplace(findTextField.text,
-                                          replaceTextField.text)
-              findTextField.text = ""
-              replaceTextField.text = ""
-            }
-          }
-        }
+      OperationsPanel {
+        Layout.fillWidth: true
       }
 
-      RowLayout {
-        Button {
-          Layout.fillWidth: true
-          text: qsTr("Connect All Devices")
-          onClicked: {
-            nodeHandler.appInterface.connectAll(true)
-            nodeHandler.appInterface.refreshEprocs()
-          }
-        }
-
-        Button {
-          Layout.fillWidth: true
-          text: qsTr("Disconnect All Devices")
-          onClicked: nodeHandler.appInterface.disconnectAll()
-        }
+      FindAndReplacePanel {
+        Layout.fillWidth: true
       }
 
-      GroupBox {
-        title: qsTr("Save")
-        RowLayout {
-          Layout.fillWidth: true
-          Text {
-            text: qsTr("Path:")
-          }
-          TextField {
-            Layout.fillWidth: true
-          }
-          Button {
-            Layout.fillWidth: false
-            text: "..."
-          }
-          Button {
-            text: qsTr("Save")
-          }
-        }
+      FilePanel {
+        Layout.fillWidth: true
       }
 
       GroupBox {
         Layout.fillWidth: true
-        title: qsTr("Watches")
+        Layout.fillHeight: true
 
-        C1.TableView {
-          id: tableView
+        title: qsTr("Watchlist")
+
+        WatchTableView {
+          id: watchTableView
           anchors.fill: parent
           model: treeModel.watched
 
-          C1.TableViewColumn {
-            title: qsTr("Key")
-            role: "key"
-            width: tableView.width / 2
-            resizable: true
+          Binding {
+            target: nodeHandler.appInterface
+            property: "watched"
+            value: treeModel.watched
           }
 
-          C1.TableViewColumn {
-            title: qsTr("Value")
-            role: "value"
-            width: tableView.width / 2 - 2
-            resizable: true
+          Timer {
+            id: refreshTimer
+            interval: 1000
+            repeat: true
+            running: watchTableView.rowCount > 0
+            onTriggered: nodeHandler.appInterface.updateWatched()
           }
         }
       }

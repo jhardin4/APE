@@ -37,7 +37,7 @@ class AppImageData(OrderedDict):
     def key(self):
         name = []
         item = self
-        while item is not None:
+        while item is not None and item.parent is not None:
             name.append(item.name)
             item = item.parent
 

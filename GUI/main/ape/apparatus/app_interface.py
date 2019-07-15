@@ -18,13 +18,15 @@ class AppInterface(QObject):
     guiNodeChanged = Signal()
     appImageChanged = Signal()
     eprocsChanged = Signal()
+    watchedChanged = Signal()
 
     def __init__(self, parent=None):
         super(AppInterface, self).__init__(parent)
 
         self._gui_node = None
-        self._app_image = {}
+        self._app_image = AppImageData(name='root')
         self._eprocs = {}
+        self._watched = []
 
     @Property(GuiNode, notify=guiNodeChanged)
     def guiNode(self):
@@ -41,6 +43,7 @@ class AppInterface(QObject):
     def refresh(self):
         if not self._gui_node:
             logger.warning('Cannot refresh without guiNode')
+            return
 
         logger.debug('starting serial clone')
         data = self._gui_node.apparatus.serialClone()
@@ -72,6 +75,7 @@ class AppInterface(QObject):
     def connectAll(self, simulation):
         if not self._gui_node:
             logger.warning('Cannot connectAll without guiNode')
+            return
 
         self._gui_node.apparatus.Connect_All(simulation=simulation)
         for device in self._app_image['devices'].values():
@@ -82,6 +86,7 @@ class AppInterface(QObject):
     def disconnectAll(self):
         if not self._gui_node:
             logger.warning('Cannot disconnectAll without guiNode')
+            return
 
         self._gui_node.apparatus.Disconnect_All()
         for device in self._app_image['devices'].values():
@@ -92,6 +97,7 @@ class AppInterface(QObject):
     def refreshEprocs(self):
         if not self._gui_node:
             logger.warning('Cannot fetch eprocs without guiNode')
+            return
 
         logger.debug('fetching EProcs')
         epl_dict = {}
@@ -107,6 +113,7 @@ class AppInterface(QObject):
     def getRequirements(self, device, procedure):
         if not self._gui_node:
             logger.warning('Cannot fetch requirements without guiNode')
+            return
 
         name = f'{device}_{procedure}'
         if name in dir(Procedures):
@@ -125,6 +132,8 @@ class AppInterface(QObject):
     def startTemplate(self, simulation=True):
         if not self._gui_node:
             logger.warning('Cannot start template without guiNode')
+            return
+
         # Get list of templates
         files = dir(tGUIs)
         GUIlist = []
@@ -148,3 +157,35 @@ class AppInterface(QObject):
             kwargs = dict()
         self._gui_node.apparatus.applyTemplate(tName, args=args, kwargs=kwargs)
         self.refresh()
+
+    @Property(list, notify=watchedChanged)
+    def watched(self):
+        return self._watched
+
+    @watched.setter
+    def watched(self, value):
+        if value == self._watched:
+            return
+        self._watched = value
+        self.watchedChanged.emit()
+
+    @Slot(str)
+    def updateValue(self, key):
+        if not self._gui_node:
+            logger.warning('Cannot update value guiNode')
+            return
+
+        item = self._app_image.get_key(key)
+        if item is None:
+            logger.warning('cannot update key {}: not found'.format(key))
+            return
+
+        logger.debug('updating key {}'.format(key))
+        value = self._gui_node.apparatus.getValue(key.split('/'))
+        item.value = value
+        logger.debug('update complete: {}'.format(value))
+
+    @Slot()
+    def updateWatched(self):
+        for watched in self._watched:
+            self.updateValue(watched['key'])

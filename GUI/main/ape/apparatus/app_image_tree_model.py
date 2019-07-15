@@ -101,24 +101,28 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         item = index.internalPointer()
         if role in (Qt.EditRole, self.NameRole):
             item.name = value
-            return True
+            changed = True
         elif role == self.ValueRole:
             item.value = value
-            return True
+            changed = True
         elif role == self.WatchRole:
             item.watch = value
             key = item.key
             if value:
-                self.watched.append({"key": key, "value": item.value})
+                self.watched.append({"key": key, "value": str(item.value)})
             else:
                 for entry in self.watched:
                     if entry["key"] == key:
                         self.watched.remove(entry)
                         break
             self.watchedChanged.emit()
-            return True
+            changed = True
         else:
-            return False
+            changed = False
+
+        if changed:
+            self.dataChanged.emit(index, index, [role])
+        return changed
 
     def roleNames(self):
         return self.role_names()
