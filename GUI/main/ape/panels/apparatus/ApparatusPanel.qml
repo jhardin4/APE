@@ -36,15 +36,15 @@ Item {
     ColumnLayout {
       Layout.fillWidth: false
 
+      DataPanel {
+        Layout.fillWidth: true
+      }
+
       OperationsPanel {
         Layout.fillWidth: true
       }
 
       FindAndReplacePanel {
-        Layout.fillWidth: true
-      }
-
-      FilePanel {
         Layout.fillWidth: true
       }
 
@@ -73,9 +73,6 @@ Item {
             onTriggered: nodeHandler.appInterface.updateWatched()
           }
         }
-      }
-
-      VerticalFiller {
       }
     }
   }

@@ -1,7 +1,7 @@
 import logging
 
 from qtpy.QtWidgets import QInputDialog, QLineEdit
-from qtpy.QtCore import QObject, Signal, Property, Slot
+from qtpy.QtCore import QObject, Signal, Property, Slot, QUrl
 
 import Procedures
 import GUI.TemplateGUIs as tGUIs
@@ -189,3 +189,7 @@ class AppInterface(QObject):
     def updateWatched(self):
         for watched in self._watched:
             self.updateValue(watched['key'])
+
+    @Slot(QUrl)
+    def saveAs(self, url):
+        pass

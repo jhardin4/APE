@@ -20,6 +20,7 @@ Item {
 
   ColumnLayout {
     anchors.fill: parent
+    anchors.margins: Style.singleMargin
 
     RowLayout {
       ProcedureTreeView {

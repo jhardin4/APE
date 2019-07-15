@@ -8,16 +8,6 @@ GroupBox {
     anchors.fill: parent
     Button {
       Layout.fillWidth: true
-      text: qsTr("Refresh")
-      onClicked: nodeHandler.appInterface.refresh()
-    }
-    Button {
-      Layout.fillWidth: true
-      text: qsTr("New from Template")
-      onClicked: nodeHandler.appInterface.startTemplate(false)
-    }
-    Button {
-      Layout.fillWidth: true
       text: qsTr("Connect All Devices")
       onClicked: {
         nodeHandler.appInterface.connectAll(true)

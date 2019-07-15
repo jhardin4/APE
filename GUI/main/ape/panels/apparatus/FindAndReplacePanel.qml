@@ -33,7 +33,8 @@ GroupBox {
       enabled: findTextField.text && replaceTextField.text
       text: qsTr("Execute")
       onClicked: {
-        appInterface.findAndReplace(findTextField.text, replaceTextField.text)
+        nodeHandler.appInterface.findAndReplace(findTextField.text,
+                                                replaceTextField.text)
         findTextField.text = ""
         replaceTextField.text = ""
       }
