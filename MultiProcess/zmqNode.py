@@ -145,6 +145,7 @@ class zmqNode:
             targetMethod = self.getMethod(message['subject'])
 
         # Pass the target method the correct data
+        tempresult = None
         if targetMethod != '':
             if ('args' in message) and not ('kwargs' in message):
                 tempresult = targetMethod(*message['args'])
