@@ -3,7 +3,6 @@ import logging
 from qtpy.QtWidgets import QInputDialog, QLineEdit
 from qtpy.QtCore import QObject, Signal, Property, Slot, QUrl
 
-import Procedures
 import GUI.TemplateGUIs as tGUIs
 
 from .app_image_data import AppImageData, AppImageDataWalker
@@ -17,7 +16,6 @@ class AppInterface(QObject):
     _gui_node: GuiNode
     guiNodeChanged = Signal()
     appImageChanged = Signal()
-    eprocsChanged = Signal()
     watchedChanged = Signal()
 
     def __init__(self, parent=None):
@@ -25,7 +23,6 @@ class AppInterface(QObject):
 
         self._gui_node = None
         self._app_image = AppImageData(name='root')
-        self._eprocs = {}
         self._watched = []
 
     @Property(GuiNode, notify=guiNodeChanged)
@@ -56,10 +53,6 @@ class AppInterface(QObject):
     @property
     def app_image(self):
         return self._app_image
-
-    @property
-    def eprocs(self):
-        return self._eprocs
 
     @Slot(str, str, result=int)
     def findAndReplace(self, find, replace):
@@ -92,40 +85,6 @@ class AppInterface(QObject):
         for device in self._app_image['devices'].values():
             device.set_key('Connected', False)
         self.appImageChanged.emit()
-
-    @Slot()
-    def refreshEprocs(self):
-        if not self._gui_node:
-            logger.warning('Cannot fetch eprocs without guiNode')
-            return
-
-        logger.debug('fetching EProcs')
-        epl_dict = {}
-        epl = self._gui_node.executor.getDevices('procexec')
-        for device in epl:
-            eprocs = self._gui_node.executor.getEprocs(device, 'procexec')
-            epl_dict[device] = eprocs
-        logger.debug(f'Eprocs fetched {epl_dict}')
-        self._eprocs = epl_dict
-        self.eprocsChanged.emit()
-
-    @Slot(str, str, result=list)
-    def getRequirements(self, device, procedure):
-        if not self._gui_node:
-            logger.warning('Cannot fetch requirements without guiNode')
-            return
-
-        name = f'{device}_{procedure}'
-        if name in dir(Procedures):
-            f = getattr(Procedures, name)(
-                self._gui_node.apparatus, self._gui_node.executor
-            )
-            return [{'key': k, "value": v} for k, v in f.requirements.items()]
-        else:
-            reqs = self._gui_node.executor.getRequirements(
-                device, procedure, 'procexec'
-            )
-            return [{'key': k, 'value': ''} for k in reqs]
 
     @Slot()
     @Slot(bool)
@@ -170,7 +129,7 @@ class AppInterface(QObject):
         self.watchedChanged.emit()
 
     @Slot(str)
-    def updateValue(self, key):
+    def fetchValue(self, key):
         if not self._gui_node:
             logger.warning('Cannot update value guiNode')
             return
@@ -186,9 +145,9 @@ class AppInterface(QObject):
         logger.debug('update complete: {}'.format(value))
 
     @Slot()
-    def updateWatched(self):
+    def fetchWatched(self):
         for watched in self._watched:
-            self.updateValue(watched['key'])
+            self.fetchValue(watched['key'])
 
     @Slot(QUrl)
     def saveAs(self, url):

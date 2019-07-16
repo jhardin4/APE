@@ -3,31 +3,31 @@ import logging
 from qtpy.QtCore import Property, Signal, Slot, QModelIndex
 from qtpy.QtGui import QStandardItemModel, QStandardItem
 
-from ..apparatus.app_interface import AppInterface
+from .procedure_interface import ProcedureInterface
 
 logger = logging.getLogger('ProcedureModel')
 
 
 class ProcedureModel(QStandardItemModel):
-    _app_interface: AppInterface
-    appInterfaceChanged = Signal()
+    _proc_interface: ProcedureInterface
+    procInterfaceChanged = Signal()
 
     def __init__(self, parent=None):
         super(ProcedureModel, self).__init__(parent)
 
-        self._app_interface = None
+        self._proc_interface = None
 
-    @Property(AppInterface, notify=appInterfaceChanged)
-    def appInterface(self):
-        return self._app_interface
+    @Property(ProcedureInterface, notify=procInterfaceChanged)
+    def procInterface(self):
+        return self._proc_interface
 
-    @appInterface.setter
-    def appInterface(self, new_interface):
-        if new_interface == self._app_interface:
+    @procInterface.setter
+    def procInterface(self, new_interface):
+        if new_interface == self._proc_interface:
             return
-        old_interface = self._app_interface
-        self._app_interface = new_interface
-        self.appInterfaceChanged.emit()
+        old_interface = self._proc_interface
+        self._proc_interface = new_interface
+        self.procInterfaceChanged.emit()
 
         if old_interface:
             old_interface.eprocsChanged.disconnect(self.refresh)
@@ -39,11 +39,11 @@ class ProcedureModel(QStandardItemModel):
     def refresh(self):
         self.clear()
 
-        if not self._app_interface:
-            logger.warning('cannot refresh without an appInterface')
+        if not self._proc_interface:
+            logger.warning('cannot refresh without a procInterface')
             return
 
-        eprocs = self._app_interface.eprocs
+        eprocs = self._proc_interface.eprocs
         for device in eprocs.keys():
             device_item = QStandardItem(device)
             self.appendRow(device_item)

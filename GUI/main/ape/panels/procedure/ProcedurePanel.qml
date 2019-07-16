@@ -13,7 +13,7 @@ Item {
 
   ProcedureModel {
     id: procedureModel
-    appInterface: nodeHandler.appInterface
+    procInterface: nodeHandler.procInterface
   }
 
   ProcedureList {
@@ -35,7 +35,7 @@ Item {
           if (selectedProcedure.length > 0) {
             var device = treeView.selectedProcedure[0]
             var proc = treeView.selectedProcedure[1]
-            var reqs = nodeHandler.appInterface.getRequirements(device, proc)
+            var reqs = nodeHandler.procInterface.getRequirements(device, proc)
             procReqView.model = reqs
           } else {
             procReqView.model = []
@@ -51,6 +51,16 @@ Item {
             procList.addProcedure(treeView.selectedProcedure.join('_'),
                                   procReqView.model)
             tableView.currentRow = -1
+          }
+        }
+        Button {
+          text: qsTr("Run")
+          enabled: treeView.selectedProcedure.length > 0
+          onClicked: {
+            nodeHandler.procInterface.do(treeView.selectedProcedure[0],
+                                         treeView.selectedProcedure[1], {
+
+                                         })
           }
         }
       }

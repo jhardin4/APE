@@ -11,7 +11,7 @@ GroupBox {
       text: qsTr("Connect All Devices")
       onClicked: {
         nodeHandler.appInterface.connectAll(true)
-        nodeHandler.appInterface.refreshEprocs()
+        nodeHandler.procInterface.refreshEprocs()
       }
     }
 

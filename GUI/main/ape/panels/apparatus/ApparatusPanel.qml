@@ -72,7 +72,7 @@ Item {
             interval: 1000
             repeat: true
             running: watchTableView.rowCount > 0 && nodeHandler.guiRunning
-            onTriggered: nodeHandler.appInterface.updateWatched()
+            onTriggered: nodeHandler.appInterface.fetchWatched()
           }
         }
       }

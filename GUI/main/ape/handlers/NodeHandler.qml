@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import ape.nodes 1.0
 import ape.apparatus 1.0
+import ape.procedure 1.0
 
 QtObject {
   id: root
@@ -33,6 +34,11 @@ QtObject {
 
   readonly property AppInterface appInterface: AppInterface {
     id: appInterface
+    guiNode: root.guiNode
+  }
+
+  readonly property ProcedureInterface procInterface: ProcedureInterface {
+    id: procedureInterface
     guiNode: root.guiNode
   }
 }
