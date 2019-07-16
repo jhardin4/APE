@@ -1,4 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow
+import signal
+
+from qtpy.QtCore import QTimer
+from qtpy.QtWidgets import QApplication, QPushButton, QMainWindow
+
 from MultiProcess.Appa import Appa
 from MultiProcess.ProcExec import ProcExec
 import sys
@@ -62,6 +66,12 @@ class LauncherGui(QMainWindow):
         self.proc_Appa = None
         self.proc_ProcExec = None
 
+        self._start_check_timer()
+
+    def closeEvent(self, event):
+        event.accept()
+        self.shutdown()
+
     # connects to all three of the nodes as server
     # server MUST be true for all of these
     def connect2A(self):
@@ -99,7 +109,7 @@ class LauncherGui(QMainWindow):
             args=(self.L2PE_address, self.A2PE_address, self.G2PE_address),
         )
         self.proc_ProcExec.start()
-        logger.debug('start MainGui')
+        logger.debug('start APE')
         self.closeAPEbtn.setEnabled(True)
         self.startAPEbtn.setEnabled(False)
         self.startGUIbtn.setEnabled(True)
@@ -107,12 +117,16 @@ class LauncherGui(QMainWindow):
 
     # closes the AP and E portion of the program
     def closeAPE(self):
+        if not self.proc_Appa:
+            return
         # disconnects the launcher
         self.sendClose('appa')
         self.proc_Appa.join()
         self.sendClose('procexec')
         self.proc_ProcExec.join()
-        logger.debug('close MainGui')
+        self.proc_Appa = None
+        self.proc_ProcExec = None
+        logger.debug('close APE')
         self.closeAPEbtn.setEnabled(False)
         self.startAPEbtn.setEnabled(True)
         self.startGUIbtn.setEnabled(False)
@@ -131,9 +145,12 @@ class LauncherGui(QMainWindow):
 
     # closes the User Interface
     def closeGUI(self):
+        if not self.proc_GUI:
+            return
         self.sendClose('gui')
         self.proc_GUI.terminate()
         self.proc_GUI.join()
+        self.proc_GUI = None
         logger.debug('close GUI')
         self.closeAPEbtn.setEnabled(True)
         self.startAPEbtn.setEnabled(False)
@@ -144,10 +161,22 @@ class LauncherGui(QMainWindow):
         self.node.close()
         self.close()
 
+    def shutdown(self):
+        self.closeGUI()
+        self.closeAPE()
+        self.closeLauncher()
+        QApplication.quit()
+
+    def _start_check_timer(self):
+        self._timer = QTimer()
+        self._timer.timeout.connect(lambda: None)
+        self._timer.start(100)
+
     @staticmethod
     def start():
         app = QApplication(sys.argv)
         # instance of the new class
-        _ = LauncherGui()
+        gui = LauncherGui()
+        signal.signal(signal.SIGINT, lambda *args: gui.shutdown())
         # exiting function
         sys.exit(app.exec_())
