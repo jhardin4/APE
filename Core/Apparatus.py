@@ -386,7 +386,7 @@ class Apparatus(dict):
         if not fname:
             fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
         jsonfile = open(fname, mode='w')
-        json.dump(self.serialClone(), jsonfile)
+        json.dump(self.serialClone(), jsonfile, indent=2, sort_keys=True)
         jsonfile.close()
 
     def DoEproc(self, device, method, details):
