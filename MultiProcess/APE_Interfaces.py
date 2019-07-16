@@ -305,3 +305,55 @@ class ExecutorInterface:
         while not self.loopBlocks['gotEprocs']:
             self.node.listen(address)
         return self.returnedValue
+
+    def do(self, device, procedure, requirements):
+        margs = [device, procedure, requirements]
+        message = {'subject': 'target.do', 'args': margs}
+        self.node.send('procexec', message)
+
+    def doProc(self, index):
+        margs = [index]
+        message = {'subject': 'target.doProc', 'args': margs}
+        self.node.send('procexec', message)
+
+    def doProcList(self):
+        message = {'subject': 'target.doProclist'}
+        self.node.send('procexec', message)
+
+    def getProclist(self):
+        # Build expected reply
+        ereply = {}
+        ereply['subject'] = 'target.getProclist.recv_value'
+        ereply['args'] = ['gotProclist', 'e_reply']
+
+        # Build primary message
+        message = {'subject': 'target.getProclist', 'ereply': ereply}
+        self.loopBlocks['gotProclist'] = False
+        self.node.send('procexec', message)
+        while not self.loopBlocks['gotProclist']:
+            self.node.listen('procexec')
+        return self.returnedValue
+
+    def clearProclist(self):
+        message = {'subject': 'target.clearProclist'}
+        self.node.send('procexec', message)
+
+    def insertProc(self, index, device, procedure, requirements):
+        margs = [index, device, procedure, requirements]
+        message = {'subject': 'target.insertProc', 'args': margs}
+        self.node.send('procexec', message)
+
+    def updateProc(self, index, requirements):
+        margs = [index, requirements]
+        message = {'subject': 'target.updateProc', 'args': margs}
+        self.node.send('procexec', message)
+
+    def removeProc(self, index):
+        margs = [index]
+        message = {'subject': 'target.removeProc', 'args': margs}
+        self.node.send('procexec', message)
+
+    def swapProcs(self, index1, index2):
+        margs = [index1, index2]
+        message = {'subject': 'target.swapProcs', 'args': margs}
+        self.node.send('procexec', message)

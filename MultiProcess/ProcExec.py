@@ -1,4 +1,5 @@
 import Core
+import Procedures
 from MultiProcess.zmqNode import zmqNode
 from MultiProcess import APE_Interfaces
 
@@ -21,8 +22,10 @@ class ProcExec:
         self.connect2G(PE2G_address)
         self.node.start_listening()
 
-    # connects to G as server, L and A as client
     def connect2L(self, PE2L_address):
+        """
+        connects to G as server, L and A as client
+        """
         self.node.connect('launcher', PE2L_address)
 
     def connect2A(self, PE2A_address):
@@ -31,16 +34,108 @@ class ProcExec:
     def connect2G(self, PE2G_address):
         self.node.connect('gui', PE2G_address, server=True)
 
-    # Does a procedure immediately and does not add it to the procedure list
-    def Do(self, procedure, requirements):
-        if requirements == {}:
-            procedure.Do()
+    def _create_procedure(self, device, procedure, requirements):
+        procname = f'{device}_{procedure}'
+        if procname in dir(Procedures):
+            raw_proc = getattr(Procedures, procname)(self.apparatus, self.executor)
+            if not requirements:
+                proc = lambda _: raw_proc.Do()  # noqa: E731
+            else:
+                proc = lambda reqs: raw_proc.Do(reqs)  # noqa: E731
         else:
-            procedure.Do(requirements)
+            proc = lambda reqs: self.executor.Send(  # noqa: E731
+                {'devices': device, 'procedure': procedure, 'details': reqs}
+            )
+        return proc
 
-    def DoProclist(self):
-        for line in self.proclist:
-            self.Do(line['procedure'], line['requirements'])
+    def do(self, device, procedure, requirements):
+        """
+        Does a procedure immediately and does not add it to the procedure list
+        """
+        proc = self._create_procedure(device, procedure, bool(requirements))
+        proc(requirements)
+
+    def doProc(self, index):
+        """
+        Does a procedure already added to the procedure list
+        """
+        proc = self.proclist[index]
+        proc['proc'](proc['requirements'])
+
+    def doProclist(self):
+        """
+        Does all the procedures in the procedure list
+        """
+        for proc in self.proclist:
+            proc['proc'](proc['requirements'])
+
+    def getProclist(self):
+        """
+        Returns the complete proclist
+        """
+        return [
+            {
+                'device': proc['device'],
+                'procedure': proc['procedure'],
+                'requirements': proc['requirements'],
+            }
+            for proc in self.proclist
+        ]
+
+    def clearProclist(self):
+        """
+        Deletes all procedures in the proclist
+        :return:
+        """
+        del self.proclist[:]
+
+    def insertProc(self, index, device, procedure, requirements):
+        """
+        Inserts a new procedure into the proclist
+        :param index: Append if -1 else insert into list.
+        :param device: Name of the device.
+        :param procedure: Name of the procedure.
+        :param requirements: Procedure requirements.
+        """
+        proc = self._create_procedure(device, procedure, bool(requirements))
+        entry = {
+            'proc': proc,
+            'device': device,
+            'procedure': procedure,
+            'requirements': requirements,
+        }
+        if index == -1:
+            self.proclist.append(entry)
+        elif index < len(self.proclist):
+            self.proclist.insert(index, entry)
+        else:
+            raise IndexError()
+
+    def updateProc(self, index, requirements):
+        """
+        Updates an existing procedure in the proclist.
+        :param index: Index of the procedure in the list.
+        :param requirements: New procedure requirements.
+        """
+        self.proclist[index]['requirements'] = requirements
+
+    def removeProc(self, index):
+        """
+        Deletes a single procedure from the proclist.
+        :param index: Index of the procedure in the list.
+        """
+        self.proclist.remove(index)
+
+    def swapProcs(self, index1, index2):
+        """
+        Swaps the position of two procedures in the list.
+        :param index1: Index of the first procedure.
+        :param index2: Index of the second procedure.
+        """
+        self.proclist[index1], self.proclist[index2] = (
+            self.proclist[index2],
+            self.proclist[index1],
+        )
 
 
 if __name__ == '__main__':
