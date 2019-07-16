@@ -119,6 +119,11 @@ class ApparatusInterface:
         }
         self.node.send('appa', message)
 
+    def logApparatus(self, fname):
+        margs = [fname]
+        message = {'subject': 'target.apparatus.logApparatus', 'args': margs}
+        self.node.send('appa', message)
+
 
 class ExecutorInterface:
     def __init__(self, node):
