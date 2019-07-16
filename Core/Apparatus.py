@@ -382,8 +382,9 @@ class Apparatus(dict):
         else:
             return str(type(abranch))
 
-    def logApparatus(self):
-        fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
+    def logApparatus(self, fname=None):
+        if not fname:
+            fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
         jsonfile = open(fname, mode='w')
         json.dump(self.serialClone(), jsonfile)
         jsonfile.close()
