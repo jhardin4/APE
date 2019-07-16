@@ -192,4 +192,9 @@ class AppInterface(QObject):
 
     @Slot(QUrl)
     def saveAs(self, url):
-        pass
+        if not self._gui_node:
+            logger.warning('Cannot update value guiNode')
+            return
+
+        filename = url.toLocalFile()
+        self._gui_node.apparatus.logApparatus(filename)

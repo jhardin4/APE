@@ -16,8 +16,8 @@ GroupBox {
     fileMode: FileDialog.SaveFile
 
     onAccepted: {
-      pathTextField.text = file
       settings.file = file
+      nodeHandler.appInterface.saveAs(file)
     }
 
     onVisibleChanged: {
@@ -42,13 +42,13 @@ GroupBox {
     Button {
       Layout.fillWidth: true
 
-      text: qsTr("Import")
+      text: qsTr("Import...")
       enabled: false
     }
     Button {
       Layout.fillWidth: true
 
-      text: qsTr("Export")
+      text: qsTr("Export...")
       onClicked: fileDialog.open()
     }
   }
