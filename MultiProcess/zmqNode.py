@@ -12,6 +12,8 @@ It uses json objects as messages and and these objects have 4 parts:
 Recieving messages is non-blocking
 
 '''
+import traceback
+
 import zmq
 import threading
 
@@ -146,16 +148,21 @@ class zmqNode:
 
         # Pass the target method the correct data
         tempresult = None
-        if targetMethod != '':
-            if ('args' in message) and not ('kwargs' in message):
-                tempresult = targetMethod(*message['args'])
-            elif not ('args' in message) and ('kwargs' in message):
-                tempresult = targetMethod(**message['kwargs'])
-            elif ('args' in message) and ('kwargs' in message):
-                tempresult = targetMethod(*message['args'], **message['kwargs'])
-            else:
-                if targetMethod != self:
-                    tempresult = targetMethod()
+        exception = None
+        try:
+            if targetMethod != '':
+                if ('args' in message) and not ('kwargs' in message):
+                    tempresult = targetMethod(*message['args'])
+                elif not ('args' in message) and ('kwargs' in message):
+                    tempresult = targetMethod(**message['kwargs'])
+                elif ('args' in message) and ('kwargs' in message):
+                    tempresult = targetMethod(*message['args'], **message['kwargs'])
+                else:
+                    if targetMethod != self:
+                        tempresult = targetMethod()
+        except Exception as e:
+            traceback.print_exc()
+            exception = e
 
         # Handle expected replies
         if 'ereply' in message:
@@ -169,7 +176,10 @@ class zmqNode:
             reply_message = self.build_message(**message['ereply'])
             self.send(self.cur_connection, reply_message)
 
-        self.addlog('Handled ' + self.cur_connection + ' ' + str(message))
+        if exception:
+            self.addlog(f'Error handling {self.cur_connection} {message}: {exception}')
+        else:
+            self.addlog(f'Handled {self.cur_connection} {message}')
 
     def getMethod(self, maddress):
         madd_list = maddress.split('.')
