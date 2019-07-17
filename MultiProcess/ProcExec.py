@@ -10,6 +10,7 @@ class ProcExec:
         self.node = zmqNode('procexec')
         self.node.target = self
         self.node.logging = True
+        self.loopBlocks = {}
         # creates an executor
         self.executor = Core.Executor()
         self.executor.node = self.node
@@ -39,13 +40,22 @@ class ProcExec:
         if procname in dir(Procedures):
             raw_proc = getattr(Procedures, procname)(self.apparatus, self.executor)
             if not requirements:
-                proc = lambda _: raw_proc.Do()  # noqa: E731
+
+                def proc(_):
+                    raw_proc.Do()
+
             else:
-                proc = lambda reqs: raw_proc.Do(reqs)  # noqa: E731
+
+                def proc(reqs):
+                    raw_proc.Do(reqs)
+
         else:
-            proc = lambda reqs: self.executor.Send(  # noqa: E731
-                {'devices': device, 'procedure': procedure, 'details': reqs}
-            )
+
+            def proc(reqs):
+                self.executor.Send(
+                    {'devices': device, 'procedure': procedure, 'details': reqs}
+                )
+
         return proc
 
     def do(self, device, procedure, requirements):
@@ -124,7 +134,7 @@ class ProcExec:
         Deletes a single procedure from the proclist.
         :param index: Index of the procedure in the list.
         """
-        self.proclist.remove(index)
+        del self.proclist[index]
 
     def swapProcs(self, index1, index2):
         """

@@ -316,14 +316,14 @@ class ExecutorInterface:
         message = {'subject': 'target.doProc', 'args': margs}
         self.node.send('procexec', message)
 
-    def doProcList(self):
+    def doProclist(self):
         message = {'subject': 'target.doProclist'}
         self.node.send('procexec', message)
 
     def getProclist(self):
         # Build expected reply
         ereply = {}
-        ereply['subject'] = 'target.getProclist.recv_value'
+        ereply['subject'] = 'target.executor.recv_value'
         ereply['args'] = ['gotProclist', 'e_reply']
 
         # Build primary message
