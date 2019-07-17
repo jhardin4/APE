@@ -36,9 +36,8 @@ class ProcExec:
         self.node.connect('gui', PE2G_address, server=True)
 
     def _create_procedure(self, device, procedure, requirements):
-        procname = f'{device}_{procedure}'
-        if procname in dir(Procedures):
-            raw_proc = getattr(Procedures, procname)(self.apparatus, self.executor)
+        if device == '':
+            raw_proc = getattr(Procedures, procedure)(self.apparatus, self.executor)
             if not requirements:
 
                 def proc(_):
