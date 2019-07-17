@@ -49,7 +49,7 @@ C1.TreeView {
   C1.TableViewColumn {
     title: qsTr("Procedure")
     role: "display"
-    width: root.width / 2
+    width: root.width - 20
     resizable: false
   }
 }

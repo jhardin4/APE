@@ -48,6 +48,10 @@ class ProcedureInterface(QObject):
 
         logger.debug('fetching EProcs')
         epl_dict = {}
+        epl_dict['Procedures'] = [
+            name for name in dir(Procedures) if not name.startswith('__')
+        ]
+
         epl = self._gui_node.executor.getDevices('procexec')
         for device in epl:
             eprocs = self._gui_node.executor.getEprocs(device, 'procexec')
@@ -62,12 +66,13 @@ class ProcedureInterface(QObject):
             logger.warning('Cannot fetch requirements without guiNode')
             return
 
-        name = f'{device}_{procedure}'
-        if name in dir(Procedures):
-            f = getattr(Procedures, name)(
+        if device == 'Procedures':
+            f = getattr(Procedures, procedure)(
                 self._gui_node.apparatus, self._gui_node.executor
             )
-            return [{'key': k, "value": v} for k, v in f.requirements.items()]
+            return [
+                {'key': k, "value": str(v['value'])} for k, v in f.requirements.items()
+            ]
         else:
             reqs = self._gui_node.executor.getRequirements(
                 device, procedure, 'procexec'
@@ -84,7 +89,10 @@ class ProcedureInterface(QObject):
         raw_proclist = self._gui_node.executor.getProclist()
         logger.debug(f'proclist updated {raw_proclist}')
         for entry in raw_proclist:
-            entry['name'] = f'{entry["device"]}_{entry["procedure"]}'
+            if entry['device']:
+                entry['name'] = f'{entry["device"]}_{entry["procedure"]}'
+            else:
+                entry['name'] = entry['procedure']
             raw_reqs = entry["requirements"]
             entry["requirements"] = [
                 {'key': k, 'value': v} for k, v in raw_reqs.items()
@@ -103,6 +111,9 @@ class ProcedureInterface(QObject):
         if not self._gui_node:
             logger.warning('Cannot add requirements without guiNode')
             return
+
+        if device == 'Procedures':
+            device = ''
 
         reqs = self._convert_req_model_to_list(requirements)
         self._gui_node.executor.insertProc(
@@ -176,6 +187,9 @@ class ProcedureInterface(QObject):
         if not self._gui_node:
             logger.warning('Cannot do procedure without guiNode')
             return
+
+        if device == 'Procedures':
+            device = ''
 
         reqs = self._convert_req_model_to_list(requirements)
         logger.debug(f'do procedure {device}_{procedure}, reqs: {reqs}')

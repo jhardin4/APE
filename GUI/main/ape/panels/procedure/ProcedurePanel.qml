@@ -56,6 +56,7 @@ Item {
             tableView.selectRow(row)
           }
         }
+
         Button {
           text: qsTr("Run")
           enabled: treeView.selectedProcedure.length > 0
@@ -113,6 +114,7 @@ Item {
             onClicked: nodeHandler.procInterface.doProcedure(
                          tableView.currentRow)
           }
+
           Button {
             text: qsTr("Execute All")
             Layout.fillWidth: true
@@ -131,6 +133,7 @@ Item {
             nodeHandler.procInterface.refreshProclist()
           }
         }
+
         Button {
           text: qsTr("Move Up")
           enabled: tableView.currentRow > 0
@@ -141,6 +144,7 @@ Item {
             tableView.selectRow(row - 1)
           }
         }
+
         Button {
           text: qsTr("Move Down")
           enabled: (tableView.currentRow > -1)
