@@ -48,9 +48,12 @@ Item {
           text: qsTr("Add")
           enabled: treeView.selectedProcedure.length > 0
           onClicked: {
-            procList.addProcedure(treeView.selectedProcedure.join('_'),
-                                  procReqView.model)
-            tableView.currentRow = -1
+            var row = tableView.currentRow
+            nodeHandler.procInterface.addProcedure(
+                  treeView.selectedProcedure[0], treeView.selectedProcedure[1],
+                  procReqView.model)
+            nodeHandler.procInterface.refreshProclist()
+            tableView.selectRow(row)
           }
         }
         Button {
@@ -87,7 +90,13 @@ Item {
           id: tableView
           Layout.fillHeight: true
           Layout.fillWidth: true
-          model: procList.procList
+          model: nodeHandler.procInterface.proclist
+
+          function selectRow(row) {
+            selection.clear()
+            selection.select(row)
+            currentRow = row
+          }
 
           C1.TableViewColumn {
             title: qsTr("Procedures")
@@ -95,16 +104,20 @@ Item {
             width: tableView.width - 2
           }
         }
+
         RowLayout {
           Button {
             text: qsTr("Execute")
             Layout.fillWidth: true
             enabled: tableView.currentRow > -1
+            onClicked: nodeHandler.procInterface.doProcedure(
+                         tableView.currentRow)
           }
           Button {
             text: qsTr("Execute All")
             Layout.fillWidth: true
             enabled: tableView.rowCount > 0
+            onClicked: nodeHandler.procInterface.doProclist()
           }
         }
       }
@@ -114,8 +127,8 @@ Item {
           text: qsTr("Remove")
           enabled: tableView.currentRow > -1
           onClicked: {
-            procList.remove(tableView.currentRow)
-            tableView.currentRow = -1
+            nodeHandler.procInterface.removeProcedure(tableView.currentRow)
+            nodeHandler.procInterface.refreshProclist()
           }
         }
         Button {
@@ -123,10 +136,9 @@ Item {
           enabled: tableView.currentRow > 0
           onClicked: {
             var row = tableView.currentRow
-            procList.moveUp(row)
-            tableView.selection.clear()
-            tableView.selection.select(row - 1)
-            tableView.currentRow = row - 1
+            nodeHandler.procInterface.moveProcedureUp(row)
+            nodeHandler.procInterface.refreshProclist()
+            tableView.selectRow(row - 1)
           }
         }
         Button {
@@ -135,10 +147,9 @@ Item {
                    && (tableView.currentRow < tableView.rowCount - 1)
           onClicked: {
             var row = tableView.currentRow
-            procList.moveDown(row)
-            tableView.selection.clear()
-            tableView.selection.select(row + 1)
-            tableView.currentRow = row + 1
+            nodeHandler.procInterface.moveProcedureDown(row)
+            nodeHandler.procInterface.refreshProclist()
+            tableView.selectRow(row + 1)
           }
         }
       }
@@ -152,14 +163,13 @@ Item {
           var tableRow = tableView.currentRow
           var reqs = reqTableView.model
           reqs[row]["value"] = value
-          procList.updateRequirements(tableView.currentRow, reqs)
-          tableView.selection.clear()
-          tableView.selection.select(tableRow)
-          tableView.currentRow = tableRow
+          nodeHandler.procInterface.updateProcedure(tableView.currentRow, reqs)
+          nodeHandler.procInterface.refreshProclist()
+          tableView.selectRow(tableRow)
         }
 
         model: (tableView.currentRow
-                > -1) ? procList.procList[tableView.currentRow].requirements : []
+                > -1) ? tableView.model[tableView.currentRow]["requirements"] : []
       }
     }
   }

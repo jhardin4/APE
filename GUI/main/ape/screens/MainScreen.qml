@@ -21,6 +21,7 @@ Item {
     anchors.fill: parent
 
     MorphingContainer {
+      id: container
       Layout.fillWidth: true
       Layout.fillHeight: true
       visible: nodeHandler.guiRunning
@@ -35,6 +36,10 @@ Item {
 
       Item {
         id: utilitiesPanel
+      }
+
+      Settings {
+        property alias currentIndex: container.currentIndex
       }
     }
 

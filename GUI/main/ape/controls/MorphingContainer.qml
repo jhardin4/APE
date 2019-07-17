@@ -6,6 +6,7 @@ Item {
   id: root
   property int bigWidth: 1500
   property var titles: [qsTr("Apparatus"), qsTr("Procedure"), qsTr("Utilities")]
+  property alias currentIndex: bar.currentIndex
   default property alias containerData: layout.data
 
   QtObject {
@@ -24,8 +25,9 @@ Item {
           while (layout.children.length > 0) {
             layout.children[0].parent = layout2
           }
+          var previousIndex = bar.currentIndex
           bar.currentIndex = -1
-          bar.currentIndex = 0
+          bar.currentIndex = previousIndex
         }
       }
     }

@@ -28,6 +28,8 @@ QtObject {
     onRunningChanged: {
       if (running) {
         appInterface.refresh()
+        procInterface.refreshEprocs()
+        procInterface.refreshProclist()
       }
     }
   }

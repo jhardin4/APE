@@ -12,12 +12,14 @@ class ProcedureInterface(QObject):
     _gui_node: GuiNode
     guiNodeChanged = Signal()
     eprocsChanged = Signal()
+    proclistChanged = Signal()
 
     def __init__(self, parent=None):
         super(ProcedureInterface, self).__init__(parent)
 
         self._gui_node = None
         self._eprocs = {}
+        self._proclist = []
 
     @Property(GuiNode, notify=guiNodeChanged)
     def guiNode(self):
@@ -33,6 +35,10 @@ class ProcedureInterface(QObject):
     @property
     def eprocs(self):
         return self._eprocs
+
+    @Property(list, notify=proclistChanged)
+    def proclist(self):
+        return self._proclist
 
     @Slot()
     def refreshEprocs(self):
@@ -68,13 +74,110 @@ class ProcedureInterface(QObject):
             )
             return [{'key': k, 'value': ''} for k in reqs]
 
+    @Slot()
+    def refreshProclist(self):
+        if not self._gui_node:
+            logger.warning('Cannot refresh proclist without guiNode')
+            return
+
+        logger.debug('fetching proclist')
+        raw_proclist = self._gui_node.executor.getProclist()
+        logger.debug(f'proclist updated {raw_proclist}')
+        for entry in raw_proclist:
+            entry['name'] = f'{entry["device"]}_{entry["procedure"]}'
+            raw_reqs = entry["requirements"]
+            entry["requirements"] = [
+                {'key': k, 'value': v} for k, v in raw_reqs.items()
+            ]
+        self._proclist = raw_proclist
+        self.proclistChanged.emit()
+
+    @staticmethod
+    def _convert_req_model_to_list(requirements):
+        return {
+            entry['key']: entry['value'] for entry in requirements if entry['value']
+        }
+
+    @Slot(str, str, list)
+    def addProcedure(self, device, procedure, requirements):
+        if not self._gui_node:
+            logger.warning('Cannot add requirements without guiNode')
+            return
+
+        reqs = self._convert_req_model_to_list(requirements)
+        self._gui_node.executor.insertProc(
+            index=-1, device=device, procedure=procedure, requirements=reqs
+        )
+
+    @Slot(int)
+    def removeProcedure(self, index):
+        if not self._gui_node:
+            logger.warning('Cannot remove procedure without guiNode')
+            return
+
+        if 0 <= index < len(self._proclist):
+            self._gui_node.executor.removeProc(index=index)
+
+    @Slot(int)
+    def moveProcedureUp(self, index):
+        if not self._gui_node:
+            logger.warning('Cannot move procedure without guiNode')
+            return
+
+        if 0 < index < len(self._proclist):
+            self._gui_node.executor.swapProcs(index - 1, index)
+
+    @Slot(int)
+    def moveProcedureDown(self, index):
+        if not self._gui_node:
+            logger.warning('Cannot move procedure without guiNode')
+            return
+
+        if 0 <= index < (len(self._proclist) - 1):
+            self._gui_node.executor.swapProcs(index + 1, index)
+
+    @Slot(int, list)
+    def updateProcedure(self, index, requirements):
+        if not self._gui_node:
+            logger.warning('Cannot update procedure without guiNode')
+            return
+
+        if 0 <= index < len(self._proclist):
+            reqs = self._convert_req_model_to_list(requirements)
+            self._gui_node.executor.updateProc(index, reqs)
+
+    @Slot()
+    def clearProclist(self):
+        if not self._gui_node:
+            logger.warning('Cannot move procedure without guiNode')
+            return
+
+        self._gui_node.executor.clearProclist()
+
+    @Slot(int)
+    def doProcedure(self, index):
+        if not self._gui_node:
+            logger.warning('Cannot do procedure without guiNode')
+            return
+
+        if 0 <= index < len(self._proclist):
+            self._gui_node.executor.doProc(index)
+
+    @Slot()
+    def doProclist(self):
+        if not self._gui_node:
+            logger.warning('Cannot do proclist without guiNode')
+            return
+
+        self._gui_node.executor.doProclist()
+
     @Slot(str, str, list)
     def do(self, device, procedure, requirements):
         if not self._gui_node:
-            logger.warning('Cannot do procedure with guiNode')
+            logger.warning('Cannot do procedure without guiNode')
             return
 
-        reqs = {entry['key']: entry['value'] for entry in requirements}
+        reqs = self._convert_req_model_to_list(requirements)
         logger.debug(f'do procedure {device}_{procedure}, reqs: {reqs}')
         self._gui_node.executor.do(device, procedure, reqs)
         logger.debug('done')
