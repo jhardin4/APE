@@ -33,7 +33,7 @@ def basic_eprocs():
 def test_creating_procedure_model_from_interface_works(basic_eprocs):
     model = ProcedureModel()
 
-    model.appInterface = create_interface(basic_eprocs)
+    model.procInterface = create_interface(basic_eprocs)
 
     assert model.rowCount(QModelIndex()) == 2
     assert model.columnCount() == 1
@@ -49,7 +49,7 @@ def test_creating_procedure_model_from_interface_works(basic_eprocs):
 
 def test_getting_procedure_name_from_valid_index_returns_name(basic_eprocs):
     model = ProcedureModel()
-    model.appInterface = create_interface(basic_eprocs)
+    model.procInterface = create_interface(basic_eprocs)
 
     index = model.index(0, 0, model.index(0, 0))
     name = model.getProcedureName(index)
@@ -59,7 +59,7 @@ def test_getting_procedure_name_from_valid_index_returns_name(basic_eprocs):
 
 def test_getting_procedure_name_from_top_level_index_returns_empty_string(basic_eprocs):
     model = ProcedureModel()
-    model.appInterface = create_interface(basic_eprocs)
+    model.procInterface = create_interface(basic_eprocs)
 
     index = model.index(0, 0)
     name = model.getProcedureName(index)
