@@ -1,7 +1,6 @@
 import Devices
 import json
 import time
-from copy import deepcopy
 import AppTemplates
 
 
@@ -212,15 +211,14 @@ class Apparatus(dict):
 
         return level
 
-    def setValue(self, infoAddress='', value=''):
-        if infoAddress == '':
+    def setValue(self, infoAddress=None, value=''):
+        if not infoAddress:
             return ''
 
         level = self
-        dc_infoAddress = deepcopy(infoAddress)
-        lastlevel = dc_infoAddress.pop()
+        lastlevel = infoAddress[-1]
 
-        for branch in dc_infoAddress:
+        for branch in infoAddress[:-1]:
             try:
                 level = level[branch]
             except TypeError:
