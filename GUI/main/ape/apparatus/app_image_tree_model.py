@@ -11,7 +11,7 @@ from qtpy.QtCore import (
 )
 
 from .app_interface import AppInterface
-from .app_image_data import AppImageData, AppImageDataWalker
+from .app_image_data import AppImageData
 
 logger = logging.getLogger('AppImageTreeModel')
 
@@ -35,7 +35,6 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
     Q_ENUMS(AppImageTreeModelRoles)
 
     appInterfaceChanged = Signal()
-    watchedChanged = Signal()
 
     def __init__(self, parent=None):
         super(AppImageTreeModel, self).__init__(parent)
@@ -59,13 +58,26 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
 
         if old_interface:
             old_interface.appImageChanged.disconnect(self.refresh)
+            old_interface.itemUpdated.disconnect(self._on_item_updated)
         if new_interface:
             new_interface.appImageChanged.connect(self.refresh)
+            new_interface.itemUpdated.connect(self._on_item_updated)
             self.refresh()
 
-    @Property(list, notify=watchedChanged)
-    def watched(self):
-        return self._watched
+    def _on_item_updated(self, key):
+        levels = key.split('/')
+        item = self._data
+        for level in levels:
+            item = item.get(level, None)
+            if item is None:
+                return
+
+        if item.parent is None:
+            row = 0
+        else:
+            row = list(item.parent.values()).index(item)
+        index = self.createIndex(row, 0, item)
+        self.dataChanged.emit(index, index)
 
     @Slot()
     def refresh(self):
@@ -76,11 +88,6 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         self.beginResetModel()
         self._data = self._app_interface.app_image
         self.endResetModel()
-
-        for item in AppImageDataWalker(self._data):
-            if item.watch:
-                self.watched.append({"key": item.key, "value": str(item.value)})
-        self.watchedChanged.emit()
 
     def data(self, index, role=Qt.DisplayRole):
         if not index.isValid():
@@ -104,18 +111,13 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
             changed = True
         elif role == self.ValueRole:
             item.value = value
+            self._app_interface.setValue(item.key, value)
             changed = True
         elif role == self.WatchRole:
-            item.watch = value
-            key = item.key
             if value:
-                self.watched.append({"key": key, "value": str(item.value)})
+                self._app_interface.append_watched(item)
             else:
-                for entry in self.watched:
-                    if entry["key"] == key:
-                        self.watched.remove(entry)
-                        break
-            self.watchedChanged.emit()
+                self._app_interface.remove_watched(item)
             changed = True
         else:
             changed = False

@@ -10,6 +10,13 @@ C1.TreeView {
   selectionMode: C1.SelectionMode.SingleSelection
   headerVisible: true
   backgroundVisible: false
+  property var editingIndex: null
+
+  onDoubleClicked: {
+    if (model.flags(index) & Qt.ItemIsEditable) {
+      root.editingIndex = index
+    }
+  }
 
   Component.onCompleted: delayTimer.start()
 
@@ -43,8 +50,16 @@ C1.TreeView {
     onTriggered: d.expandAll()
   }
 
-  itemDelegate: AppImageTreeViewItemDelegate {
+  itemDelegate: Item {
     height: 20
+    Text {
+      anchors.fill: parent
+      anchors.leftMargin: Style.singleMargin
+      verticalAlignment: Text.AlignVCenter
+      text: styleData.value
+      color: styleData.textColor
+      elide: Text.ElideRight
+    }
   }
 
   C1.TableViewColumn {
@@ -59,6 +74,10 @@ C1.TreeView {
     role: "value"
     width: root.width / 2 - 3
     resizable: true
+    delegate: ValueItemDelegate {
+      table: root
+      editRole: AppImageTreeModel.ValueRole
+    }
   }
 
   C1.TableViewColumn {

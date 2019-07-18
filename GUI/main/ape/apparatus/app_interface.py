@@ -17,6 +17,7 @@ class AppInterface(QObject):
     guiNodeChanged = Signal()
     appImageChanged = Signal()
     watchedChanged = Signal()
+    itemUpdated = Signal(str)
 
     def __init__(self, parent=None):
         super(AppInterface, self).__init__(parent)
@@ -128,10 +129,32 @@ class AppInterface(QObject):
         self._watched = value
         self.watchedChanged.emit()
 
+    def append_watched(self, item):
+        item.watch = True
+        self._watched.append(item)
+        self.watchedChanged.emit()
+
+    def remove_watched(self, item):
+        item.watch = False
+        popped = False
+        for i, entry in enumerate(self._watched):
+            if entry is item:
+                self._watched.pop(i)
+                popped = True
+                break
+        if popped:
+            self.watchedChanged.emit()
+
+    def clear_watched(self):
+        for item in self._watched:
+            item.watch = False
+        self._watched = []
+        self.watchedChanged.emit()
+
     @Slot(str)
     def fetchValue(self, key):
         if not self._gui_node:
-            logger.warning('Cannot update value guiNode')
+            logger.warning('Cannot fetch value without guiNode')
             return
 
         item = self._app_image.get_key(key)
@@ -143,17 +166,27 @@ class AppInterface(QObject):
         value = self._gui_node.apparatus.getValue(key.split('/'))
         item.value = value
         logger.debug('update complete: {}'.format(value))
+        self.itemUpdated.emit(item.key)
 
     @Slot()
     def fetchWatched(self):
         for watched in self._watched:
-            self.fetchValue(watched['key'])
+            self.fetchValue(watched.key)
 
     @Slot(QUrl)
     def saveAs(self, url):
         if not self._gui_node:
-            logger.warning('Cannot update value guiNode')
+            logger.warning('Cannot save without guiNode')
             return
 
         filename = url.toLocalFile()
         self._gui_node.apparatus.logApparatus(filename)
+
+    @Slot(str, 'QVariant')
+    def setValue(self, key, value):
+        if not self._gui_node:
+            logger.warning('Cannot set value without guiNode')
+            return
+
+        self._gui_node.apparatus.setValue(key.split('/'), value)
+        self.itemUpdated.emit(key)

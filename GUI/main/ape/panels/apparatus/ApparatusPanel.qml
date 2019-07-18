@@ -16,6 +16,11 @@ Item {
     appInterface: nodeHandler.appInterface
   }
 
+  WatchlistModel {
+    id: watchlistModel
+    appInterface: nodeHandler.appInterface
+  }
+
   RowLayout {
     anchors.fill: parent
     anchors.margins: Style.singleMargin
@@ -59,7 +64,7 @@ Item {
         WatchTableView {
           id: watchTableView
           anchors.fill: parent
-          model: treeModel.watched
+          model: watchlistModel
 
           Binding {
             target: nodeHandler.appInterface
@@ -72,6 +77,7 @@ Item {
             interval: 1000
             repeat: true
             running: watchTableView.rowCount > 0 && nodeHandler.guiRunning
+                     && !watchTableView.editing
             onTriggered: nodeHandler.appInterface.fetchWatched()
           }
         }
