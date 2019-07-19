@@ -395,25 +395,32 @@ class Apparatus(dict):
         self.LogProc('eproc_' + device + '_' + method, details)
         self.LogProc('eproc_' + device + '_' + method, 'end')
 
-    def createAppEntry(self, AppAddress):
+    def createAppEntry(self, app_address):
         target = self
         # Build everything but the last entry
-        for n in range(len(AppAddress) - 1):
-            if AppAddress[n] in target:
-                if type(target[AppAddress[n]]) == dict:
-                    target = target[AppAddress[n]]
+        for entry in app_address[:-1]:
+            if entry in target:
+                if type(target[entry]) == dict:
+                    target = target[entry]
                 else:
                     raise Exception(
-                        str(AppAddress[n])
-                        + ' in '
-                        + str(AppAddress)
-                        + ' is already occupied'
+                        str(entry) + ' in ' + str(app_address) + ' is already occupied'
                     )
             else:
-                target[AppAddress[n]] = {}
-                target = target[AppAddress[n]]
-        if AppAddress[len(AppAddress) - 1] not in target:
-            target[AppAddress[len(AppAddress) - 1]] = {}
+                target[entry] = {}
+                target = target[entry]
+        if app_address[-1] not in target:
+            target[app_address[-1]] = {}
+
+    def removeAppEntry(self, app_address):
+        target = self
+        for entry in app_address[:-1]:
+            if entry in target:
+                target = target[entry]
+            else:
+                return
+        if app_address[-1] in target:
+            del target[app_address[-1]]
 
     def applyTemplate(self, template, args=None, kwargs=None):
         if kwargs is None:

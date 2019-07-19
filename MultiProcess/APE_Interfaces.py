@@ -44,14 +44,14 @@ class ApparatusInterface:
             self.node.listen('appa')
         return self.returnedValue
 
-    def createAppEntry(self, AppAddress):
+    def createAppEntry(self, app_address):
         # Build expected reply
         ereply = {}
         ereply['subject'] = 'target.apparatus.recv_value'
         ereply['args'] = ['madeEntry', 'e_reply']
 
         # Build primary message
-        args = [AppAddress]
+        args = [app_address]
         message = {
             'subject': 'target.apparatus.createAppEntry',
             'args': args,
@@ -60,6 +60,25 @@ class ApparatusInterface:
         self.loopBlocks['madeEntry'] = False
         self.node.send('appa', message)
         while not self.loopBlocks['madeEntry']:
+            self.node.listen('appa')
+        return self.returnedValue
+
+    def removeAppEntry(self, app_address):
+        # Build expected reply
+        ereply = {}
+        ereply['subject'] = 'target.apparatus.recv_value'
+        ereply['args'] = ['removedEntry', 'e_reply']
+
+        # Build primary message
+        args = [app_address]
+        message = {
+            'subject': 'target.apparatus.removeAppEntry',
+            'args': args,
+            'ereply': ereply,
+        }
+        self.loopBlocks['removedEntry'] = False
+        self.node.send('appa', message)
+        while not self.loopBlocks['removedEntry']:
             self.node.listen('appa')
         return self.returnedValue
 
