@@ -20,6 +20,7 @@ class AppImageTreeModelRoles:
     NameRole = Qt.UserRole
     ValueRole = Qt.UserRole + 1
     WatchRole = Qt.UserRole + 2
+    KeyRole = Qt.UserRole + 3
 
     @staticmethod
     def role_names():
@@ -27,6 +28,7 @@ class AppImageTreeModelRoles:
             AppImageTreeModelRoles.NameRole: b'name',
             AppImageTreeModelRoles.ValueRole: b'value',
             AppImageTreeModelRoles.WatchRole: b'watch',
+            AppImageTreeModelRoles.KeyRole: b'key',
         }
 
 
@@ -99,6 +101,7 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
             self.NameRole: lambda: item.name,
             self.ValueRole: lambda: str(item.value),
             self.WatchRole: lambda: item.watch,
+            self.KeyRole: lambda: item.key,
         }
 
         data = switch.get(role, lambda: None)()
@@ -135,8 +138,10 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
 
         flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
         item = index.internalPointer()
-        if item.value:
+        if len(item) == 0:
             flags |= Qt.ItemIsEditable
+        elif index.parent().isValid() or item.name not in ('proclog', 'eproclist'):
+            flags |= Qt.ItemIsTristate
 
         return flags
 

@@ -1,4 +1,5 @@
 import QtQuick 2.2
+import QtQuick.Controls 2.0
 import ape.core 1.0
 
 Item {
@@ -9,13 +10,15 @@ Item {
   property bool modified
   property Item table: null
   property int editRole: Qt.EditRole
+  property bool isGroupNode: index.valid ? table.model.flags(
+                                             index) & Qt.ItemIsTristate : false
 
   Text {
     anchors.fill: parent
     anchors.leftMargin: Style.singleMargin
     verticalAlignment: Text.AlignVCenter
     text: textInput.text
-    color: styleData.textColor
+    color: root.isGroupNode ? "gray" : styleData.textColor
     elide: Text.ElideRight
     visible: !root.editing
   }
@@ -26,7 +29,7 @@ Item {
     anchors.fill: parent
     anchors.leftMargin: Style.singleMargin
     verticalAlignment: Text.AlignVCenter
-    text: String(styleData.value)
+    text: root.isGroupNode ? "+" : String(styleData.value)
     selectByMouse: true
     visible: root.editing
     enabled: visible

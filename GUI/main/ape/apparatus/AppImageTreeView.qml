@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4 as C1
 import QtQuick.Controls 2.2
+import ape.controls 1.0
 import ape.core 1.0
 import ape.apparatus 1.0
 
@@ -15,6 +16,8 @@ C1.TreeView {
   onDoubleClicked: {
     if (model.flags(index) & Qt.ItemIsEditable) {
       root.editingIndex = index
+    } else if (model.flags(index) & Qt.ItemIsTristate) {
+      d.prepareNewEntry()
     }
   }
 
@@ -30,6 +33,23 @@ C1.TreeView {
         var index = modelAdapter.mapRowToModelIndex(i)
         modelAdapter.expand(index)
       }
+    }
+
+    function prepareNewEntry() {
+      newEntryDialog.baseText = root.model.data(root.currentIndex,
+                                                AppImageTreeModel.KeyRole)
+      newEntryDialog.open()
+    }
+
+    function addNewEntry() {
+      nodeHandler.appInterface.createAppEntry(newEntryDialog.key)
+      nodeHandler.appInterface.refresh()
+    }
+
+    function removeEntry() {
+      var key = root.model.data(root.currentIndex, AppImageTreeModel.KeyRole)
+      nodeHandler.appInterface.removeAppEntry(key)
+      nodeHandler.appInterface.refresh()
     }
   }
 
@@ -60,6 +80,38 @@ C1.TreeView {
       color: styleData.textColor
       elide: Text.ElideRight
     }
+  }
+
+  MouseArea {
+    anchors.fill: parent
+    acceptedButtons: Qt.RightButton
+    onClicked: {
+      editMenu.open()
+      editMenu.x = mouse.x
+      editMenu.y = mouse.y
+      mouse.accepted = false
+    }
+  }
+
+  Menu {
+    id: editMenu
+    MenuItem {
+      text: qsTr("Add New Entry")
+      enabled: root.currentIndex.valid ? root.model.flags(
+                                           root.currentIndex) & Qt.ItemIsTristate : false
+      onClicked: d.prepareNewEntry()
+    }
+
+    MenuItem {
+      text: qsTr("Remove Entry")
+      enabled: root.currentIndex.valid ? root.currentIndex.parent.valid : false
+      onClicked: d.removeEntry()
+    }
+  }
+
+  NewAppEntryDialog {
+    id: newEntryDialog
+    onAccepted: d.addNewEntry(key)
   }
 
   C1.TableViewColumn {

@@ -190,3 +190,19 @@ class AppInterface(QObject):
 
         self._gui_node.apparatus.setValue(key.split('/'), value)
         self.itemUpdated.emit(key)
+
+    @Slot(str)
+    def createAppEntry(self, key):
+        if not self._gui_node:
+            logger.warning('Cannot create app entry without guiNode')
+            return
+
+        self._gui_node.apparatus.createAppEntry(key.split('/'))
+
+    @Slot(str)
+    def removeAppEntry(self, key):
+        if not self._gui_node:
+            logger.warning('Cannot remove app entry without guiNode')
+            return
+
+        self._gui_node.apparatus.removeAppEntry(key.split('/'))
