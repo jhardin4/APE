@@ -356,26 +356,30 @@ class Apparatus(dict):
 
         return simpleinfo
 
-    def serialClone(self, abranch='', origin=True):
-        if origin:
-            clone = {}
-            for key in self:
-                clone[key] = self.serialClone(abranch=self[key], origin=False)
-            return clone
+    def serialClone(self, abranch=None, address=None):
+        if abranch is None:
+            abranch = self
 
-        elif type(abranch) == dict:
+        if address:
+            for entry in address:
+                if entry in abranch:
+                    abranch = abranch[entry]
+                else:
+                    return None
+
+        if isinstance(abranch, dict):
             tempdict = {}
-            for key in abranch:
-                tempdict[key] = self.serialClone(abranch=abranch[key], origin=False)
+            for key, value in abranch.items():
+                tempdict[key] = self.serialClone(abranch=value)
             return tempdict
 
-        elif type(abranch) == list:
+        elif isinstance(abranch, list):
             templist = []
-            for n in range(len(abranch)):
-                templist.append(self.serialClone(abranch=abranch[n], origin=False))
+            for item in abranch:
+                templist.append(self.serialClone(abranch=item))
             return templist
 
-        elif type(abranch) in [bool, int, float, str]:
+        elif isinstance(abranch, (bool, int, float, str)):
             return abranch
         else:
             return str(type(abranch))

@@ -110,14 +110,18 @@ class ApparatusInterface:
             self.node.listen('appa')
         return self.returnedValue
 
-    def serialClone(self):
+    def serialClone(self, address=None):
         # Build expected reply
         ereply = {}
         ereply['subject'] = 'target.apparatus.recv_value'
         ereply['args'] = ['clone', 'e_reply']
 
         # Build primary message
-        message = {'subject': 'target.apparatus.serialClone', 'ereply': ereply}
+        message = {
+            'subject': 'target.apparatus.serialClone',
+            'ereply': ereply,
+            'kwargs': {'address': address},
+        }
         self.loopBlocks['clone'] = False
         self.node.send('appa', message)
         while not self.loopBlocks['clone']:
