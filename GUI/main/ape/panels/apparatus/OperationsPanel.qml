@@ -1,16 +1,18 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import Qt.labs.settings 1.0
 
 GroupBox {
   title: qsTr("Operations")
+
   GridLayout {
     anchors.fill: parent
     Button {
       Layout.fillWidth: true
       text: qsTr("Connect All Devices")
       onClicked: {
-        nodeHandler.appInterface.connectAll(true)
+        nodeHandler.appInterface.connectAll(simulationCheck.checked)
         nodeHandler.procInterface.refreshEprocs()
       }
     }
@@ -20,5 +22,14 @@ GroupBox {
       text: qsTr("Disconnect All Devices")
       onClicked: nodeHandler.appInterface.disconnectAll()
     }
+
+    CheckBox {
+      id: simulationCheck
+      text: qsTr("Simulation")
+    }
+  }
+
+  Settings {
+    property alias simulationMode: simulationCheck.checked
   }
 }
