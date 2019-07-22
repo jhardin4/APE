@@ -27,7 +27,7 @@ class Motion(Device):
         self.motionmode = 'loadrun'
         # Defines the motion axes of the motion device
         self.axes = ['X', 'x', 'Y', 'y', 'Z', 'z']
-        # Strage location for default motion settings
+        # Storage location for default motion settings
         self.motionsetting = {}
         # Defining the elemental procedures
         self.requirements['Move'] = {}
@@ -104,11 +104,11 @@ class Motion(Device):
         #
         if dmotionmode != '':
             self.motionmode = dmotionmode
-            self.motionsettings['motionmode'] = dmotionmode
+            self.motionsetting['motionmode'] = dmotionmode
 
         if dmotiontype != '':
             self.motiontype = dmotiontype
-            self.motionsettings['motiontype'] = dmotiontype
+            self.motionsetting['motiontype'] = dmotiontype
 
         if RelAbs != '':
             self.fSet_RelAbs(RelAbs, motionmode)
@@ -122,7 +122,7 @@ class Motion(Device):
         if RelAbs == 'Abs':
             self.commandlog.append('G90 \n')
 
-        self.motionsettings['RelAbs'] = RelAbs
+        self.motionsetting['RelAbs'] = RelAbs
         self.fRun(motionmode)
 
     def MotionCMD(self, point, speed, motiontype):
