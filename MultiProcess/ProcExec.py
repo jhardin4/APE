@@ -51,9 +51,7 @@ class ProcExec:
         else:
 
             def proc(reqs):
-                self.executor.Send(
-                    {'devices': device, 'procedure': procedure, 'details': reqs}
-                )
+                self.apparatus.DoEproc(device, procedure, reqs)
 
         return proc
 
