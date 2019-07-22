@@ -77,7 +77,7 @@ class WatchlistModel(QAbstractItemModel, WatchlistModelRoles):
         switch = {
             Qt.DisplayRole: lambda: item.key,
             self.KeyRole: lambda: item.key,
-            self.ValueRole: lambda: item.value,
+            self.ValueRole: lambda: str(item.value),
         }
 
         data = switch.get(role, lambda: None)()

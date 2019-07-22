@@ -13,6 +13,7 @@ GroupBox {
       text: qsTr("Connect All Devices")
       onClicked: {
         nodeHandler.appInterface.connectAll(simulationCheck.checked)
+        nodeHandler.appInterface.refreshProclog()
         nodeHandler.procInterface.refreshEprocs()
       }
     }
@@ -20,7 +21,10 @@ GroupBox {
     Button {
       Layout.fillWidth: true
       text: qsTr("Disconnect All Devices")
-      onClicked: nodeHandler.appInterface.disconnectAll()
+      onClicked: {
+        nodeHandler.appInterface.disconnectAll()
+        nodeHandler.appInterface.refreshProclog()
+      }
     }
 
     CheckBox {

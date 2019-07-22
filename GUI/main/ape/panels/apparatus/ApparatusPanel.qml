@@ -21,6 +21,11 @@ Item {
     appInterface: nodeHandler.appInterface
   }
 
+  ProclogModel {
+    id: proclogModel
+    appInterface: nodeHandler.appInterface
+  }
+
   RowLayout {
     anchors.fill: parent
     anchors.margins: Style.singleMargin
@@ -30,12 +35,25 @@ Item {
       GroupBox {
         Layout.fillWidth: true
         Layout.fillHeight: true
+        Layout.preferredHeight: 300
         title: qsTr("Apparatus")
 
         AppImageTreeView {
           id: treeView
           anchors.fill: parent
           model: treeModel
+        }
+      }
+
+      GroupBox {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.preferredHeight: 200
+        title: qsTr("Proclog")
+
+        ProclogTreeView {
+          anchors.fill: parent
+          model: proclogModel
         }
       }
     }

@@ -13,8 +13,7 @@ Item {
     id: d
     property bool big: root.width > root.bigWidth
 
-    onBigChanged: changeBig()
-
+    //onBigChanged: changeBig()
     function changeBig() {
       {
         if (big) {

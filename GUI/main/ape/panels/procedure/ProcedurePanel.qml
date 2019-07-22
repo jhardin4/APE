@@ -65,6 +65,7 @@ Item {
                                          treeView.selectedProcedure[1], {
 
                                          })
+            nodeHandler.appInterface.refreshProclog()
           }
         }
       }
@@ -111,15 +112,20 @@ Item {
             text: qsTr("Execute")
             Layout.fillWidth: true
             enabled: tableView.currentRow > -1
-            onClicked: nodeHandler.procInterface.doProcedure(
-                         tableView.currentRow)
+            onClicked: {
+              nodeHandler.procInterface.doProcedure(tableView.currentRow)
+              nodeHandler.appInterface.refreshProclog()
+            }
           }
 
           Button {
             text: qsTr("Execute All")
             Layout.fillWidth: true
             enabled: tableView.rowCount > 0
-            onClicked: nodeHandler.procInterface.doProclist()
+            onClicked: {
+              nodeHandler.procInterface.doProclist()
+              nodeHandler.appInterface.refreshProclog()
+            }
           }
         }
       }

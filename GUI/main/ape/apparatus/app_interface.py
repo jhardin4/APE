@@ -16,6 +16,7 @@ class AppInterface(QObject):
     _gui_node: GuiNode
     guiNodeChanged = Signal()
     appImageChanged = Signal()
+    proclogChanged = Signal()
     watchedChanged = Signal()
     itemUpdated = Signal(str)
 
@@ -25,6 +26,7 @@ class AppInterface(QObject):
         self._gui_node = None
         self._app_image = AppImageData(name='root')
         self._watched = []
+        self._proclog = []
 
     @Property(GuiNode, notify=guiNodeChanged)
     def guiNode(self):
@@ -43,10 +45,16 @@ class AppInterface(QObject):
             logger.warning('Cannot refresh without guiNode')
             return
 
-        logger.debug('starting serial clone')
-        data = self._gui_node.apparatus.serialClone()
-        self._app_image = AppImageData.from_dict(data, 'root')
-
+        logger.debug('starting serial clone of devices and information')
+        self._app_image.clear()
+        devices = self._gui_node.apparatus.serialClone(address=['devices'])
+        device_data = AppImageData.from_dict(devices, 'devices')
+        device_data.parent = self._app_image
+        self._app_image['devices'] = device_data
+        information = self._gui_node.apparatus.serialClone(address=['information'])
+        information_data = AppImageData.from_dict(information, 'information')
+        information_data.parent = self._app_image
+        self._app_image['information'] = information_data
         logger.debug(f'serial clone completed {self._app_image}')
 
         self.appImageChanged.emit()
@@ -54,6 +62,22 @@ class AppInterface(QObject):
     @property
     def app_image(self):
         return self._app_image
+
+    @Slot()
+    def refreshProclog(self):
+        if not self._gui_node:
+            logger.warning('Cannot refresh without guiNode')
+            return
+
+        logger.debug('starting serial clone of proclog')
+        self._proclog = self._gui_node.apparatus.serialClone(address=['proclog'])
+        logger.debug(f'serial clone of proclog completed {self._proclog}')
+
+        self.proclogChanged.emit()
+
+    @property
+    def proclog(self):
+        return self._proclog
 
     @Slot(str, str, result=int)
     def findAndReplace(self, find, replace):
