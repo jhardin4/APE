@@ -25,8 +25,10 @@ class Procedure:
         # self.CheckRequirements()
         self.Report(string='start')
         self.Report()
-        self.Plan()
-        self.Report(string='end')
+        try:
+            self.Plan()
+        finally:  # makes sure depthindex is decreased on error
+            self.Report(string='end')
 
     def Report(self, string=''):
         if string == '':
@@ -78,8 +80,10 @@ class Procedure:
 
     def DoEproc(self, device, method, details):
         self.Report(string='start')
-        self.executor.execute(
-            [[{'devices': device, 'procedure': method, 'details': details}]]
-        )
         self.apparatus.LogProc('eproc_' + device + '_' + method, details)
-        self.Report(string='end')
+        try:
+            self.executor.execute(
+                [[{'devices': device, 'procedure': method, 'details': details}]]
+            )
+        finally:  # makes sure depthindex is decreased on error
+            self.Report(string='end')
