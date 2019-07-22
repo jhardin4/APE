@@ -71,9 +71,13 @@ RUN /tmp/install/1-system.sh
 COPY 2-glx.sh /tmp/install/
 RUN /tmp/install/2-glx.sh
 
+# Install dependencies
+COPY 3-deps.sh /tmp/install/
+RUN /tmp/install/3-deps.sh
+
 # Build and install devel stuff
-COPY 3-tools.sh /tmp/install/
-RUN /tmp/install/3-tools.sh
+COPY 4-tools.sh /tmp/install/
+RUN /tmp/install/4-tools.sh
 
 # Final cleanup
 RUN rm -rf /tmp/install
