@@ -32,7 +32,10 @@ GroupBox {
     Button {
       Layout.fillWidth: true
       text: qsTr("Refresh")
-      onClicked: nodeHandler.appInterface.refresh()
+      onClicked: {
+        nodeHandler.appInterface.refresh()
+        nodeHandler.procInterface.refreshEprocs()
+      }
     }
     Button {
       Layout.fillWidth: true

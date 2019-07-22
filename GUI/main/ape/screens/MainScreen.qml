@@ -7,6 +7,7 @@ import ape.controls 1.0
 import ape.panels.startup 1.0
 import ape.panels.apparatus 1.0
 import ape.panels.procedure 1.0
+import ape.panels.utilities 1.0
 import Qt.labs.settings 1.0
 
 Item {
@@ -34,7 +35,7 @@ Item {
         id: procedurePanel
       }
 
-      Item {
+      UtilitiesPanel {
         id: utilitiesPanel
       }
 
