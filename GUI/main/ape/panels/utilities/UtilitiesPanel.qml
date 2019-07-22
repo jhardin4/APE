@@ -21,6 +21,10 @@ Item {
       Layout.fillWidth: true
     }
 
+    CameraControlPanel {
+      Layout.fillWidth: true
+    }
+
     VerticalFiller {
     }
   }
