@@ -1,7 +1,7 @@
 import logging
 from inspect import isclass
 
-from qtpy.QtCore import QObject, Property, Signal, Slot
+from qtpy.QtCore import QObject, Property, Signal, Slot, QUrl
 
 import Procedures
 import Project_Procedures
@@ -207,3 +207,21 @@ class ProcedureInterface(QObject):
         logger.debug(f'do procedure {device}_{procedure}, reqs: {reqs}')
         self._gui_node.executor.do(device, procedure, reqs)
         logger.debug('done')
+
+    @Slot(QUrl)
+    def saveAs(self, url):
+        if not self._gui_node:
+            logger.warning('Cannot save without guiNode')
+            return
+
+        filename = url.toLocalFile()
+        self._gui_node.executor.exportProclist(filename)
+
+    @Slot(QUrl)
+    def importFrom(self, url):
+        if not self._gui_node:
+            logger.warning('Cannot import without guiNode')
+            return
+
+        filename = url.toLocalFile()
+        self._gui_node.executor.importProclist(filename)

@@ -10,7 +10,7 @@ GroupBox {
   FileDialog {
     id: fileDialog
     nameFilters: [qsTr("JSON files (*.json)"), qsTr("All files (*)")]
-    title: qsTr("Save File")
+    title: openMode ? qsTr("Open AppImage File") : qsTr("Save AppImage File")
     folder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
     property bool openMode: true
     fileMode: openMode ? FileDialog.OpenFile : FileDialog.SaveFile

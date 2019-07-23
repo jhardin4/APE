@@ -10,6 +10,10 @@ GroupBox {
   property alias proclistView: tableView
   title: qsTr("Proclist")
 
+  ImportExportDialog {
+    id: importExportDialog
+  }
+
   RowLayout {
     anchors.fill: parent
 
@@ -81,6 +85,10 @@ GroupBox {
         }
       }
 
+      Item {
+        height: Style.singleSpacing
+      }
+
       Button {
         text: qsTr("Remove")
         enabled: tableView.currentRow > -1
@@ -96,6 +104,26 @@ GroupBox {
         onClicked: {
           nodeHandler.procInterface.clearProclist()
           nodeHandler.procInterface.refreshProclist()
+        }
+      }
+
+      Item {
+        height: Style.singleSpacing
+      }
+
+      Button {
+        text: qsTr("Export...")
+        onClicked: {
+          importExportDialog.openMode = false
+          importExportDialog.open()
+        }
+      }
+
+      Button {
+        text: qsTr("Import...")
+        onClicked: {
+          importExportDialog.openMode = true
+          importExportDialog.open()
         }
       }
     }
