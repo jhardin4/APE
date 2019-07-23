@@ -147,6 +147,11 @@ class ApparatusInterface:
         message = {'subject': 'target.apparatus.logApparatus', 'args': margs}
         self.node.send('appa', message)
 
+    def importApparatus(self, fname):
+        margs = [fname]
+        message = {'subject': 'target.apparatus.importApparatus', 'args': margs}
+        self.node.send('appa', message)
+
     def DoEproc(self, device, method, details):
         margs = [device, method, details]
         message = {'subject': 'target.apparatus.DoEproc', 'args': margs}

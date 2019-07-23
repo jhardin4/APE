@@ -391,6 +391,18 @@ class Apparatus(dict):
         json.dump(self.serialClone(), jsonfile, indent=2, sort_keys=True)
         jsonfile.close()
 
+    def importApparatus(self, fname=None):
+        if not fname:
+            fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
+        with open(fname, 'r') as old_app:
+            old_app_data = json.load(old_app)
+            # Clear the proclog
+            self.proclog = []
+            self['proclog'] = self.proclog
+            # Replace the current device and information
+            self['devices'] = old_app_data['devices']
+            self['information'] = old_app_data['information']
+
     def DoEproc(self, device, method, details):
         self.LogProc('eproc_' + device + '_' + method, 'start')
         self.executor.execute(
