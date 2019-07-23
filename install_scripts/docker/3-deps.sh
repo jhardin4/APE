@@ -13,6 +13,9 @@ pip install \
     opencv-python \
     pyueye
 
+pip uninstall --yes \
+    enum34
+
 ###########################
 # Clean up
 ###########################
