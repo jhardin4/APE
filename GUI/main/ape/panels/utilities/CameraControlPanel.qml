@@ -15,15 +15,39 @@ GroupBox {
       id: view
       Layout.fillWidth: true
       Layout.fillHeight: true
-      implicitHeight: 200
-      implicitWidth: 200
+      implicitHeight: 640
+      implicitWidth: 480
       running: runningButton.checked
+      camId: deviceCombo.currentIndex
+
+      Label {
+        anchors.centerIn: parent
+        text: qsTr(
+                "No UEye driver loaded.\nCheck the PYUEYE_DLL_PATH environment variable.")
+        horizontalAlignment: Text.AlignHCenter
+        visible: !view.driverLoaded
+      }
     }
 
-    Button {
-      id: runningButton
-      text: checked ? qsTr("Close") : qsTr("Open")
-      checkable: true
+    RowLayout {
+      enabled: view.driverLoaded
+      Layout.alignment: Qt.AlignHCenter
+      Label {
+        text: qsTr("Device:")
+      }
+
+      ComboBox {
+        id: deviceCombo
+        model: [0, 1, 2]
+        enabled: !view.running
+      }
+
+      Button {
+        id: runningButton
+        text: checked ? qsTr("Close") : qsTr("Open")
+        checkable: true
+        checked: view.running
+      }
     }
   }
 }
