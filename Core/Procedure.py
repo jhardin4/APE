@@ -1,3 +1,6 @@
+from Core.Apparatus import InvalidApparatusAddressException
+
+
 class Procedure:
     def __init__(self, apparatus, executor, **kwargs):
         self.requirements = {}
@@ -46,10 +49,12 @@ class Procedure:
                 self.requirements[req]['source'] == 'apparatus'
                 and self.requirements[req]['address'] != ''
             ):
-                tempvalue = self.apparatus.getValue(self.requirements[req]['address'])
-                if tempvalue != 'Invalid ApparatusAddress':
+                try:
+                    tempvalue = self.apparatus.getValue(
+                        self.requirements[req]['address']
+                    )
                     self.requirements[req]['value'] = tempvalue
-                else:
+                except InvalidApparatusAddressException:
                     raise Exception(
                         'ApparatusAddress '
                         + str(self.requirements[req]['address'])

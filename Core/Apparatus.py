@@ -4,6 +4,10 @@ import time
 import AppTemplates
 
 
+class InvalidApparatusAddressException(Exception):
+    pass
+
+
 class Apparatus(dict):
     def __init__(self):
         dict.__init__(self)
@@ -204,12 +208,18 @@ class Apparatus(dict):
             try:
                 level = level[branch]
             except TypeError:
-
-                return 'Invalid ApparatusAddress'
+                raise InvalidApparatusAddressException('Type does not match')
             except KeyError:
-                return 'Invalid ApparatusAddress'
-
+                raise InvalidApparatusAddressException('Key not found')
         return level
+
+    def checkAddress(self, infoAddress=''):
+        try:
+            _ = self.getValue(infoAddress)
+        except InvalidApparatusAddressException:
+            return False
+        else:
+            return True
 
     def setValue(self, infoAddress=None, value=''):
         if not infoAddress:
@@ -222,9 +232,9 @@ class Apparatus(dict):
             try:
                 level = level[branch]
             except TypeError:
-                return 'Invalid ApparatusAddress'
+                raise InvalidApparatusAddressException('Type does not match')
             except KeyError:
-                return 'Invalid ApparatusAddress'
+                raise InvalidApparatusAddressException('Key not found')
         level[lastlevel] = value
 
     def findDevices(self, key, value=None):
