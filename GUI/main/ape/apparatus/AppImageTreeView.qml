@@ -51,6 +51,17 @@ C1.TreeView {
       nodeHandler.appInterface.removeAppEntry(key)
       nodeHandler.appInterface.refresh()
     }
+
+    function copyValue() {
+      var value = root.model.data(root.currentIndex,
+                                  AppImageTreeModel.ValueRole)
+      nodeHandler.appEntryValueCopied(value)
+    }
+
+    function copyName() {
+      var name = root.model.data(root.currentIndex, AppImageTreeModel.NameRole)
+      nodeHandler.appEntryNameCopied(name)
+    }
   }
 
   Connections {
@@ -106,6 +117,19 @@ C1.TreeView {
       text: qsTr("Remove Entry")
       enabled: root.currentIndex.valid ? root.currentIndex.parent.valid : false
       onClicked: d.removeEntry()
+    }
+
+    MenuItem {
+      text: qsTr("Copy Value To Requirements")
+      enabled: root.currentIndex.valid ? root.model.flags(
+                                           root.currentIndex) & Qt.ItemIsEditable : false
+      onClicked: d.copyValue()
+    }
+
+    MenuItem {
+      text: qsTr("Copy Name to Requirements")
+      enabled: Boolean(root.currentIndex.valid)
+      onClicked: d.copyName()
     }
   }
 

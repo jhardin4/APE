@@ -17,11 +17,31 @@ C1.TableView {
   QtObject {
     id: d
 
-    function valueUpdate(row, key, value) {
+    function valueUpdate(row, value) {
+      var key = root.model[row]["key"]
       updateTimer.row = row
       updateTimer.key = key
       updateTimer.value = value
       updateTimer.start()
+    }
+  }
+
+  Connections {
+    target: nodeHandler
+    ignoreUnknownSignals: true
+
+    onAppEntryValueCopied: {
+      var row = root.currentRow
+      if (row > -1) {
+        d.valueUpdate(row, value)
+      }
+    }
+
+    onAppEntryNameCopied: {
+      var row = root.currentRow
+      if (row > -1) {
+        d.valueUpdate(row, name)
+      }
     }
   }
 
@@ -79,8 +99,7 @@ C1.TableView {
 
         onEditingFinished: {
           root.editingRow = -1
-          var key = root.model[styleData.row]["key"]
-          d.valueUpdate(styleData.row, key, text)
+          d.valueUpdate(styleData.row, text)
         }
 
         onVisibleChanged: {

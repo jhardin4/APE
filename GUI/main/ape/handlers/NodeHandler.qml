@@ -7,6 +7,9 @@ QtObject {
   id: root
   readonly property bool guiRunning: guiNode.running
 
+  signal appEntryValueCopied(string value)
+  signal appEntryNameCopied(string name)
+
   readonly property QtObject d: QtObject {
   }
 
