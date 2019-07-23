@@ -1,3 +1,5 @@
+import json
+
 import Core
 import Procedures
 import Project_Procedures
@@ -99,6 +101,16 @@ class ProcExec:
         :return:
         """
         del self.proclist[:]
+
+    def exportProclist(self, fname):
+        jsonfile = open(fname, mode='w')
+        json.dump(self.getProclist(), jsonfile, indent=2, sort_keys=True)
+        jsonfile.close()
+
+    def importProclist(self, fname):
+        with open(fname, 'r') as old_proclist:
+            data = json.load(old_proclist)
+        self.proclist = data
 
     def insertProc(self, index, device, procedure, requirements):
         """

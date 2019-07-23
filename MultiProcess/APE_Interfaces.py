@@ -371,6 +371,16 @@ class ExecutorInterface:
         message = {'subject': 'target.clearProclist'}
         self.node.send('procexec', message)
 
+    def exportProclist(self, fname):
+        margs = [fname]
+        message = {'subject': 'target.exportProclist', 'args': margs}
+        self.node.send('procexec', message)
+
+    def importProclist(self, fname):
+        margs = [fname]
+        message = {'subject': 'target.importProclist', 'args': margs}
+        self.node.send('procexec', message)
+
     def insertProc(self, index, device, procedure, requirements):
         margs = [index, device, procedure, requirements]
         message = {'subject': 'target.insertProc', 'args': margs}
