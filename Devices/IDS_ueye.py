@@ -39,11 +39,11 @@ class IDS_ueye(Sensor):
             from Devices.Drivers import camera
 
             try:
-                self.handle = camera.ueye()
+                self.handle = camera.UEye()
             except Exception:
                 temp = input('Do you want to try to connect again?([y],n)')
                 if temp in ['', 'y', 'yes']:
-                    self.handle = camera.ueye()
+                    self.handle = camera.UEye()
         self.addlog(self.name + ' is connected.')
 
     def Disconnect(self):
