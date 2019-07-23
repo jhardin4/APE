@@ -77,14 +77,28 @@ class ProcedureInterface(QObject):
             logger.warning('Cannot fetch requirements without guiNode')
             return
 
-        if device in ('Procedures', 'Project_Procedures'):
-            module = Procedures if device == 'Procedures' else Project_Procedures
-            f = getattr(module, procedure)(
-                self._gui_node.apparatus, self._gui_node.executor
-            )
-            return [
-                {'key': k, "value": str(v['value'])} for k, v in f.requirements.items()
-            ]
+        if device in ('Procedures', 'Project_Procedures', ''):
+            if device == 'Procedures':
+                module = Procedures
+            elif device == 'Project_Procedures':
+                module = Project_Procedures
+            else:
+                module = (
+                    Procedures if procedure in dir(Procedures) else Project_Procedures
+                )
+            try:
+                f = getattr(module, procedure)(
+                    self._gui_node.apparatus, self._gui_node.executor
+                )
+                return [
+                    {'key': k, "value": str(v['value'])}
+                    for k, v in f.requirements.items()
+                ]
+            except Exception as e:
+                logger.warning(
+                    f'Cannot fetch requirements of {device}_{procedure}: {str(e)}'
+                )
+                return []
         else:
             reqs = self._gui_node.executor.getRequirements(
                 device, procedure, 'procexec'

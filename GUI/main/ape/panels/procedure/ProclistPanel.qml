@@ -142,8 +142,28 @@ GroupBox {
         tableView.selectRow(tableRow)
       }
 
-      model: (tableView.currentRow
-              > -1) ? tableView.model[tableView.currentRow]["requirements"] : []
+      model: (tableView.currentRow > -1) ? getModel(
+                                             tableView.model[tableView.currentRow]) : []
+      function getModel(base) {
+        // extend requirements with additional default requirements
+        var reqs = nodeHandler.procInterface.getRequirements(base["device"],
+                                                             base["procedure"])
+        var base_reqs = base["requirements"]
+        for (var i = 0; i < base_reqs.length; ++i) {
+          var found = false
+          for (var j = 0; j < reqs.length; ++j) {
+            if (reqs[j]["key"] == base_reqs[i]["key"]) {
+              reqs[j]["value"] = base_reqs[i]["value"]
+              found = true
+              break
+            }
+          }
+          if (!found) {
+            reqs.push(base_reqs[i])
+          }
+        }
+        return reqs
+      }
     }
   }
 }
