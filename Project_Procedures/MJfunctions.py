@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import utils  # kevins utils
+from .utils import detectGap, detectVerticalEdges  # kevins utils
 import skimage
 import scipy
 import scipy.ndimage
@@ -102,10 +102,10 @@ def gap_finder(imgi, imgf, binary_img, gap_padding, samplename, path, save):
 
         imgi = cv2.cvtColor(imgi, cv2.COLOR_BGR2RGB)
 
-        lines = utils.detectVerticalEdges(imgi)
+        lines = detectVerticalEdges(imgi)
 
-        [line1, line2], other_lines = utils.detectGap(imgi, lines)
-
+        [line1, line2], other_lines = detectGap(imgi, lines)
+        #
         (m, n) = imgi.shape[:2]
 
         a = np.cos(line1['theta'])

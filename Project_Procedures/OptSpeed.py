@@ -52,8 +52,8 @@ class OptSpeed(Procedure):
             ['information', 'ProcedureData', 'SpanningSample', 'cur_parameters', 'zGap']
         )
 
-        self.ImgPred = Project_Procedures.ImPredict(self.appartus, self.executor)
-        self.ParamAdjust = Project_Procedures.Suggest(self.appartus, self.executor)
+        self.ImgPred = Project_Procedures.ImPredict(self.apparatus, self.executor)
+        self.ParamAdjust = Project_Procedures.Suggest(self.apparatus, self.executor)
 
     def Plan(self):
         # Renaming information from requirements

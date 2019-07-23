@@ -1,8 +1,11 @@
 import logging
+from inspect import isclass
 
 from qtpy.QtCore import QObject, Property, Signal, Slot
 
 import Procedures
+import Project_Procedures
+from Core import Procedure
 from ..nodes import GuiNode
 
 logger = logging.getLogger('ProcedureInterface')
@@ -46,11 +49,19 @@ class ProcedureInterface(QObject):
             logger.warning('Cannot fetch eprocs without guiNode')
             return
 
+        def procs_from_module(module):
+            procs = []
+            for name in dir(module):
+                proc = getattr(module, name)
+                if isclass(proc) and issubclass(proc, Procedure):
+                    procs.append(name)
+            return procs
+
         logger.debug('fetching EProcs')
-        epl_dict = {}
-        epl_dict['Procedures'] = [
-            name for name in dir(Procedures) if not name.startswith('__')
-        ]
+        epl_dict = {
+            'Procedures': procs_from_module(Procedures),
+            'Project_Procedures': procs_from_module(Project_Procedures),
+        }
 
         epl = self._gui_node.executor.getDevices('procexec')
         for device in epl:
@@ -66,8 +77,9 @@ class ProcedureInterface(QObject):
             logger.warning('Cannot fetch requirements without guiNode')
             return
 
-        if device == 'Procedures':
-            f = getattr(Procedures, procedure)(
+        if device in ('Procedures', 'Project_Procedures'):
+            module = Procedures if device == 'Procedures' else Project_Procedures
+            f = getattr(module, procedure)(
                 self._gui_node.apparatus, self._gui_node.executor
             )
             return [
@@ -112,7 +124,7 @@ class ProcedureInterface(QObject):
             logger.warning('Cannot add requirements without guiNode')
             return
 
-        if device == 'Procedures':
+        if device in ('Procedures', 'Project_Procedures'):
             device = ''
 
         reqs = self._convert_req_model_to_list(requirements)
@@ -188,7 +200,7 @@ class ProcedureInterface(QObject):
             logger.warning('Cannot do procedure without guiNode')
             return
 
-        if device == 'Procedures':
+        if device in ('Procedures', 'Project_Procedures'):
             device = ''
 
         reqs = self._convert_req_model_to_list(requirements)
