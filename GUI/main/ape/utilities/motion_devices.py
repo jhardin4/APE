@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from inspect import isclass
 
 from qtpy.QtCore import QObject, Signal, Property, Slot
 
@@ -51,7 +52,7 @@ class MotionDevices(QObject):
         for name, device in data.get('devices', dict()).items():
             type_ = device['type'].value
             class_ = getattr(Devices, type_, None)
-            if issubclass(class_, Motion):
+            if isclass(class_) and issubclass(class_, Motion):
                 motion_devices.append(name)
 
         self._devices = motion_devices
