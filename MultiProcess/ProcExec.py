@@ -1,5 +1,6 @@
 import Core
 import Procedures
+import Project_Procedures
 from MultiProcess.zmqNode import zmqNode
 from MultiProcess import APE_Interfaces
 
@@ -37,7 +38,10 @@ class ProcExec:
 
     def _create_procedure(self, device, procedure, requirements):
         if device == '':
-            raw_proc = getattr(Procedures, procedure)(self.apparatus, self.executor)
+            raw_proc = getattr(Procedures, procedure, None)
+            if raw_proc is None:
+                raw_proc = getattr(Project_Procedures, procedure)
+            raw_proc = raw_proc(self.apparatus, self.executor)
             if not requirements:
 
                 def proc(_):
