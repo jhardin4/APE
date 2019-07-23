@@ -206,6 +206,15 @@ class AppInterface(QObject):
         filename = url.toLocalFile()
         self._gui_node.apparatus.logApparatus(filename)
 
+    @Slot(QUrl)
+    def importFrom(self, url):
+        if not self._gui_node:
+            logger.warning('Cannot import without guiNode')
+            return
+
+        filename = url.toLocalFile()
+        self._gui_node.apparatus.importApparatus(filename)
+
     @Slot(str, 'QVariant')
     def setValue(self, key, value):
         if not self._gui_node:

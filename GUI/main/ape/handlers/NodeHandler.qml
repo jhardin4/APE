@@ -18,6 +18,13 @@ QtObject {
     guiNode.stop()
   }
 
+  function refreshAll() {
+    appInterface.refresh()
+    appInterface.refreshProclog()
+    procInterface.refreshEprocs()
+    procInterface.refreshProclist()
+  }
+
   readonly property GuiNode guiNode: GuiNode {
     l2gAddress: "tcp://127.0.0.1:5577"
     a2gAddress: "tcp://127.0.0.1:5579"
@@ -27,10 +34,7 @@ QtObject {
 
     onRunningChanged: {
       if (running) {
-        appInterface.refresh()
-        appInterface.refreshProclog()
-        procInterface.refreshEprocs()
-        procInterface.refreshProclist()
+        refreshAll()
       }
     }
   }

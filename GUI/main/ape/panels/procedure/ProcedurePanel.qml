@@ -132,15 +132,6 @@ Item {
 
       ColumnLayout {
         Button {
-          text: qsTr("Remove")
-          enabled: tableView.currentRow > -1
-          onClicked: {
-            nodeHandler.procInterface.removeProcedure(tableView.currentRow)
-            nodeHandler.procInterface.refreshProclist()
-          }
-        }
-
-        Button {
           text: qsTr("Move Up")
           enabled: tableView.currentRow > 0
           onClicked: {
@@ -160,6 +151,24 @@ Item {
             nodeHandler.procInterface.moveProcedureDown(row)
             nodeHandler.procInterface.refreshProclist()
             tableView.selectRow(row + 1)
+          }
+        }
+
+        Button {
+          text: qsTr("Remove")
+          enabled: tableView.currentRow > -1
+          onClicked: {
+            nodeHandler.procInterface.removeProcedure(tableView.currentRow)
+            nodeHandler.procInterface.refreshProclist()
+          }
+        }
+
+        Button {
+          text: qsTr("Clear")
+          enabled: tableView.rowCount > 0
+          onClicked: {
+            nodeHandler.procInterface.clearProclist()
+            nodeHandler.procInterface.refreshProclist()
           }
         }
       }

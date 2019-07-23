@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-//import QtQuick.Dialogs 1.2
 import Qt.labs.platform 1.0
 import Qt.labs.settings 1.0
 
@@ -13,11 +12,17 @@ GroupBox {
     nameFilters: [qsTr("JSON files (*.json)"), qsTr("All files (*)")]
     title: qsTr("Save File")
     folder: StandardPaths.writableLocation(StandardPaths.HomeLocation)
-    fileMode: FileDialog.SaveFile
+    property bool openMode: true
+    fileMode: openMode ? FileDialog.OpenFile : FileDialog.SaveFile
 
     onAccepted: {
       settings.file = file
-      nodeHandler.appInterface.saveAs(file)
+      if (openMode) {
+        nodeHandler.appInterface.importFrom(file)
+        nodeHandler.refreshAll()
+      } else {
+        nodeHandler.appInterface.saveAs(file)
+      }
     }
 
     onVisibleChanged: {
@@ -29,6 +34,7 @@ GroupBox {
 
   RowLayout {
     anchors.fill: parent
+
     Button {
       Layout.fillWidth: true
       text: qsTr("Refresh")
@@ -37,22 +43,31 @@ GroupBox {
         nodeHandler.procInterface.refreshEprocs()
       }
     }
+
     Button {
       Layout.fillWidth: true
       text: qsTr("New from Template")
       onClicked: nodeHandler.appInterface.startTemplate(false)
     }
+
     Button {
       Layout.fillWidth: true
 
       text: qsTr("Import...")
-      enabled: false
+      onClicked: {
+        fileDialog.openMode = true
+        fileDialog.open()
+      }
     }
+
     Button {
       Layout.fillWidth: true
 
       text: qsTr("Export...")
-      onClicked: fileDialog.open()
+      onClicked: {
+        fileDialog.openMode = false
+        fileDialog.open()
+      }
     }
   }
 
