@@ -42,7 +42,7 @@ def test_creating_model_from_empty_app_image_works(empty_app_image):
     model.appInterface = create_interface(empty_app_image)
 
     assert model.rowCount(QModelIndex()) == 4
-    assert model.columnCount(QModelIndex()) == 3
+    assert model.columnCount(QModelIndex()) == 4
     index = model.index(0, 0, QModelIndex())
     assert model.rowCount(index) == 0
     assert index.data(model.NameRole) == 'devices'
@@ -54,7 +54,7 @@ def test_creating_model_from_simple_app_image_works(simple_app_image):
     model.appInterface = create_interface(simple_app_image)
 
     assert model.rowCount(QModelIndex()) == 4
-    assert model.columnCount(QModelIndex()) == 3
+    assert model.columnCount(QModelIndex()) == 4
     index = model.index(0, 0, QModelIndex())
     assert model.rowCount(index) == 2
     assert index.data(model.NameRole) == 'devices'

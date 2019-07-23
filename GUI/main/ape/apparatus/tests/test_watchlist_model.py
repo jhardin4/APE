@@ -49,10 +49,10 @@ def test_creating_model_from_simple_data_works(simple_data):
     index = model.index(0, 0, QModelIndex())
     assert model.rowCount(index) == 0
     assert index.data(model.KeyRole) == 'passage'
-    assert index.data(model.ValueRole) == pytest.approx(433.01)
+    assert float(index.data(model.ValueRole)) == pytest.approx(433.01)
     index = model.index(2, 0, QModelIndex())
     assert index.data(model.KeyRole) == 'garage'
-    assert index.data(model.ValueRole) == 161
+    assert index.data(model.ValueRole) == '161'
 
 
 def test_item_updated_triggers_data_changed(simple_data):
