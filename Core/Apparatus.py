@@ -48,10 +48,12 @@ class Apparatus(dict):
                     'descriptors' in self['devices'][device]
                     and type(self['devices'][device]['descriptors']) == list
                 ):
-                    self['devices'][device]['descriptors'] = [
-                        *self['devices'][device]['descriptors'],
-                        *self['devices'][device]['address'].descriptors,
-                    ]
+                    self['devices'][device]['descriptors'] = list(
+                        {
+                            *self['devices'][device]['descriptors'],
+                            *self['devices'][device]['address'].descriptors,
+                        }
+                    )
                 else:
                     self['devices'][device]['descriptors'] = self['devices'][device][
                         'address'
@@ -80,12 +82,14 @@ class Apparatus(dict):
                     'descriptors' in self['devices'][device]
                     and type(self['devices'][device]['descriptors']) == list
                 ):
-                    self['devices'][device]['descriptors'] = [
-                        *self['devices'][device]['descriptors'],
-                        *self.executor.getDescriptors(
-                            device, self['devices'][device]['address']
-                        ),
-                    ]
+                    self['devices'][device]['descriptors'] = list(
+                        {
+                            *self['devices'][device]['descriptors'],
+                            *self.executor.getDescriptors(
+                                device, self['devices'][device]['address']
+                            ),
+                        }
+                    )
                 else:
                     self['devices'][device][
                         'descriptors'
