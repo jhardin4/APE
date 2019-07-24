@@ -51,9 +51,8 @@ GroupBox {
         enabled: treeView.selectedProcedure.length > 0
         onClicked: {
           nodeHandler.procInterface.do(treeView.selectedProcedure[0],
-                                       treeView.selectedProcedure[1], {
-
-                                       })
+                                       treeView.selectedProcedure[1],
+                                       procReqView.model)
           nodeHandler.appInterface.refreshProclog()
         }
       }
