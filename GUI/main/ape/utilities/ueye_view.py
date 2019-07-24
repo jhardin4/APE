@@ -4,7 +4,6 @@ from qtpy.QtCore import QThread, Signal, Property, Qt, QRect, QMutex
 from qtpy.QtGui import QImage, QPainter
 from qtpy.QtQuick import QQuickPaintedItem
 
-import cv2
 from Devices.Drivers.camera import UEye, pue, CameraException
 
 logger = logging.getLogger("UpdateTread")
@@ -52,6 +51,12 @@ class UpdateThread(QThread):
         self._update_mutex.unlock()
 
     def run(self):
+        try:
+            import cv2
+        except ImportError as e:
+            self.errored.emit(str(e))
+            self.stopped.emit()
+            return
         try:
             ueye = UEye(self._cam_id, self._image_width, self._image_height)
         except CameraException as e:
