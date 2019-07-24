@@ -96,9 +96,6 @@ class AppInterface(QObject):
             return
 
         self._gui_node.apparatus.Connect_All(simulation=simulation)
-        for device in self._app_image['devices'].values():
-            device.set_key('Connected', True)
-        self.appImageChanged.emit()
 
     @Slot()
     def disconnectAll(self):
@@ -107,9 +104,6 @@ class AppInterface(QObject):
             return
 
         self._gui_node.apparatus.Disconnect_All()
-        for device in self._app_image['devices'].values():
-            device.set_key('Connected', False)
-        self.appImageChanged.emit()
 
     @Slot()
     @Slot(bool)
@@ -140,7 +134,6 @@ class AppInterface(QObject):
             args = ()
             kwargs = dict()
         self._gui_node.apparatus.applyTemplate(tName, args=args, kwargs=kwargs)
-        self.refresh()
 
     @Property(list, notify=watchedChanged)
     def watched(self):
