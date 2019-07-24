@@ -102,7 +102,7 @@ class Apparatus(dict):
                     device, simulation, self['devices'][device]['address']
                 )
 
-                # Check if the device is dependent on other devices and conncect if not dependent
+                # Check if the device is dependent on other devices and connect if not dependent
                 if self.executor.getDependence(
                     device, self['devices'][device]['address']
                 ):
