@@ -10,6 +10,7 @@ from qtpy.QtCore import (
     QModelIndex,
 )
 
+from ..base.helpers import str_to_value, value_to_str
 from .app_interface import AppInterface
 from .app_image_data import AppImageData
 
@@ -99,7 +100,7 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
         switch = {
             Qt.DisplayRole: lambda: item.name,
             self.NameRole: lambda: item.name,
-            self.ValueRole: lambda: str(item.value),
+            self.ValueRole: lambda: value_to_str(item.value),
             self.WatchRole: lambda: item.watch,
             self.KeyRole: lambda: item.key,
         }
@@ -113,9 +114,14 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
             item.name = value
             changed = True
         elif role == self.ValueRole:
-            item.value = value
-            self._app_interface.setValue(item.key, value)
-            changed = True
+            new_value = str_to_value(value, item.value)
+            if new_value is None:
+                logger.error(f'Cannot convert value {item.key} {value}')
+                changed = False
+            else:
+                item.value = new_value
+                self._app_interface.setValue(item.key, new_value)
+                changed = True
         elif role == self.WatchRole:
             if value:
                 self._app_interface.append_watched(item)
@@ -138,9 +144,11 @@ class AppImageTreeModel(QAbstractItemModel, AppImageTreeModelRoles):
 
         flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
         item = index.internalPointer()
-        if len(item) == 0:
+        if not index.parent().isValid() and item.name not in ('proclog', 'eproclist'):
+            flags |= Qt.ItemIsTristate
+        elif len(item) == 0:
             flags |= Qt.ItemIsEditable
-        elif index.parent().isValid() or item.name not in ('proclog', 'eproclist'):
+        elif index.parent().isValid():
             flags |= Qt.ItemIsTristate
 
         return flags

@@ -2,6 +2,7 @@ import logging
 
 from qtpy.QtCore import QAbstractItemModel, Property, Signal, QModelIndex, Qt, Q_ENUMS
 
+from ..base.helpers import value_to_str, str_to_value
 from .app_interface import AppInterface
 
 logger = logging.getLogger('WatchlistTableModel')
@@ -77,7 +78,7 @@ class WatchlistModel(QAbstractItemModel, WatchlistModelRoles):
         switch = {
             Qt.DisplayRole: lambda: item.key,
             self.KeyRole: lambda: item.key,
-            self.ValueRole: lambda: str(item.value),
+            self.ValueRole: lambda: value_to_str(item.value),
         }
 
         data = switch.get(role, lambda: None)()
@@ -86,9 +87,14 @@ class WatchlistModel(QAbstractItemModel, WatchlistModelRoles):
     def setData(self, index, value, role=Qt.EditRole):
         item = index.internalPointer()
         if role == self.ValueRole:
-            item.value = value
-            self._app_interface.setValue(item.key, value)
-            changed = True
+            new_value = str_to_value(value, item.value)
+            if new_value is None:
+                logger.error(f'Cannot convert value {item.key} {value}')
+                changed = False
+            else:
+                item.value = new_value
+                self._app_interface.setValue(item.key, new_value)
+                changed = True
         else:
             changed = False
 
