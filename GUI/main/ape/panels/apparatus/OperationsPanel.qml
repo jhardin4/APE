@@ -12,7 +12,9 @@ GroupBox {
       Layout.fillWidth: true
       text: qsTr("Connect All Devices")
       onClicked: {
+        nodeHandler.procInterface.createUserDevice()
         nodeHandler.appInterface.connectAll(simulationCheck.checked)
+        nodeHandler.appInterface.refresh()
         nodeHandler.appInterface.refreshProclog()
         nodeHandler.procInterface.refreshEprocs()
       }
@@ -23,6 +25,7 @@ GroupBox {
       text: qsTr("Disconnect All Devices")
       onClicked: {
         nodeHandler.appInterface.disconnectAll()
+        nodeHandler.appInterface.refresh()
         nodeHandler.appInterface.refreshProclog()
       }
     }
