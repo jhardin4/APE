@@ -213,9 +213,11 @@ class Apparatus(dict):
             try:
                 level = level[branch]
             except TypeError:
-                raise InvalidApparatusAddressException('Type does not match')
+                raise InvalidApparatusAddressException(
+                    f'Type does not match: {infoAddress}'
+                )
             except KeyError:
-                raise InvalidApparatusAddressException('Key not found')
+                raise InvalidApparatusAddressException(f'Key not found: {infoAddress}')
         return level
 
     def checkAddress(self, infoAddress=''):
@@ -237,9 +239,11 @@ class Apparatus(dict):
             try:
                 level = level[branch]
             except TypeError:
-                raise InvalidApparatusAddressException('Type does not match')
+                raise InvalidApparatusAddressException(
+                    f'Type does not match: {infoAddress}'
+                )
             except KeyError:
-                raise InvalidApparatusAddressException('Key not found')
+                raise InvalidApparatusAddressException(f'Key not found: {infoAddress}')
         level[lastlevel] = value
 
     def findDevices(self, key, value=None):
