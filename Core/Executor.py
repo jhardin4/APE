@@ -137,7 +137,11 @@ class Executor:
         return self.devicelist[device]["Address"].getDependencies()
 
     def getDevices(self, address):
-        return list(self.devicelist)
+        return [
+            name
+            for name, device in self.devicelist.items()
+            if device["AddressType"] != "zmqNode"
+        ]
 
     def getEprocs(self, device, address):
 
