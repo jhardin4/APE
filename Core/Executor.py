@@ -58,10 +58,8 @@ class Executor:
             }
             self.loopBlocks['devMade'] = False
             self.node.send(rel_address, message)
-            cur_connection = self.node.cur_connection
             while not self.loopBlocks['devMade']:
                 self.node.listen(rel_address)
-            self.node.cur_connection = cur_connection
 
     def Send(self, eproc):
         if self.devicelist[eproc['devices']]['AddressType'] == 'pointer':

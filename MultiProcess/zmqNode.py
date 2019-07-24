@@ -113,10 +113,9 @@ class zmqNode:
         message = 'no message'
         try:
             message = self.connections[name].recv_json(flags=zmq.NOBLOCK)
-            self.cur_connection = name
         except zmq.Again:
             pass
-        self.handle(message)
+        self.handle(message, connection=name)
 
     def listen_all(self):
         for connection in self.connections:
@@ -136,7 +135,7 @@ class zmqNode:
     def zprint(self, message='blank'):
         print(message)
 
-    def handle(self, message):
+    def handle(self, message, connection):
         if message == 'no message':
             return
 
@@ -174,12 +173,12 @@ class zmqNode:
             elif type(loc_ereply) == str:
                 message['ereply']['kwargs'][loc_ereply] = tempresult
             reply_message = self.build_message(**message['ereply'])
-            self.send(self.cur_connection, reply_message)
+            self.send(connection, reply_message)
 
         if exception:
-            self.addlog(f'Error handling {self.cur_connection} {message}: {exception}')
+            self.addlog(f'Error handling {connection} {message}: {exception}')
         else:
-            self.addlog(f'Handled {self.cur_connection} {message}')
+            self.addlog(f'Handled {connection} {message}')
 
     def getMethod(self, maddress):
         madd_list = maddress.split('.')
