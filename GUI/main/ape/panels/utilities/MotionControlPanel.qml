@@ -22,7 +22,7 @@ GroupBox {
       reqs = [{
                 "key": "point",
                 "value": {
-                  "axis": distance
+
                 }
               }, {
                 "key": "speed",
@@ -31,6 +31,7 @@ GroupBox {
                 "key": 'motionmode',
                 "value": "cmd"
               }]
+      reqs[0]["value"][axis] = distance
       nodeHandler.procInterface.do(device, 'Move', reqs)
       nodeHandler.appInterface.refreshProclog()
     }
