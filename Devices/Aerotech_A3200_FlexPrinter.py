@@ -13,7 +13,7 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
     def __init__(self, name):
         Motion.__init__(self, name)
 
-        self.descriptors = [*self.descriptors, *['Aerotech', 'A3200', 'sensor']]
+        self.descriptors = list({*self.descriptors, 'Aerotech', 'A3200', 'sensor'})
 
         self.tasklog = {'task1': [], 'task2': [], 'task3': [], 'task4': []}
         self.commandlog = []
