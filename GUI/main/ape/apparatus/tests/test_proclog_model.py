@@ -44,7 +44,7 @@ def test_creting_proclog_model_from_simple_data_works(simple_data):
     assert model.columnCount(QModelIndex()) == 1
     index = model.index(0, 0, QModelIndex())
     assert model.rowCount(index) == 1
-    assert model.data(index, ProclogModel.NameRole) == 'curve'
+    assert model.data(index, ProclogModel.NameRole) == 'forest'
     item_index = model.index(0, 0, index)
     assert model.rowCount(item_index) == 1
     assert model.data(item_index, ProclogModel.NameRole) == 'escape'

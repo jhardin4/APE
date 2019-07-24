@@ -34,6 +34,7 @@ class ProclogModel(QStandardItemModel, ProclogModelRoles):
     def __init__(self, parent=None):
         super(ProclogModel, self).__init__(parent)
         self._app_interface = None
+        self.setSortRole(self.IdRole)
 
     @Property(AppInterface, notify=appInterfaceChanged)
     def appInterface(self):
@@ -64,8 +65,7 @@ class ProclogModel(QStandardItemModel, ProclogModelRoles):
         proclog = self._app_interface.proclog
         previous_level = 0
         item_stack = deque([self])
-        log_size = len(proclog)
-        for i, log in enumerate(reversed(proclog)):
+        for i, log in enumerate(proclog):
             level = 0
             name = ''
             info = {}
@@ -78,7 +78,7 @@ class ProclogModel(QStandardItemModel, ProclogModelRoles):
             item = QStandardItem(name)
             item.setData(True, self.IsProcedureRole)
             item.setData('', self.ValueRole)
-            item.setData(log_size - i, self.IdRole)
+            item.setData(i + 1, self.IdRole)
             if info:
                 data_item = QStandardItem(self.tr('data'))
                 data_item.setData(False, self.IsProcedureRole)
