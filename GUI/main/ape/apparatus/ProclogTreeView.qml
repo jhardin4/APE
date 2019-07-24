@@ -7,6 +7,7 @@ import ape.apparatus 1.0
 
 ApeTreeView {
   id: root
+  autoExpand: true
 
   C1.TableViewColumn {
     title: qsTr("Name")

@@ -7,6 +7,7 @@ import ape.apparatus 1.0
 
 C1.TreeView {
   id: root
+  property bool autoExpand: true
 
   selectionMode: C1.SelectionMode.SingleSelection
   headerVisible: true
@@ -30,6 +31,14 @@ C1.TreeView {
     ignoreUnknownSignals: true
 
     onModelReset: {
+      if (root.autoExpand) {
+        delayTimer.start()
+      }
+    }
+  }
+
+  Component.onCompleted: {
+    if (root.autoExpand) {
       delayTimer.start()
     }
   }
