@@ -39,15 +39,19 @@ GroupBox {
       Layout.fillWidth: true
       text: qsTr("Refresh")
       onClicked: {
-        nodeHandler.appInterface.refresh()
-        nodeHandler.procInterface.refreshEprocs()
+        nodeHandler.refreshAll()
       }
     }
 
     Button {
       Layout.fillWidth: true
       text: qsTr("New from Template")
-      onClicked: nodeHandler.appInterface.startTemplate(false)
+      onClicked: {
+        nodeHandler.appInterface.disconnectAll()
+        nodeHandler.procInterface.clearProclist()
+        nodeHandler.appInterface.startTemplate(false)
+        nodeHandler.refreshAll()
+      }
     }
 
     Button {
