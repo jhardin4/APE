@@ -5,7 +5,9 @@ from Devices import Sensor
 class User_GUI(Sensor):
     def __init__(self, name):
         Sensor.__init__(self, name)
-        self.descriptors = [*self.descriptors, *['sensor', 'User', 'guiconsol']]
+        self.descriptors = list(
+            {*self.descriptors, 'sensor', 'User', 'guiconsol', 'consol'}
+        )
         self.requirements['GetInput'] = {}
         self.requirements['GetInput']['message'] = {
             'source': 'apparatus',
