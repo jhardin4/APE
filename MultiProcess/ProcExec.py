@@ -110,7 +110,9 @@ class ProcExec:
     def importProclist(self, fname):
         with open(fname, 'r') as old_proclist:
             data = json.load(old_proclist)
-        self.proclist = data
+        self.proclist = []
+        for item in data:
+            self.insertProc(-1, item['device'], item['procedure'], item['requirements'])
 
     def insertProc(self, index, device, procedure, requirements):
         """
