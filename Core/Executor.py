@@ -50,7 +50,7 @@ class Executor:
             ereply['args'] = ['devMade', 'e_reply']
 
             # Build primary message
-            args = [devName, devType, exec_address, rel_address]
+            args = [devName, devType, rel_address, rel_address]
             message = {
                 'subject': 'target.executor.createDevice',
                 'args': args,

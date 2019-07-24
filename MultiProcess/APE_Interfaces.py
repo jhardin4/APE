@@ -171,7 +171,7 @@ class ExecutorInterface:
 
     def createDevice(self, devName, devType, exec_address, rel_address):
         # Handle local creation of a device
-        if self.node.name == rel_address:
+        if self.node.name == rel_address == exec_address:
             self.devicelist[devName] = {}
             self.devicelist[devName]['Address'] = getattr(Devices, devType)(devName)
             self.devicelist[devName]['AddressType'] = 'pointer'
