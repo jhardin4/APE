@@ -192,6 +192,7 @@ class Apparatus(dict):
             # methodlist = self.findDeviceMethods(deviceName)
             # for method in methodlist:
             # self.removeEproc(deviceName, method)
+            self['devices'][deviceName]['Connected'] = False
 
     def Disconnect_All(self, simulation=False):
         for device in self['devices']:
