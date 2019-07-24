@@ -28,7 +28,7 @@ class Sensor(Device):
     def Measure(self, address='', addresstype=''):
         pass
 
-    def Sensor_Calibrate():
+    def Sensor_Calibrate(self):
         pass
 
 
