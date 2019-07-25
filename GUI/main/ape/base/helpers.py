@@ -14,7 +14,7 @@ def value_to_str(value):
 def str_to_value(string, old_value=None):
     try:
         return json.loads(string)  # first try to convert from JSON
-    except JSONDecodeError:
+    except (JSONDecodeError, TypeError):
         pass
     if old_value is None:
         return string
