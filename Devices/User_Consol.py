@@ -53,6 +53,7 @@ class User_Consol(Sensor):
         response_list = [options[n] for n in range(len(options))]
         response_list.append('stop')
         acceptable_response = False
+        response = 'stop'
         while not acceptable_response:
             response = input('')
             if response == '':
