@@ -36,13 +36,6 @@ C1.TableView {
         d.valueUpdate(row, value)
       }
     }
-
-    onAppEntryNameCopied: {
-      var row = root.currentRow
-      if (row > -1) {
-        d.valueUpdate(row, name)
-      }
-    }
   }
 
   Timer {

@@ -8,10 +8,6 @@ QtObject {
   readonly property bool guiRunning: guiNode.running
 
   signal appEntryValueCopied(string value)
-  signal appEntryNameCopied(string name)
-
-  readonly property QtObject d: QtObject {
-  }
 
   function startGUI() {
     guiNode.start()
