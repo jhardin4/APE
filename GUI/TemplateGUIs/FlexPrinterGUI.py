@@ -93,8 +93,8 @@ def buildFlexPrinterGUI(apparatus, materials, tools):
         devices['n' + material] = {
             'ID': '',
             'OD': '',
-            'TraceHeight': '',
-            'TraceWidth': '',
+            'trace_height': '',
+            'trace_width': '',
             'type': '',
             'addresstype': '',
             'descriptors': ['nozzle', material],
@@ -151,16 +151,16 @@ def buildFlexPrinterGUI(apparatus, materials, tools):
 
     # pumps
     n = 0
-    for materialx in materials:
+    for _ in materials:
         devices['pump' + str(n)] = {
             'type': 'Nordson_UltimusV',
             'COM': '',
             'pressure': 0,
             'vacuum': 0,
-            'pumprestime': 0,
-            'pumpontime': 0,
-            'pumpofftime': 0,
-            'midtime': 0,
+            'pumpres_time': 0,
+            'pumpon_time': 0,
+            'pumpoff_time': 0,
+            'mid_time': 0,
             'addresstype': 'pointer',
             'descriptors': [],
         }
@@ -172,10 +172,10 @@ def buildFlexPrinterGUI(apparatus, materials, tools):
             'IObit': 2,
             'pressure': 0,
             'vacuum': 0,
-            'pumprestime': 0,
-            'pumpontime': 0,
-            'pumpofftime': 0,
-            'midtime': 0,
+            'pumpres_time': 0,
+            'pumpon_time': 0,
+            'pumpoff_time': 0,
+            'mid_time': 0,
             'addresstype': 'pointer',
             'descriptors': [],
         }
