@@ -60,7 +60,12 @@ C1.TreeView {
 
     function copyName() {
       var name = root.model.data(root.currentIndex, AppImageTreeModel.NameRole)
-      nodeHandler.appEntryNameCopied(name)
+      nodeHandler.appEntryValueCopied(name)
+    }
+
+    function copyReference() {
+      var ref = root.model.data(root.currentIndex, AppImageTreeModel.KeyRole)
+      nodeHandler.appEntryValueCopied("@" + ref)
     }
   }
 
@@ -120,10 +125,16 @@ C1.TreeView {
     }
 
     MenuItem {
-      text: qsTr("Copy Value To Requirements")
+      text: qsTr("Copy Value to Requirements")
       enabled: root.currentIndex.valid ? root.model.flags(
                                            root.currentIndex) & Qt.ItemIsEditable : false
       onClicked: d.copyValue()
+    }
+
+    MenuItem {
+      text: qsTr("Copy Reference to Requirements")
+      enabled: Boolean(root.currentIndex.valid)
+      onClicked: d.copyReference()
     }
 
     MenuItem {
