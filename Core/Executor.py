@@ -14,6 +14,7 @@ class Executor:
         self.node = ''
         self.prevDevice = ''
         self.loopBlocks = {}
+        self.returnedValue = None
 
     def execute(self, eproclist):
         # This could take a list of multiple lists of eprocs but typically it
@@ -37,10 +38,15 @@ class Executor:
     def createDevice(self, devName, devType, exec_address, rel_address):
         # Handle local creation of a device
         if self.node.name == rel_address:
+            try:
+                device = getattr(Devices, devType)(devName)
+            except AttributeError:
+                return False
             self.devicelist[devName] = {}
-            self.devicelist[devName]['Address'] = getattr(Devices, devType)(devName)
+            self.devicelist[devName]['Address'] = device
             self.devicelist[devName]['AddressType'] = 'pointer'
             self.devicelist[devName]['Address'].executor = self
+            return True
         else:
             self.devicelist[devName] = {}
             self.devicelist[devName]['Address'] = rel_address
@@ -60,6 +66,7 @@ class Executor:
             self.node.send(rel_address, message)
             while not self.loopBlocks['devMade']:
                 self.node.listen(rel_address)
+            return self.returnedValue
 
     def Send(self, eproc):
         if self.devicelist[eproc['devices']]['AddressType'] == 'pointer':

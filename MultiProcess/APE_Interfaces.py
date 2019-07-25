@@ -138,8 +138,9 @@ class ExecutorInterface(ApeInterface):
             self.devicelist[devName]['Address'] = getattr(Devices, devType)(devName)
             self.devicelist[devName]['AddressType'] = 'pointer'
             self.devicelist[devName]['Address'].executor = self
+            return True
         else:
-            self._send_message(
+            return self._send_message(
                 subject='target.executor.createDevice',
                 args=[devName, devType, exec_address, rel_address],
                 target=exec_address,
