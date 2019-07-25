@@ -66,21 +66,50 @@ class ProcExec:
         Does a procedure immediately and does not add it to the procedure list
         """
         proc = self._create_procedure(device, procedure, bool(requirements))
-        proc(requirements)
+        reqs = self._resolve_requirements(requirements)
+        proc(reqs)
+
+    def _resolve_value(self, value):
+        # reference syntax
+        if value.startswith('@'):
+            real_value = self.apparatus.getValue(value[1:].split('/'))
+            return real_value
+
+        # procedure syntax
+        elif value.startswith('!'):
+            try:
+                real_value = getattr(Project_Procedures, value[1:])(
+                    self.apparatus, self.executor
+                )
+            except AttributeError:
+                real_value = None
+            return real_value
+
+        else:
+            return value
+
+    def _resolve_requirements(self, reqs):
+        filled = reqs.copy()
+        for name, value in filled.items():
+            if isinstance(value, str):
+                real_value = self._resolve_value(value)
+                filled[name] = real_value
+        return filled
 
     def doProc(self, index):
         """
         Does a procedure already added to the procedure list
         """
         proc = self.proclist[index]
-        proc['proc'](proc['requirements'])
+        reqs = self._resolve_requirements(proc['requirements'])
+        proc['proc'](reqs)
 
     def doProclist(self):
         """
         Does all the procedures in the procedure list
         """
-        for proc in self.proclist:
-            proc['proc'](proc['requirements'])
+        for i in range(len(self.proclist)):
+            self.doProc(i)
 
     def getProclist(self):
         """
