@@ -79,7 +79,7 @@ class ProclogModel(QStandardItemModel, ProclogModelRoles):
             item.setData(True, self.IsProcedureRole)
             item.setData('', self.ValueRole)
             item.setData(i + 1, self.IdRole)
-            if info:
+            if isinstance(info, dict):
                 data_item = QStandardItem(self.tr('data'))
                 data_item.setData(False, self.IsProcedureRole)
                 data_item.setData('', self.ValueRole)
@@ -88,6 +88,11 @@ class ProclogModel(QStandardItemModel, ProclogModelRoles):
                     entry_item.setData(str(v), self.ValueRole)
                     entry_item.setData(False, self.IsProcedureRole)
                     data_item.appendRow(entry_item)
+                item.appendRow(data_item)
+            elif isinstance(info, str):
+                data_item = QStandardItem(self.tr('info'))
+                data_item.setData(False, self.IsProcedureRole)
+                data_item.setData(info, self.ValueRole)
                 item.appendRow(data_item)
 
             if level > previous_level:
