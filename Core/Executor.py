@@ -130,7 +130,7 @@ class Executor:
         self.ready4next = True
         if self.logging:
             loghandle = open('Logs/' + self.logaddress, mode='a')
-            loghandle.write(message)
+            loghandle.write(str(message))
             loghandle.close()
             self.log = ''
 
