@@ -35,8 +35,7 @@ class Planner_Combinatorial(Procedure):
         self.firstrun = True
         self.runlist = []
         # Setup Apparatus
-        if 'planner' not in self.apparatus['information']:
-            self.apparatus['information']['planner'] = {}
+        self.apparatus.createAppEntry(['information', 'planner'])
 
     def Plan(self):
         # Renaming useful pieces of information
