@@ -243,28 +243,40 @@ class ProcedureInterface(QObject):
         filename = url.toLocalFile()
         self._gui_node.executor.importProclist(filename)
 
-    @Slot(str, str)
+    def _create_device(self, device_name, device_type, exec_address, rel_address):
+        created = self._gui_node.executor.createDevice(
+            device_name, device_type, exec_address, rel_address
+        )
+        if created:
+            address = ['devices', device_name, 'type']
+            if not self._gui_node.apparatus.checkAddress(address):
+                self._gui_node.apparatus.createAppEntry(address)
+            self._gui_node.apparatus.setValue(address, 'User_GUI')
+            address = ['devices', device_name, 'address']
+            if not self._gui_node.apparatus.checkAddress(address):
+                self._gui_node.apparatus.createAppEntry(address)
+            self._gui_node.apparatus.setValue(address, rel_address)
+            address = ['devices', device_name, 'addresstype']
+            if not self._gui_node.apparatus.checkAddress(address):
+                self._gui_node.apparatus.createAppEntry(address)
+            self._gui_node.apparatus.setValue(address, 'zmqNode')
+            return True
+        else:
+            logger.error(f"Creating device {device_name} {device_type} failed")
+            return False
+
+    @Slot(str, str, result=bool)
     def createDevice(self, device_name, device_type):
         if not self._gui_node:
             logger.warning('Cannot create device without guiNode')
             return
 
-    @Slot()
+        return self._create_device(device_name, device_type, 'procexec', 'procexec')
+
+    @Slot(result=bool)
     def createUserDevice(self):
         if not self._gui_node:
             logger.warning('Cannot create use device without guiNode')
             return
 
-        self._gui_node.executor.createDevice('User', 'User_GUI', 'procexec', 'gui')
-        address = ['devices', 'User', 'type']
-        if not self._gui_node.apparatus.checkAddress(address):
-            self._gui_node.apparatus.createAppEntry(address)
-        self._gui_node.apparatus.setValue(address, 'User_GUI')
-        address = ['devices', 'User', 'address']
-        if not self._gui_node.apparatus.checkAddress(address):
-            self._gui_node.apparatus.createAppEntry(address)
-        self._gui_node.apparatus.setValue(address, 'gui')
-        address = ['devices', 'User', 'addresstype']
-        if not self._gui_node.apparatus.checkAddress(address):
-            self._gui_node.apparatus.createAppEntry(address)
-        self._gui_node.apparatus.setValue(address, 'zmqNode')
+        return self._create_device('User', 'User_GUI', 'procexec', 'gui')
