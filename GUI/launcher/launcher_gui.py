@@ -1,3 +1,4 @@
+import os
 import signal
 
 from qtpy.QtCore import QTimer
@@ -21,10 +22,20 @@ class LauncherGui(QMainWindow):
         self.proc_Appa = None
         self.proc_ProcExec = None
         self.proc_GUI = None
+        self._create_logs_folder()
         self.initUI()
         # target is the GUI from the class
         self.node.target = self
         self.show()
+
+    @staticmethod
+    def _create_logs_folder():
+        dir_ = 'Logs'
+        if not os.path.exists(dir_):
+            try:
+                os.mkdir(dir_)
+            except OSError as e:
+                raise Exception(f'Could not create log file folder {dir} {str(e)}')
 
     def initUI(self):
         # sets up the window with 4 push buttons
