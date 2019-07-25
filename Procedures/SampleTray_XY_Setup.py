@@ -114,6 +114,4 @@ class SampleTray_XY_Setup(Procedure):
                         'used': False,
                     }
                 )
-        self.apparatus.setValue(
-            ['information', 'ProcedureData', self.name, 'trays', trayname], grid
-        )
+        self.apparatus.setValue(['information', 'trays', trayname], grid)
