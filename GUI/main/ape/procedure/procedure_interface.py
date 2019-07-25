@@ -122,7 +122,7 @@ class ProcedureInterface(QObject):
                 entry['name'] = entry['procedure']
             raw_reqs = entry["requirements"]
             entry["requirements"] = [
-                {'key': k, 'value': v} for k, v in raw_reqs.items()
+                {'key': k, 'value': value_to_str(v)} for k, v in raw_reqs.items()
             ]
         self._proclist = raw_proclist
         self.proclistChanged.emit()
