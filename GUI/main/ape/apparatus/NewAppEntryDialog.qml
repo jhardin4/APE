@@ -48,8 +48,10 @@ Dialog {
           Layout.preferredWidth: 400
           selectByMouse: true
           validator: RegExpValidator {
-            regExp: /([0-9A-Za-z]\/?)+/
+            regExp: /([0-9A-Za-z_]\/?)+/
           }
+
+          Keys.onReturnPressed: okButton.clicked()
         }
       }
 
@@ -57,6 +59,7 @@ Dialog {
         HorizontalFiller {
         }
         Button {
+          id: okButton
           text: qsTr("Ok")
           enabled: nameInput.text !== ""
           onClicked: newEntryDialog.accept()
