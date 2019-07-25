@@ -79,7 +79,7 @@ class ProclogModel(QStandardItemModel, ProclogModelRoles):
             item.setData(True, self.IsProcedureRole)
             item.setData('', self.ValueRole)
             item.setData(i + 1, self.IdRole)
-            if isinstance(info, dict):
+            if isinstance(info, dict) and len(info):
                 data_item = QStandardItem(self.tr('data'))
                 data_item.setData(False, self.IsProcedureRole)
                 data_item.setData('', self.ValueRole)

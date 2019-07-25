@@ -31,7 +31,7 @@ def simple_data():
                 'information': {'spot': '', "care": ['detail', 'bargain']},
             },
         ],
-        ['->', {'name': 'curve', 'information': {}}],
+        ['->', {'name': 'curve', 'information': "foo"}],
     ]
 
 
@@ -55,6 +55,11 @@ def test_creting_proclog_model_from_simple_data_works(simple_data):
         model.data(model.index(1, 0, data_index), ProclogModel.ValueRole)
         == "['detail', 'bargain']"
     )
+    index = model.index(1, 0, QModelIndex())
+    assert model.rowCount(index) == 1
+    info_index = model.index(0, 0, index)
+    assert model.data(info_index, ProclogModel.NameRole) == 'info'
+    assert model.data(info_index, ProclogModel.ValueRole) == 'foo'
 
 
 def test_proclog_model_implementation(simple_data, qtmodeltester):
