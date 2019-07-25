@@ -17,12 +17,7 @@ class SampleTray_Start(Procedure):
             'desc': 'pointer to defiend procedure to be performed at each position in tray',
         }
         # Setup Apparatus
-        if not self.apparatus.checkAddress(
-            ['information', 'trays', 'original_alignments']
-        ):
-            self.apparatus.createAppEntry(
-                ['information', 'trays', 'original_alignments']
-            )
+        self.apparatus.createAppEntry(['information', 'trays', 'original_alignments'])
 
     def Plan(self):
         # Renaming useful pieces of informaiton
@@ -46,7 +41,7 @@ class SampleTray_Start(Procedure):
                     ['information', 'alignments', alignment]
                 )
                 self.apparatus.setValue(
-                    ['information', 'trays', 'original_alignments'], value
+                    ['information', 'trays', 'original_alignments', alignment], value
                 )
 
         # Do experiments
