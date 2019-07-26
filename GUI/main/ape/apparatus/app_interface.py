@@ -217,6 +217,14 @@ class AppInterface(QObject):
         self._gui_node.apparatus.setValue(key.split('/'), value)
         self.itemUpdated.emit(key)
 
+    @Slot(str, result='QVariant')
+    def getValue(self, key):
+        if not self._gui_node:
+            logger.warning('Cannot get value without guiNode')
+            return
+
+        return self._gui_node.apparatus.getValue(key.split('/'))
+
     @Slot(str)
     def createAppEntry(self, key):
         if not self._gui_node:

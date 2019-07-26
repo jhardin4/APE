@@ -60,7 +60,6 @@ Dialog {
           model: apeDevices.devices
 
           onCurrentTextChanged: {
-            console.log(currentText)
             var reqs = nodeHandler.procInterface.getDeviceRequirements(
                   currentText)
             reqTableView.model = reqs

@@ -25,7 +25,9 @@ Item {
       Layout.fillWidth: true
     }
 
-    VerticalFiller {
+    PlotPanel {
+      Layout.fillWidth: true
+      Layout.fillHeight: true
     }
   }
 }

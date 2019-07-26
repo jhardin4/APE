@@ -16,6 +16,7 @@ class ResourcePaths(QObject):
 
         self._icon_path = QUrl.fromLocalFile(ICON_PATH)
         self._font_path = QUrl.fromLocalFile(FONT_PATH)
+        self._root_path = QUrl.fromLocalFile(os.getcwd())
 
     @staticmethod
     def qml_singleton_provider(engine, _):
@@ -30,3 +31,7 @@ class ResourcePaths(QObject):
     @Property(QUrl, constant=True)
     def fontPath(self):
         return self._font_path
+
+    @Property(QUrl, constant=True)
+    def rootPath(self):
+        return self._root_path

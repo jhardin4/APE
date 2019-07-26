@@ -7,6 +7,13 @@ import ape.utilities 1.0
 GroupBox {
   title: qsTr("Camera Control")
   id: root
+  property bool ready: ueyeDevices.devices.length > 0
+  visible: ready
+
+  UEyeDevices {
+    id: ueyeDevices
+    appInterface: nodeHandler.appInterface
+  }
 
   ColumnLayout {
     anchors.fill: parent

@@ -7,6 +7,8 @@ import ape.utilities 1.0
 GroupBox {
   title: qsTr("Motion Control")
   id: root
+  property bool ready: motionDevices.devices.length > 0
+  visible: ready
 
   QtObject {
     id: d
@@ -44,6 +46,7 @@ GroupBox {
       Label {
         text: qsTr("Device:")
       }
+
       ComboBox {
         id: deviceCombo
         Layout.fillWidth: true

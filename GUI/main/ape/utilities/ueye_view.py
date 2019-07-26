@@ -104,6 +104,7 @@ class UEyeView(QQuickPaintedItem):
     camIdChanged = Signal(int)
     imageWidthChanged = Signal(int)
     imageHeightChanged = Signal(int)
+    devicesChanged = Signal()
 
     def __init__(self, parent=None):
         super(UEyeView, self).__init__(parent)
@@ -113,6 +114,7 @@ class UEyeView(QQuickPaintedItem):
         self._cam_id = 0
         self._image_width = 2048
         self._image_height = 1088
+        self._devices = []
 
         self.destroyed.connect(lambda: self._stop_thread)
 
@@ -123,6 +125,10 @@ class UEyeView(QQuickPaintedItem):
         logger.error(f"Error loading camera {msg}")
         self._running = False
         self.runningChanged.emit(self._running)
+
+    @Property(list, notify=devicesChanged)
+    def devices(self):
+        return self._devices
 
     @Property(bool, notify=runningChanged)
     def running(self):
