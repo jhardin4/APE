@@ -196,8 +196,11 @@ class ExecutorInterface(ApeInterface):
         if address == self.node.name:
             return self.devicelist[device]["Address"].getDependencies()
 
-        subject = f'target.executor.devicelist["{device}"]["Address"].getDependencies'
-        return self._send_message(subject=subject, target=address)
+        return self._send_message(
+            subject='target.executor.getDependencies',
+            args=[device, address],
+            target=address,
+        )
 
     def getRequirements(self, device, eproc, address):
         if address == self.node.name:

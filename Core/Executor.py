@@ -123,19 +123,44 @@ class Executor(ApeInterface):
             loghandle.close()
             self.log = ''
 
-    def getDependencies(self, device):
-        return self.devicelist[device]["Address"].getDependencies()
+    def getDependencies(self, device, address):
+        if address == self.node.name:
+            return self.devicelist[device]["Address"].getDependencies()
+        else:
+            return self._send_message(
+                subject='target.executor.getDependencies',
+                args=[device, address],
+                target=address,
+            )
 
     def getDevices(self, address):
-        return [
-            name
-            for name, device in self.devicelist.items()
-            if device["AddressType"] != "zmqNode"
-        ]
+        if address == self.node.name:
+            return [
+                name
+                for name, device in self.devicelist.items()
+                if device["AddressType"] != "zmqNode"
+            ]
+        else:
+            return self._send_message(
+                subject='target.executor.getDevices', args=[address], target=address
+            )
 
     def getEprocs(self, device, address):
-
-        return list(self.devicelist[device]['Address'].requirements)
+        if address == self.node.name:
+            return list(self.devicelist[device]['Address'].requirements)
+        else:
+            return self._send_message(
+                subject='target.executor.getEprocs',
+                args=[device, address],
+                target=address,
+            )
 
     def getRequirements(self, device, eproc, address):
-        return list(self.devicelist[device]['Address'].requirements[eproc])
+        if address == self.node.name:
+            return list(self.devicelist[device]['Address'].requirements[eproc])
+        else:
+            return self._send_message(
+                subject='target.getRequirements',
+                args=[device, eproc, address],
+                target=address,
+            )
