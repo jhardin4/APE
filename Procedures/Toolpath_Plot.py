@@ -35,6 +35,10 @@ class Toolpath_Plot(Procedure):
             'toolpath',
         ]
 
+        self.apparatus.createAppEntry(
+            ['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name']
+        )
+
     def Plan(self):
         materials = self.requirements['parameters']['value']['materials']
         paths = self.requirements['target']['value'][0]
@@ -110,3 +114,9 @@ class Toolpath_Plot(Procedure):
         plt.savefig(logimagefilename, dpi=600)
         plt.close()
         plt.clf()
+
+        # store address for further use
+        self.apparatus.setValue(
+            ['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name'],
+            logimagefilename,
+        )
