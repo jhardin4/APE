@@ -1,5 +1,3 @@
-import time
-
 from Core import Procedure
 from Procedures import Toolpath_Generate, Toolpath_Print, Planner_Combinatorial
 
@@ -37,5 +35,6 @@ class PrintSample(Procedure):
         # Generate Toolpath
         self.gentp.Do()
         self.printtp.Do({'toolpath': self.gentp.requirements['target']['value']})
-        if self.apparatus.simulation:
-            time.sleep(1)  # Just in for demonstration
+
+        # if self.apparatus.simulation:
+        #    time.sleep(1)  # Just in for demonstration
