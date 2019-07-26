@@ -20,6 +20,15 @@ Item {
     id: importExportDialog
   }
 
+  CreateDeviceDialog {
+    id: createDeviceDialog
+
+    onAccepted: {
+      nodeHandler.procInterface.createDevice(name, type, requirements)
+      nodeHandler.appInterface.refreshAppImage()
+    }
+  }
+
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Style.singleMargin
@@ -80,8 +89,7 @@ Item {
 
         Button {
           text: qsTr("Create<br>Device")
-          enabled: false
-          onClicked: console.log("foo")
+          onClicked: createDeviceDialog.open()
         }
       }
 

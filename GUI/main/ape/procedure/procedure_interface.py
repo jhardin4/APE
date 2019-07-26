@@ -6,6 +6,7 @@ from types import ModuleType
 
 from qtpy.QtCore import QObject, Property, Signal, Slot, QUrl
 
+import Devices
 import Procedures
 import Project_Procedures
 from Core import Procedure, Apparatus, Executor
@@ -339,35 +340,45 @@ class ProcedureInterface(QObject):
         filename = url.toLocalFile()
         self._gui_node.executor.importProclist(filename)
 
-    def _create_device(self, device_name, device_type, exec_address, rel_address):
+    def _create_device(
+        self, device_name, device_type, exec_address, rel_address, requirements
+    ):
         created = self._gui_node.executor.createDevice(
             device_name, device_type, exec_address, rel_address
         )
         if created:
             address = ['devices', device_name, 'type']
-            if not self._gui_node.apparatus.checkAddress(address):
-                self._gui_node.apparatus.createAppEntry(address)
-            self._gui_node.apparatus.setValue(address, 'User_GUI')
+            self._gui_node.apparatus.createAppEntry(address)
+            self._gui_node.apparatus.setValue(address, device_type)
             address = ['devices', device_name, 'address']
-            if not self._gui_node.apparatus.checkAddress(address):
-                self._gui_node.apparatus.createAppEntry(address)
+            self._gui_node.apparatus.createAppEntry(address)
             self._gui_node.apparatus.setValue(address, rel_address)
             address = ['devices', device_name, 'addresstype']
-            if not self._gui_node.apparatus.checkAddress(address):
-                self._gui_node.apparatus.createAppEntry(address)
+            self._gui_node.apparatus.createAppEntry(address)
             self._gui_node.apparatus.setValue(address, 'zmqNode')
+            reqs = self._convert_req_model_to_list(requirements)
+            for k, v in reqs.items():
+                address = ['devices', device_name, k]
+                self._gui_node.apparatus.createAppEntry(address)
+                self._gui_node.apparatus.setValue(address, v)
             return True
         else:
             logger.error(f"Creating device {device_name} {device_type} failed")
             return False
 
     @Slot(str, str, result=bool)
-    def createDevice(self, device_name, device_type):
+    @Slot(str, str, list, result=bool)
+    def createDevice(self, device_name, device_type, requirements=None):
         if not self._gui_node:
             logger.warning('Cannot create device without guiNode')
             return
 
-        return self._create_device(device_name, device_type, 'procexec', 'procexec')
+        if requirements is None:
+            requirements = []
+
+        return self._create_device(
+            device_name, device_type, 'procexec', 'procexec', requirements
+        )
 
     @Slot(result=bool)
     def createUserDevice(self):
@@ -375,4 +386,13 @@ class ProcedureInterface(QObject):
             logger.warning('Cannot create use device without guiNode')
             return
 
-        return self._create_device('User', 'User_GUI', 'procexec', 'gui')
+        return self._create_device('User', 'User_GUI', 'procexec', 'gui', [])
+
+    @Slot(str, result=list)
+    def getDeviceRequirements(self, device):
+        device = getattr(Devices, device)
+        dev = device("dummy")
+        return [
+            {'key': k, "value": value_to_str(v['value'])}
+            for k, v in dev.requirements["Connect"].items()
+        ]
