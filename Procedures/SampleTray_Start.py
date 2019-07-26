@@ -25,7 +25,7 @@ class SampleTray_Start(Procedure):
         procedure = self.requirements['procedure']['value']
         tray = self.apparatus.getValue(['information', 'trays', trayname])
 
-        # Retreiving necessary device names
+        # Retrieving necessary device names
 
         # Retrieving information from apparatus
 
