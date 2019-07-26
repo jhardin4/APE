@@ -29,6 +29,7 @@ class ProcedureInterface(QObject):
         self._eprocs = {}
         self._proclist = []
         self._procedures = []
+        self._device_nodes = {}
 
     @Property(GuiNode, notify=guiNodeChanged)
     def guiNode(self):
@@ -73,10 +74,17 @@ class ProcedureInterface(QObject):
             'Project_Procedures': procs_from_module(Project_Procedures),
         }
 
-        epl = self._gui_node.executor.getDevices('procexec')
-        for device in epl:
-            eprocs = self._gui_node.executor.getEprocs(device, 'procexec')
-            epl_dict[device] = eprocs
+        self._device_nodes.clear()
+
+        def fetch_procs(node):
+            epl = self._gui_node.executor.getDevices(node)
+            for device in epl:
+                eprocs = self._gui_node.executor.getEprocs(device, node)
+                epl_dict[device] = eprocs
+                self._device_nodes[device] = node
+
+        fetch_procs('procexec')
+        fetch_procs('gui')
         logger.debug(f'Eprocs fetched {epl_dict}')
         self._eprocs = epl_dict
         self.eprocsChanged.emit()
@@ -110,9 +118,8 @@ class ProcedureInterface(QObject):
                 )
                 return []
         else:
-            reqs = self._gui_node.executor.getRequirements(
-                device, procedure, 'procexec'
-            )
+            node = self._device_nodes.get(device, 'procexec')
+            reqs = self._gui_node.executor.getRequirements(device, procedure, node)
             return [{'key': k, 'value': ''} for k in reqs]
 
     @staticmethod
