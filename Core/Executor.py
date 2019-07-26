@@ -1,20 +1,20 @@
 import time
 import sys
 import Devices
+from MultiProcess.APE_Interfaces import ApeInterface
 
 
-class Executor:
-    def __init__(self):
+class Executor(ApeInterface):
+    def __init__(self, node=None):
+        super(Executor, self).__init__(node, recv_subject='target.executor.recv_value')
         self.devicelist = {}
         self.log = ''
         self.logaddress = str(int(round(time.time(), 0))) + 'log.txt'
         self.logging = True
         self.debug = False
         self.ready4next = True
-        self.node = ''
+        self.node = node
         self.prevDevice = ''
-        self.loopBlocks = {}
-        self.returnedValue = None
 
     def execute(self, eproclist):
         # This could take a list of multiple lists of eprocs but typically it
@@ -51,22 +51,11 @@ class Executor:
             self.devicelist[devName] = {}
             self.devicelist[devName]['Address'] = rel_address
             self.devicelist[devName]['AddressType'] = 'zmqNode'
-            ereply = {}
-            ereply['subject'] = 'target.executor.recv_value'
-            ereply['args'] = ['devMade', 'e_reply']
-
-            # Build primary message
-            args = [devName, devType, rel_address, rel_address]
-            message = {
-                'subject': 'target.executor.createDevice',
-                'args': args,
-                'ereply': ereply,
-            }
-            self.loopBlocks['devMade'] = False
-            self.node.send(rel_address, message)
-            while not self.loopBlocks['devMade']:
-                self.node.listen(rel_address)
-            return self.returnedValue
+            return self._send_message(
+                subject='target.executor.createDevice',
+                args=[devName, devType, rel_address, rel_address],
+                target=rel_address,
+            )
 
     def Send(self, eproc):
         if self.devicelist[eproc['devices']]['AddressType'] == 'pointer':
@@ -133,10 +122,6 @@ class Executor:
             loghandle.write(str(message))
             loghandle.close()
             self.log = ''
-
-    def recv_value(self, target, value):
-        self.loopBlocks[target] = True
-        self.returnedValue = value
 
     def getDependencies(self, device):
         return self.devicelist[device]["Address"].getDependencies()
