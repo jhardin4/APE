@@ -1,3 +1,5 @@
+import time
+
 from Core import Procedure
 
 
@@ -44,7 +46,9 @@ class Toolpath_Plot(Procedure):
 
         matplotlib.use('AGG')
         import matplotlib.pyplot as plt
-        import time
+
+        # import of Axes3D is required fro projection=3d
+        from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
         # Determine toolpath dimension
         dim = 0
