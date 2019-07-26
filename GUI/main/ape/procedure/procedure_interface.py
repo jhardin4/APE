@@ -1,5 +1,8 @@
 import logging
+import sys
+from importlib import reload
 from inspect import isclass
+from types import ModuleType
 
 from qtpy.QtCore import QObject, Property, Signal, Slot, QUrl
 
@@ -267,6 +270,26 @@ class ProcedureInterface(QObject):
             return
 
         self._gui_node.executor.clearProcedures()
+
+    @Slot()
+    def reloadProcedures(self):
+        if not self._gui_node:
+            logger.warning('Cannot reload procedures without guiNode')
+            return
+
+        def deep_reload(module):
+            for attribute_name in dir(module):
+                attribute = getattr(module, attribute_name)
+                if isclass(attribute):
+                    reload(sys.modules[attribute.__module__])
+                elif type(attribute) is ModuleType:
+                    reload(attribute)
+            reload(module)
+
+        deep_reload(Procedures)
+        deep_reload(Project_Procedures)
+
+        self._gui_node.executor.reloadProcedures()
 
     @Slot(str, str, list)
     def createProcedure(self, device, procedure, requirements):

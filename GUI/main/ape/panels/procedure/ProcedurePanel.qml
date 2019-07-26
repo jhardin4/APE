@@ -25,6 +25,8 @@ Item {
     anchors.margins: Style.singleMargin
 
     RowLayout {
+      Layout.preferredHeight: 200
+
       GroupBox {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -174,6 +176,7 @@ Item {
     }
 
     RowLayout {
+      Layout.preferredHeight: 200
 
       GroupBox {
         Layout.fillWidth: true
@@ -297,6 +300,16 @@ Item {
           enabled: instancesTableView.rowCount > 0
           onClicked: {
             nodeHandler.procInterface.clearProcedures()
+            nodeHandler.procInterface.refreshProcedures()
+            nodeHandler.procInterface.refreshProclist()
+          }
+        }
+
+        Button {
+          text: qsTr("Reload")
+          onClicked: {
+            nodeHandler.procInterface.reloadProcedures()
+            nodeHandler.procInterface.refreshEprocs()
             nodeHandler.procInterface.refreshProcedures()
             nodeHandler.procInterface.refreshProclist()
           }

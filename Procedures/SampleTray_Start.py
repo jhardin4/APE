@@ -20,7 +20,7 @@ class SampleTray_Start(Procedure):
         self.apparatus.createAppEntry(['information', 'trays', 'original_alignments'])
 
     def Plan(self):
-        # Renaming useful pieces of informaiton
+        # Renaming useful pieces of information
         trayname = self.requirements['trayname']['value']
         procedure = self.requirements['procedure']['value']
         tray = self.apparatus.getValue(['information', 'trays', trayname])
