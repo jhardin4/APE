@@ -137,6 +137,17 @@ class ProcExec:
         if ref in self.procedures:
             del self.procedures[ref]
 
+    def do(self, device, procedure, requirements):
+        """
+        Does a procedure without instantiating it.
+        :param device: Name of the device.
+        :param procedure: Name of the procedure.
+        :param requirements: Procedure requirements.
+        """
+        proc = self._create_procedure(device, procedure, bool(requirements))
+        reqs = self._resolve_requirements(requirements, eproc=bool(device))
+        proc(reqs)
+
     def doProcedure(self, device, procedure):
         """
         Does a procedure from the instantiated procedures.
@@ -253,6 +264,12 @@ class ProcExec:
             self.proclist[index2],
             self.proclist[index1],
         )
+
+    def reloadProcedures(self):
+        """
+        Reloads all local procedure instances
+        """
+        pass
 
 
 if __name__ == '__main__':

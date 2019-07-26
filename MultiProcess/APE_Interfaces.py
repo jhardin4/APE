@@ -239,6 +239,9 @@ class ExecutorInterface(ApeInterface):
     def removeProcedure(self, device, procedure):
         self._send_message(subject='target.removeProcedure', args=[device, procedure])
 
+    def do(self, device, procedure, requirements):
+        self._send_message(subject='target.do', args=[device, procedure, requirements])
+
     def doProcedure(self, device, procedure):
         self._send_message(subject='target.doProcedure', args=[device, procedure])
 
