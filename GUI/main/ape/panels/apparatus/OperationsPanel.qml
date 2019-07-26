@@ -14,7 +14,7 @@ GroupBox {
       onClicked: {
         nodeHandler.procInterface.createUserDevice()
         nodeHandler.appInterface.connectAll(simulationCheck.checked)
-        nodeHandler.appInterface.refresh()
+        nodeHandler.appInterface.refreshAppImage()
         nodeHandler.appInterface.refreshProclog()
         nodeHandler.procInterface.refreshEprocs()
       }
@@ -25,7 +25,7 @@ GroupBox {
       text: qsTr("Disconnect All Devices")
       onClicked: {
         nodeHandler.appInterface.disconnectAll()
-        nodeHandler.appInterface.refresh()
+        nodeHandler.appInterface.refreshAppImage()
         nodeHandler.appInterface.refreshProclog()
       }
     }

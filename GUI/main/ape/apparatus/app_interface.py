@@ -40,7 +40,7 @@ class AppInterface(QObject):
         self.guiNodeChanged.emit()
 
     @Slot()
-    def refresh(self):
+    def refreshAppImage(self):
         if not self._gui_node:
             logger.warning('Cannot refresh without guiNode')
             return

@@ -43,13 +43,13 @@ C1.TreeView {
 
     function addNewEntry() {
       nodeHandler.appInterface.createAppEntry(newEntryDialog.key)
-      nodeHandler.appInterface.refresh()
+      nodeHandler.appInterface.refreshAppImage()
     }
 
     function removeEntry() {
       var key = root.model.data(root.currentIndex, AppImageTreeModel.KeyRole)
       nodeHandler.appInterface.removeAppEntry(key)
-      nodeHandler.appInterface.refresh()
+      nodeHandler.appInterface.refreshAppImage()
     }
 
     function copyValue() {

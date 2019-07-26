@@ -18,9 +18,10 @@ QtObject {
   }
 
   function refreshAll() {
-    appInterface.refresh()
+    appInterface.refreshAppImage()
     appInterface.refreshProclog()
     procInterface.refreshEprocs()
+    procInterface.refreshProcedures()
     procInterface.refreshProclist()
   }
 

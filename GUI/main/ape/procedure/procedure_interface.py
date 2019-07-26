@@ -17,6 +17,7 @@ class ProcedureInterface(QObject):
     guiNodeChanged = Signal()
     eprocsChanged = Signal()
     proclistChanged = Signal()
+    proceduresChanged = Signal()
 
     def __init__(self, parent=None):
         super(ProcedureInterface, self).__init__(parent)
@@ -24,6 +25,7 @@ class ProcedureInterface(QObject):
         self._gui_node = None
         self._eprocs = {}
         self._proclist = []
+        self._procedures = []
 
     @Property(GuiNode, notify=guiNodeChanged)
     def guiNode(self):
@@ -43,6 +45,10 @@ class ProcedureInterface(QObject):
     @Property(list, notify=proclistChanged)
     def proclist(self):
         return self._proclist
+
+    @Property(list, notify=proceduresChanged)
+    def procedures(self):
+        return self._procedures
 
     @Slot()
     def refreshEprocs(self):
@@ -106,16 +112,9 @@ class ProcedureInterface(QObject):
             )
             return [{'key': k, 'value': ''} for k in reqs]
 
-    @Slot()
-    def refreshProclist(self):
-        if not self._gui_node:
-            logger.warning('Cannot refresh proclist without guiNode')
-            return
-
-        logger.debug('fetching proclist')
-        raw_proclist = self._gui_node.executor.getProclist()
-        logger.debug(f'proclist updated {raw_proclist}')
-        for entry in raw_proclist:
+    @staticmethod
+    def _convert_procedure_list(procedures):
+        for entry in procedures:
             if entry['device']:
                 entry['name'] = f'{entry["device"]}_{entry["procedure"]}'
             else:
@@ -124,8 +123,31 @@ class ProcedureInterface(QObject):
             entry["requirements"] = [
                 {'key': k, 'value': value_to_str(v)} for k, v in raw_reqs.items()
             ]
-        self._proclist = raw_proclist
+        return procedures
+
+    @Slot()
+    def refreshProclist(self):
+        if not self._gui_node:
+            logger.warning('Cannot refresh proclist without guiNode')
+            return
+
+        logger.debug('fetching proclist')
+        proclist = self._gui_node.executor.getProclist()
+        logger.debug(f'proclist updated {proclist}')
+        self._proclist = self._convert_procedure_list(proclist)
         self.proclistChanged.emit()
+
+    @Slot()
+    def refreshProcedures(self):
+        if not self._gui_node:
+            logger.warning('Cannot refresh procedures without guiNode')
+            return
+
+        logger.debug('fetchiing procedures')
+        procedures = self._gui_node.executor.getProcedures()
+        logger.debug(f'procedures updated {procedures}')
+        self._procedures = self._convert_procedure_list(procedures)
+        self.proceduresChanged.emit()
 
     @staticmethod
     def _convert_req_model_to_list(requirements):
@@ -136,7 +158,7 @@ class ProcedureInterface(QObject):
         }
 
     @Slot(str, str, list)
-    def addProcedure(self, device, procedure, requirements):
+    def addProclistItem(self, device, procedure, requirements):
         if not self._gui_node:
             logger.warning('Cannot add requirements without guiNode')
             return
@@ -145,18 +167,18 @@ class ProcedureInterface(QObject):
             device = ''
 
         reqs = self._convert_req_model_to_list(requirements)
-        self._gui_node.executor.insertProc(
+        self._gui_node.executor.insertProclistItem(
             index=-1, device=device, procedure=procedure, requirements=reqs
         )
 
     @Slot(int)
-    def removeProcedure(self, index):
+    def removeProclistItem(self, index):
         if not self._gui_node:
             logger.warning('Cannot remove procedure without guiNode')
             return
 
         if 0 <= index < len(self._proclist):
-            self._gui_node.executor.removeProc(index=index)
+            self._gui_node.executor.removeProclistItem(index=index)
 
     @Slot(int)
     def moveProcedureUp(self, index):
@@ -165,7 +187,7 @@ class ProcedureInterface(QObject):
             return
 
         if 0 < index < len(self._proclist):
-            self._gui_node.executor.swapProcs(index - 1, index)
+            self._gui_node.executor.swapProclistItems(index - 1, index)
 
     @Slot(int)
     def moveProcedureDown(self, index):
@@ -174,34 +196,34 @@ class ProcedureInterface(QObject):
             return
 
         if 0 <= index < (len(self._proclist) - 1):
-            self._gui_node.executor.swapProcs(index + 1, index)
+            self._gui_node.executor.swapProclistItems(index + 1, index)
 
     @Slot(int, list)
-    def updateProcedure(self, index, requirements):
+    def updateProclistItem(self, index, requirements):
         if not self._gui_node:
             logger.warning('Cannot update procedure without guiNode')
             return
 
         if 0 <= index < len(self._proclist):
             reqs = self._convert_req_model_to_list(requirements)
-            self._gui_node.executor.updateProc(index, reqs)
+            self._gui_node.executor.updateProclistItem(index, reqs)
 
     @Slot()
     def clearProclist(self):
         if not self._gui_node:
-            logger.warning('Cannot move procedure without guiNode')
+            logger.warning('Cannot clear proclist without guiNode')
             return
 
         self._gui_node.executor.clearProclist()
 
     @Slot(int)
-    def doProcedure(self, index):
+    def doProclistItem(self, index):
         if not self._gui_node:
-            logger.warning('Cannot do procedure without guiNode')
+            logger.warning('Cannot doProclistItem procedure without guiNode')
             return
 
         if 0 <= index < len(self._proclist):
-            self._gui_node.executor.doProc(index)
+            self._gui_node.executor.doProclistItem(index)
 
     @Slot()
     def doProclist(self):
@@ -211,8 +233,8 @@ class ProcedureInterface(QObject):
 
         self._gui_node.executor.doProclist()
 
-    @Slot(str, str, list)
-    def do(self, device, procedure, requirements):
+    @Slot(str, str)
+    def doProcedure(self, device, procedure):
         if not self._gui_node:
             logger.warning('Cannot do procedure without guiNode')
             return
@@ -220,10 +242,40 @@ class ProcedureInterface(QObject):
         if device in ('Procedures', 'Project_Procedures'):
             device = ''
 
-        reqs = self._convert_req_model_to_list(requirements)
-        logger.debug(f'do procedure {device}_{procedure}, reqs: {reqs}')
-        self._gui_node.executor.do(device, procedure, reqs)
+        logger.debug(f'do procedure {device}_{procedure}')
+        self._gui_node.executor.doProcedure(device, procedure)
         logger.debug('done')
+
+    @Slot()
+    def clearProcedures(self):
+        if not self._gui_node:
+            logger.warning('Cannot clear procedures without guiNode')
+            return
+
+        self._gui_node.executor.clearProcedures()
+
+    @Slot(str, str, list)
+    def createProcedure(self, device, procedure, requirements):
+        if not self._gui_node:
+            logger.warning('Cannot create procedure without guiNode')
+            return
+
+        if device in ('Procedures', 'Project_Procedures'):
+            device = ''
+
+        reqs = self._convert_req_model_to_list(requirements)
+        self._gui_node.executor.createProcedure(device, procedure, reqs)
+
+    @Slot(str, str)
+    def removeProcedure(self, device, procedure):
+        if not self._gui_node:
+            logger.warning('Cannot remove procedure without guiNode')
+            return
+
+        if device in ('Procedures', 'Project_Procedures'):
+            device = ''
+
+        self._gui_node.executor.removeProcedure(device, procedure)
 
     @Slot(QUrl)
     def saveAs(self, url):

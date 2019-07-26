@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4 as C1
 import QtQuick.Controls 2.2
+import QtQml.Models 2.3
 import ape.controls 1.0
 import ape.core 1.0
 import ape.apparatus 1.0
@@ -8,10 +9,19 @@ import ape.apparatus 1.0
 C1.TreeView {
   id: root
   property bool autoExpand: true
+  property var currentIndex: selection.currentIndex
 
   selectionMode: C1.SelectionMode.SingleSelection
   headerVisible: true
   backgroundVisible: false
+
+  selection: ItemSelectionModel {
+    model: root.model
+  }
+
+  function clearSelection() {
+    selection.clear()
+  }
 
   QtObject {
     id: d

@@ -16,6 +16,7 @@ FileDialog {
     settings.file = file
     if (openMode) {
       nodeHandler.procInterface.importFrom(file)
+      nodeHandler.procInterface.refreshProcedures()
       nodeHandler.procInterface.refreshProclist()
     } else {
       nodeHandler.procInterface.saveAs(file)
