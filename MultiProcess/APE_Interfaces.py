@@ -11,7 +11,11 @@ class ApeInterface:
         self.recv_subject = recv_subject
         self.default_target = target
 
-    def _send_message(self, subject, kwargs=None, args=None, reply=None, target=None):
+    def _send_message(
+        self, subject, kwargs=None, args=None, reply=None, target=None, json_args=None
+    ):
+        if json_args is None:
+            json_args = {}
         if target is None:
             target = self.default_target
         if reply is None:
@@ -30,7 +34,7 @@ class ApeInterface:
 
         if reply:
             self.loopBlocks[subject] = False
-        self.node.send(target, message)
+        self.node.send(target, message, **json_args)
         if reply:
             while not self.loopBlocks[subject]:
                 self.node.listen(target)
@@ -84,7 +88,10 @@ class ApparatusInterface(ApeInterface):
 
     def LogProc(self, name, requirements):
         self._send_message(
-            'target.apparatus.LogProc', args=[name, requirements], reply=False
+            'target.apparatus.LogProc',
+            args=[name, requirements],
+            reply=False,
+            json_args={'default': lambda o: '<not serializable>'},
         )
 
     def findDevice(self, reqs):

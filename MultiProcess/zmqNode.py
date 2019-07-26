@@ -87,9 +87,9 @@ class zmqNode:
                     return key
         return False
 
-    def send(self, name, message):
+    def send(self, name, message, **kwargs):
         try:
-            self.connections[name].send_json(message, flags=zmq.NOBLOCK)
+            self.connections[name].send_json(message, flags=zmq.NOBLOCK, **kwargs)
         except TypeError:
             raise Exception(str(message))
         except zmq.Again:
