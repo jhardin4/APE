@@ -128,8 +128,8 @@ class ProcExec:
                     reload(attribute)
             reload(module)
 
-        reload(Procedures)
-        reload(Project_Procedures)
+        deep_reload(Procedures)
+        deep_reload(Project_Procedures)
 
         for item in self.procedures.values():
             proc = self._create_procedure(
