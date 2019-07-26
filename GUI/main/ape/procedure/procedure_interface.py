@@ -233,6 +233,20 @@ class ProcedureInterface(QObject):
 
         self._gui_node.executor.doProclist()
 
+    @Slot(str, str, list)
+    def do(self, device, procedure, requirements):
+        if not self._gui_node:
+            logger.warning('Cannot do procedure without guiNode')
+            return
+
+        if device in ('Procedures', 'Project_Procedures'):
+            device = ''
+
+        logger.debug(f'do procedure {device}_{procedure}')
+        reqs = self._convert_req_model_to_list(requirements)
+        self._gui_node.executor.do(device, procedure, reqs)
+        logger.debug('done')
+
     @Slot(str, str)
     def doProcedure(self, device, procedure):
         if not self._gui_node:

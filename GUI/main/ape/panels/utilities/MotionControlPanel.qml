@@ -77,12 +77,12 @@ GroupBox {
       enabled: deviceCombo.currentIndex > -1
 
       Repeater {
-        model: ["x", "y", "z", "a", "b", "c"]
+        model: ["X", "Y", "Z", "A", "B", "C"]
 
         ColumnLayout {
           Button {
             Layout.fillWidth: true
-            text: modelData.toUpperCase() + "+"
+            text: modelData + "+"
             onClicked: {
               var device = deviceCombo.currentText
               d.move(device, modelData, Number(stepSizeCombo.currentText),
@@ -92,7 +92,7 @@ GroupBox {
 
           Button {
             Layout.fillWidth: true
-            text: modelData.toUpperCase() + "-"
+            text: modelData + "-"
             onClicked: {
               var device = deviceCombo.currentText
               d.move(device, modelData, -Number(stepSizeCombo.currentText),
