@@ -1,4 +1,8 @@
 import json
+import sys
+from importlib import reload
+from inspect import isclass
+from types import ModuleType
 
 import Core
 import Procedures
@@ -107,6 +111,31 @@ class ProcExec:
         """
         self.procedures.clear()
         self.clearProclist()
+
+    def reloadProcedures(self):
+        """
+        Reloads all local procedure instances
+        """
+        for item in self.procedures.values():
+            del item['proc']
+
+        def deep_reload(module):
+            for attribute_name in dir(module):
+                attribute = getattr(module, attribute_name)
+                if isclass(attribute):
+                    reload(sys.modules[attribute.__module__])
+                elif type(attribute) is ModuleType:
+                    reload(attribute)
+            reload(module)
+
+        reload(Procedures)
+        reload(Project_Procedures)
+
+        for item in self.procedures.values():
+            proc = self._create_procedure(
+                item['device'], item['procedure'], bool(item['requirements'])
+            )
+            item['proc'] = proc
 
     def createProcedure(self, device, procedure, requirements):
         """
@@ -264,13 +293,3 @@ class ProcExec:
             self.proclist[index2],
             self.proclist[index1],
         )
-
-    def reloadProcedures(self):
-        """
-        Reloads all local procedure instances
-        """
-        pass
-
-
-if __name__ == '__main__':
-    pass

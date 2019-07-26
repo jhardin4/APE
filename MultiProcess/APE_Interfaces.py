@@ -231,6 +231,9 @@ class ExecutorInterface(ApeInterface):
     def clearProcedures(self):
         self._send_message(subject='target.clearProcedures')
 
+    def reloadProcedures(self):
+        self._send_message(subject='target.reloadProcedures')
+
     def createProcedure(self, device, procedure, requirements):
         self._send_message(
             subject='target.createProcedure', args=[device, procedure, requirements]
