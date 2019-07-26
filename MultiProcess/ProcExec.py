@@ -15,8 +15,8 @@ class ProcExec:
         self.node.logging = True
         self.loopBlocks = {}
         # creates an executor
-        self.executor = Core.Executor()
-        self.executor.node = self.node
+        self.executor = Core.Executor(self.node)
+        self.procedures = {}
         self.proclist = []
         # Create an interface for the apparatus and assign it to the executor
         self.apparatus = APE_Interfaces.ApparatusInterface(self.node)
@@ -61,22 +61,14 @@ class ProcExec:
 
         return proc
 
-    def do(self, device, procedure, requirements):
-        """
-        Does a procedure immediately and does not add it to the procedure list
-        """
-        proc = self._create_procedure(device, procedure, bool(requirements))
-        reqs = self._resolve_requirements(requirements)
-        proc(reqs)
-
-    def _resolve_value(self, value):
+    def _resolve_value(self, value, eproc):
         # reference syntax
         if value.startswith('@'):
             real_value = self.apparatus.getValue(value[1:].split('/'))
             return real_value
 
         # procedure syntax
-        elif value.startswith('!'):
+        elif value.startswith('!') and not eproc:
             try:
                 real_value = getattr(Project_Procedures, value[1:])(
                     self.apparatus, self.executor
@@ -88,20 +80,80 @@ class ProcExec:
         else:
             return value
 
-    def _resolve_requirements(self, reqs):
+    def _resolve_requirements(self, reqs, eproc):
         filled = reqs.copy()
         for name, value in filled.items():
             if isinstance(value, str):
-                real_value = self._resolve_value(value)
+                real_value = self._resolve_value(value, eproc)
                 filled[name] = real_value
         return filled
 
-    def doProc(self, index):
+    def getProcedures(self):
         """
-        Does a procedure already added to the procedure list
+        Returns all instantiated procedures.
         """
-        proc = self.proclist[index]
-        reqs = self._resolve_requirements(proc['requirements'])
+        return [
+            {
+                'device': proc['device'],
+                'procedure': proc['procedure'],
+                'requirements': proc['requirements'],
+            }
+            for proc in self.procedures.values()
+        ]
+
+    def clearProcedures(self):
+        """
+        Deletes all instantiated procedures.
+        """
+        self.procedures.clear()
+        self.clearProclist()
+
+    def createProcedure(self, device, procedure, requirements):
+        """
+        Instantiates a new procedure.
+        :param device: Name of the device.
+        :param procedure: Name of the procedure.
+        :param requirements: Procedure requirements.
+        """
+        proc = self._create_procedure(device, procedure, bool(requirements))
+        entry = {
+            'proc': proc,
+            'device': device,
+            'procedure': procedure,
+            'requirements': requirements,
+        }
+        self.procedures[f'{device}/{procedure}'] = entry
+
+    def removeProcedure(self, device, procedure):
+        """
+        Deletes an instantiated procedure and all it's users.
+        :param device: Name of the device.
+        :param procedure: Name of the procedure.
+        """
+        for item in self.proclist:
+            if item['device'] == device and item['procedure'] == procedure:
+                self.proclist.remove(item)
+        ref = f'{device}/{procedure}'
+        if ref in self.procedures:
+            del self.procedures[ref]
+
+    def doProcedure(self, device, procedure):
+        """
+        Does a procedure from the instantiated procedures.
+        """
+        proc = self.procedures[f'{device}/{procedure}']
+        reqs = self._resolve_requirements(proc['requirements'], eproc=bool(device))
+        proc['proc'](reqs)
+
+    def doProclistItem(self, index):
+        """
+        Does a procedure already in the procedure list.
+        """
+        item = self.proclist[index]
+        proc = self.procedures[f'{item["device"]}/{item["procedure"]}']
+        reqs = self._resolve_requirements(
+            item['requirements'], eproc=bool(item['device'])
+        )
         proc['proc'](reqs)
 
     def doProclist(self):
@@ -109,7 +161,7 @@ class ProcExec:
         Does all the procedures in the procedure list
         """
         for i in range(len(self.proclist)):
-            self.doProc(i)
+            self.doProclistItem(i)
 
     def getProclist(self):
         """
@@ -127,23 +179,38 @@ class ProcExec:
     def clearProclist(self):
         """
         Deletes all procedures in the proclist
-        :return:
         """
         del self.proclist[:]
 
     def exportProclist(self, fname):
+        """
+        Export the proclist and procedures to a JSON file.
+        :param fname: Name of the JSON file.
+        """
         jsonfile = open(fname, mode='w')
-        json.dump(self.getProclist(), jsonfile, indent=2, sort_keys=True)
+        data = {'procedures': self.getProcedures(), 'proclist': self.getProclist()}
+        json.dump(data, jsonfile, indent=2, sort_keys=True)
         jsonfile.close()
 
     def importProclist(self, fname):
+        """
+        Import proclist and procedures from a JSON files.
+        :param fname: Name of the JSON file.
+        """
         with open(fname, 'r') as old_proclist:
             data = json.load(old_proclist)
-        self.proclist = []
-        for item in data:
-            self.insertProc(-1, item['device'], item['procedure'], item['requirements'])
+        del self.proclist[:]
+        self.procedures.clear()
+        for item in data['procedures']:
+            self.createProcedure(
+                item['device'], item['procedure'], item['requirements']
+            )
+        for item in data['proclist']:
+            self.insertProclistItem(
+                -1, item['device'], item['procedure'], item['requirements']
+            )
 
-    def insertProc(self, index, device, procedure, requirements):
+    def insertProclistItem(self, index, device, procedure, requirements):
         """
         Inserts a new procedure into the proclist
         :param index: Append if -1 else insert into list.
@@ -151,21 +218,17 @@ class ProcExec:
         :param procedure: Name of the procedure.
         :param requirements: Procedure requirements.
         """
-        proc = self._create_procedure(device, procedure, bool(requirements))
-        entry = {
-            'proc': proc,
-            'device': device,
-            'procedure': procedure,
-            'requirements': requirements,
-        }
+        if f'{device}/{procedure}' not in self.procedures:
+            raise KeyError("Procedure not found")
+        entry = {'device': device, 'procedure': procedure, 'requirements': requirements}
         if index == -1:
             self.proclist.append(entry)
         elif index < len(self.proclist):
             self.proclist.insert(index, entry)
         else:
-            raise IndexError()
+            raise IndexError("Index must be -1 or in range")
 
-    def updateProc(self, index, requirements):
+    def updateProclistItem(self, index, requirements):
         """
         Updates an existing procedure in the proclist.
         :param index: Index of the procedure in the list.
@@ -173,14 +236,14 @@ class ProcExec:
         """
         self.proclist[index]['requirements'] = requirements
 
-    def removeProc(self, index):
+    def removeProclistItem(self, index):
         """
         Deletes a single procedure from the proclist.
         :param index: Index of the procedure in the list.
         """
         del self.proclist[index]
 
-    def swapProcs(self, index1, index2):
+    def swapProclistItems(self, index1, index2):
         """
         Swaps the position of two procedures in the list.
         :param index1: Index of the first procedure.

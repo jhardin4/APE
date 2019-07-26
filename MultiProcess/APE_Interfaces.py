@@ -3,7 +3,7 @@ import Devices
 
 
 class ApeInterface:
-    def __init__(self, node, recv_subject, target):
+    def __init__(self, node, recv_subject, target=''):
         self.loopBlocks = {}
         self.returnedValue = None
         self.default_blocking = True
@@ -218,11 +218,25 @@ class ExecutorInterface(ApeInterface):
             subject='target.executor.getEprocs', args=[device, address], target=address
         )
 
-    def do(self, device, procedure, requirements):
-        self._send_message(subject='target.do', args=[device, procedure, requirements])
+    def getProcedures(self):
+        return self._send_message(subject='target.getProcedures')
 
-    def doProc(self, index):
-        self._send_message(subject='target.doProc', args=[index])
+    def clearProcedures(self):
+        self._send_message(subject='target.clearProcedures')
+
+    def createProcedure(self, device, procedure, requirements):
+        self._send_message(
+            subject='target.createProcedure', args=[device, procedure, requirements]
+        )
+
+    def removeProcedure(self, device, procedure):
+        self._send_message(subject='target.removeProcedure', args=[device, procedure])
+
+    def doProcedure(self, device, procedure):
+        self._send_message(subject='target.doProcedure', args=[device, procedure])
+
+    def doProclistItem(self, index):
+        self._send_message(subject='target.doProclistItem', args=[index])
 
     def doProclist(self):
         self._send_message(subject='target.doProclist')
@@ -239,16 +253,19 @@ class ExecutorInterface(ApeInterface):
     def importProclist(self, fname):
         self._send_message(subject='target.importProclist', args=[fname])
 
-    def insertProc(self, index, device, procedure, requirements):
+    def insertProclistItem(self, index, device, procedure, requirements):
         self._send_message(
-            subject='target.insertProc', args=[index, device, procedure, requirements]
+            subject='target.insertProclistItem',
+            args=[index, device, procedure, requirements],
         )
 
-    def updateProc(self, index, requirements):
-        self._send_message(subject='target.updateProc', args=[index, requirements])
+    def updateProclistItem(self, index, requirements):
+        self._send_message(
+            subject='target.updateProclistItem', args=[index, requirements]
+        )
 
-    def removeProc(self, index):
-        self._send_message(subject='target.removeProc', args=[index])
+    def removeProclistItem(self, index):
+        self._send_message(subject='target.removeProclistItem', args=[index])
 
-    def swapProcs(self, index1, index2):
-        self._send_message(subject='target.swapProcs', args=[index1, index2])
+    def swapProclistItems(self, index1, index2):
+        self._send_message(subject='target.swapProclistItems', args=[index1, index2])
