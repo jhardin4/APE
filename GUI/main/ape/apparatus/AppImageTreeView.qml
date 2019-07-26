@@ -5,13 +5,10 @@ import ape.controls 1.0
 import ape.core 1.0
 import ape.apparatus 1.0
 
-C1.TreeView {
+ApeTreeView {
   id: root
-
-  selectionMode: C1.SelectionMode.SingleSelection
-  headerVisible: true
-  backgroundVisible: false
   property var editingIndex: null
+  autoExpand: false
 
   onDoubleClicked: {
     if (model.flags(index) & Qt.ItemIsEditable) {
@@ -21,19 +18,8 @@ C1.TreeView {
     }
   }
 
-  Component.onCompleted: delayTimer.start()
-
   QtObject {
     id: d
-
-    function expandAll() {
-      /* NOTE: need to use internal modelAdapter, since index returned by external API seems to broken */
-      var modelAdapter = root.__model
-      for (var i = 0; i < modelAdapter.rowCount(); i++) {
-        var index = modelAdapter.mapRowToModelIndex(i)
-        modelAdapter.expand(index)
-      }
-    }
 
     function prepareNewEntry() {
       newEntryDialog.baseText = root.model.data(root.currentIndex,
@@ -67,23 +53,6 @@ C1.TreeView {
       var ref = root.model.data(root.currentIndex, AppImageTreeModel.KeyRole)
       nodeHandler.appEntryValueCopied("@" + ref)
     }
-  }
-
-  Connections {
-    target: root.model
-    ignoreUnknownSignals: true
-
-    onModelReset: {
-      delayTimer.start()
-    }
-  }
-
-  Timer {
-    /* need to use this timer to make expanding work */
-    id: delayTimer
-    interval: 10
-    repeat: false
-    onTriggered: d.expandAll()
   }
 
   itemDelegate: Item {
