@@ -6,4 +6,3 @@ PyQt5
 zmq
 opencv-python
 matplotlib
-pre-commit
