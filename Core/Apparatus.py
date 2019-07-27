@@ -1,9 +1,12 @@
 import Devices
 import json
 import time
-from copy import deepcopy
-from importlib import import_module
 import AppTemplates
+
+
+class InvalidApparatusAddressException(Exception):
+    pass
+
 
 class Apparatus(dict):
     def __init__(self):
@@ -12,7 +15,9 @@ class Apparatus(dict):
         self['information'] = {}
         self['eproclist'] = []
         self.proclog = []
-        self['proclog'] = self.proclog  # this was put in because I am too lazy to fix it right
+        self[
+            'proclog'
+        ] = self.proclog  # this was put in because I am too lazy to fix it right
         self.proclog_threadindex = 0
         self.proclog_depthindex = 0
         self.executor = ''
@@ -28,18 +33,31 @@ class Apparatus(dict):
             self['devices'][device]['Connected'] = False
             if self['devices'][device]['addresstype'] == 'pointer':
                 # Create instance of the Device
-                self['devices'][device]['address'] = getattr(Devices, self['devices'][device]['type'])(device)
-                self.executor.loadDevice(device, self['devices'][device]['address'], 'pointer')
+                self['devices'][device]['address'] = getattr(
+                    Devices, self['devices'][device]['type']
+                )(device)
+                self.executor.loadDevice(
+                    device, self['devices'][device]['address'], 'pointer'
+                )
 
                 # Register the device with the Executor
                 # self['devices'][device]['address'].ERegister(executor)
 
                 # Add Device descriptors to Apparatus ones
-                if 'descriptors' in self['devices'][device] and type(self['devices'][device]['descriptors']) == list:
-                    self['devices'][device]['descriptors'] = [*self['devices'][device]['descriptors'],
-                                                              *self['devices'][device]['address'].descriptors]
+                if (
+                    'descriptors' in self['devices'][device]
+                    and type(self['devices'][device]['descriptors']) == list
+                ):
+                    self['devices'][device]['descriptors'] = list(
+                        {
+                            *self['devices'][device]['descriptors'],
+                            *self['devices'][device]['address'].descriptors,
+                        }
+                    )
                 else:
-                    self['devices'][device]['descriptors'] = self['devices'][device]['address'].descriptors
+                    self['devices'][device]['descriptors'] = self['devices'][device][
+                        'address'
+                    ].descriptors
 
                 # Set Device simulation state
                 self['devices'][device]['address'].simulation = simulation
@@ -52,20 +70,42 @@ class Apparatus(dict):
                     self.Connect(device)
             elif self['devices'][device]['addresstype'] == 'zmqNode':
                 # Create a device through the executor
-                self.executor.createDevice(device, self['devices'][device]['type'], 'procexec', self['devices'][device]['address'])
+                self.executor.createDevice(
+                    device,
+                    self['devices'][device]['type'],
+                    'procexec',
+                    self['devices'][device]['address'],
+                )
 
                 # Add Device descriptors to Apparatus ones
-                if 'descriptors' in self['devices'][device] and type(self['devices'][device]['descriptors']) == list:
-                    self['devices'][device]['descriptors'] = [*self['devices'][device]['descriptors'],
-                                                              *self.executor.getDescriptors(device, self['devices'][device]['address'])]
+                if (
+                    'descriptors' in self['devices'][device]
+                    and type(self['devices'][device]['descriptors']) == list
+                ):
+                    self['devices'][device]['descriptors'] = list(
+                        {
+                            *self['devices'][device]['descriptors'],
+                            *self.executor.getDescriptors(
+                                device, self['devices'][device]['address']
+                            ),
+                        }
+                    )
                 else:
-                    self['devices'][device]['descriptors'] = self.executor.getDescriptors(device, self['devices'][device]['address'])
+                    self['devices'][device][
+                        'descriptors'
+                    ] = self.executor.getDescriptors(
+                        device, self['devices'][device]['address']
+                    )
 
                 # Set Device simulation state
-                self.executor.setSimulation(device, simulation, self['devices'][device]['address'])
+                self.executor.setSimulation(
+                    device, simulation, self['devices'][device]['address']
+                )
 
-                # Check if the device is dependent on other devices and conncect if not dependent
-                if self.executor.getDependence(device, self['devices'][device]['address']):
+                # Check if the device is dependent on other devices and connect if not dependent
+                if self.executor.getDependence(
+                    device, self['devices'][device]['address']
+                ):
                     # Add to dependent device list for later processing
                     self.dependent_Devices.append(device)
                 else:
@@ -83,9 +123,13 @@ class Apparatus(dict):
         # Get Arguments of Connect for the device
         # self['devices'][deviceName]['address'].CreateEprocs(self, self.executor)
         if self['devices'][deviceName]['addresstype'] == 'pointer':
-            arguments = list(self['devices'][deviceName]['address'].requirements['Connect'])
+            arguments = list(
+                self['devices'][deviceName]['address'].requirements['Connect']
+            )
         if self['devices'][deviceName]['addresstype'] == 'zmqNode':
-            arguments = self.executor.getRequirements(deviceName, 'Connect', self['devices'][deviceName]['address'])
+            arguments = self.executor.getRequirements(
+                deviceName, 'Connect', self['devices'][deviceName]['address']
+            )
         # Try to collect the required arguments together
         details = {}
         for element in arguments:
@@ -97,7 +141,7 @@ class Apparatus(dict):
                     raise Exception(errorstr)
 
         # Run the Connect method of the Device with the right arguments
-        #deviceconnect.Do(details)
+        # deviceconnect.Do(details)
         self.DoEproc(deviceName, 'Connect', details)
 
         # Note in the apparatus that the device is connected
@@ -112,13 +156,17 @@ class Apparatus(dict):
             if self['devices'][device]['addresstype'] == 'pointer':
                 depList = self.executor.getDependencies(device)
             elif self['devices'][device]['addresstype'] == 'zmqNode':
-                depList = self.executor.getDependencies(device, self['devices'][device]['address'])
-            
+                depList = self.executor.getDependencies(
+                    device, self['devices'][device]['address']
+                )
+
             for devname in depList:
-                parent_devname = self['devices'][device][devname+'name']
+                parent_devname = self['devices'][device][devname + 'name']
 
                 if self['devices'][parent_devname]['Connected']:
-                    self['devices'][device][devname + 'address'] = self['devices'][parent_devname]['address']
+                    self['devices'][device][devname + 'address'] = self['devices'][
+                        parent_devname
+                    ]['address']
                 else:
                     Ready2Connect = False
 
@@ -129,33 +177,31 @@ class Apparatus(dict):
                 self.dependent_Devices.append(device)
 
             loopcounter += 1
-            if len(self.dependent_Devices) != 0 and loopcounter > 4 * len(self.dependent_Devices):
+            if len(self.dependent_Devices) != 0 and loopcounter > 4 * len(
+                self.dependent_Devices
+            ):
                 raise Exception('Dependencies not found')
 
     def Disconnect(self, deviceName):
         # if self['devices'][deviceName]['addresstype'] == 'pointer':
-            # deviceDisconnect = self.GetEproc(deviceName, 'Disconnect')
-            # deviceDisconnect.Do()
+        # deviceDisconnect = self.GetEproc(deviceName, 'Disconnect')
+        # deviceDisconnect.Do()
         if self['devices'][deviceName]['addresstype'] != '':
             self.DoEproc(deviceName, 'Disconnect', {})
             # Remove the eprocs registered with the apparatus
             # methodlist = self.findDeviceMethods(deviceName)
             # for method in methodlist:
-                # self.removeEproc(deviceName, method)
-
+            # self.removeEproc(deviceName, method)
+            self['devices'][deviceName]['Connected'] = False
 
     def Disconnect_All(self, simulation=False):
         for device in self['devices']:
             self.Disconnect(device)
         self.logApparatus()
-         
-        
-        #need to change Connected in devices to False to show all devices disconnected
-        
-        #code after this was added to wok on disconnect button
-        
-   
 
+        # need to change Connected in devices to False to show all devices disconnected
+
+        # code after this was added to wok on disconnect button
 
     def getValue(self, infoAddress=''):
         if infoAddress == '':
@@ -167,31 +213,42 @@ class Apparatus(dict):
             try:
                 level = level[branch]
             except TypeError:
-                
-                return 'Invalid ApparatusAddress'
+                raise InvalidApparatusAddressException(
+                    f'Type does not match: {infoAddress}'
+                )
             except KeyError:
-                return 'Invalid ApparatusAddress'
-
+                raise InvalidApparatusAddressException(f'Key not found: {infoAddress}')
         return level
 
-    def setValue(self, infoAddress='', value=''):
-        if infoAddress == '':
+    def checkAddress(self, infoAddress=''):
+        try:
+            _ = self.getValue(infoAddress)
+        except InvalidApparatusAddressException:
+            return False
+        else:
+            return True
+
+    def setValue(self, infoAddress=None, value=''):
+        if not infoAddress:
             return ''
 
         level = self
-        dc_infoAddress = deepcopy(infoAddress)
-        lastlevel = dc_infoAddress.pop()
+        lastlevel = infoAddress[-1]
 
-        for branch in dc_infoAddress:
+        for branch in infoAddress[:-1]:
             try:
                 level = level[branch]
             except TypeError:
-                return 'Invalid ApparatusAddress'
+                raise InvalidApparatusAddressException(
+                    f'Type does not match: {infoAddress}'
+                )
             except KeyError:
-                return 'Invalid ApparatusAddress'
+                raise InvalidApparatusAddressException(f'Key not found: {infoAddress}')
         level[lastlevel] = value
-    
-    def findDevices(self, key, value=[]):
+
+    def findDevices(self, key, value=None):
+        if value is None:
+            value = []
         foundDevices = []
 
         for device in self['devices']:
@@ -201,7 +258,10 @@ class Apparatus(dict):
                 devicePasses = False
             else:
                 if value != []:
-                    if type(self['devices'][device][key]) == dict or type(self['devices'][device][key]) == list:
+                    if (
+                        type(self['devices'][device][key]) == dict
+                        or type(self['devices'][device][key]) == list
+                    ):
                         if value not in self['devices'][device][key]:
                             devicePasses = False
 
@@ -260,12 +320,15 @@ class Apparatus(dict):
                 return line['handle']
 
         return 'No matching elemental procedure found.'
-    
+
     def removeEproc(self, device, method):
         found = False
         for n in range(len(self['eproclist'])):
             if not found:
-                if self['eproclist'][n]['device'] == device and self['eproclist'][n]['method'] == method:
+                if (
+                    self['eproclist'][n]['device'] == device
+                    and self['eproclist'][n]['method'] == method
+                ):
                     self['eproclist'].pop(n)
                     found = True
         if not found:
@@ -294,7 +357,13 @@ class Apparatus(dict):
         elif type(information) == dict:
             for info in information:
                 if (type(information[info]) == dict) and ('value' in information[info]):
-                    if type(information[info]['value']) in [dict, list, int, float, str]:
+                    if type(information[info]['value']) in [
+                        dict,
+                        list,
+                        int,
+                        float,
+                        str,
+                    ]:
                         simpleinfo[info] = information[info]['value']
                     else:
                         simpleinfo[info] = str(type(information[info]))
@@ -302,70 +371,100 @@ class Apparatus(dict):
                     if type(information[info]) in [dict, list, int, float, str]:
                         simpleinfo[info] = information[info]
                     else:
-                        simpleinfo[info] = str(type(information[info]))                    
+                        simpleinfo[info] = str(type(information[info]))
 
         return simpleinfo
 
-    def serialClone(self, abranch='', origin=True):
-        if origin:
-            clone = {}
-            for key in self:
-                clone[key] = self.serialClone(abranch=self[key], origin=False)
-            return clone
+    def serialClone(self, abranch=None, address=None):
+        if abranch is None:
+            abranch = self
 
-        elif type(abranch) == dict:
+        if address:
+            for entry in address:
+                if entry in abranch:
+                    abranch = abranch[entry]
+                else:
+                    return None
+
+        if isinstance(abranch, dict):
             tempdict = {}
-            for key in abranch:
-                tempdict[key] = self.serialClone(abranch=abranch[key], origin=False)
+            for key, value in abranch.items():
+                tempdict[key] = self.serialClone(abranch=value)
             return tempdict
 
-        elif type(abranch) == list:
+        elif isinstance(abranch, list):
             templist = []
-            for n in range(len(abranch)):
-                templist.append(self.serialClone(abranch=abranch[n], origin=False))
+            for item in abranch:
+                templist.append(self.serialClone(abranch=item))
             return templist
 
-        elif type(abranch) in [bool, int, float, str]:
+        elif isinstance(abranch, (bool, int, float, str)):
             return abranch
         else:
             return str(type(abranch))
 
-    def logApparatus(self):
-        fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
+    def logApparatus(self, fname=None):
+        if not fname:
+            fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
         jsonfile = open(fname, mode='w')
-        json.dump(self.serialClone(), jsonfile)
+        json.dump(self.serialClone(), jsonfile, indent=2, sort_keys=True)
         jsonfile.close()
-        
+
+    def importApparatus(self, fname=None):
+        if not fname:
+            fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
+        with open(fname, 'r') as old_app:
+            old_app_data = json.load(old_app)
+            # Clear the proclog
+            self.proclog = []
+            self['proclog'] = self.proclog
+            # Replace the current device and information
+            self['devices'] = old_app_data['devices']
+            self['information'] = old_app_data['information']
+
     def DoEproc(self, device, method, details):
         self.LogProc('eproc_' + device + '_' + method, 'start')
-        self.executor.execute([[{
-            'devices': device,
-            'procedure': method,
-            'details': details
-            }]])
+        self.executor.execute(
+            [[{'devices': device, 'procedure': method, 'details': details}]]
+        )
         self.LogProc('eproc_' + device + '_' + method, details)
         self.LogProc('eproc_' + device + '_' + method, 'end')
 
-    def createAppEntry(self, AppAddress):
+    def createAppEntry(self, app_address):
         target = self
         # Build everything but the last entry
-        for n in range(len(AppAddress)-1):
-            if AppAddress[n] in target:
-                if type(target[AppAddress[n]]) == dict:
-                    target = target[AppAddress[n]]
+        for entry in app_address[:-1]:
+            if entry in target:
+                if type(target[entry]) == dict:
+                    target = target[entry]
                 else:
-                    raise Exception(str(AppAddress[n]) + ' in ' + str(AppAddress) + ' is already occupied')
+                    raise Exception(
+                        str(entry) + ' in ' + str(app_address) + ' is already occupied'
+                    )
             else:
-                target[AppAddress[n]] = {}
-                target = target[AppAddress[n]]
-        if AppAddress[len(AppAddress)-1] not in target:
-            target[AppAddress[len(AppAddress)-1]] = {}
+                target[entry] = {}
+                target = target[entry]
+        if app_address[-1] not in target:
+            target[app_address[-1]] = {}
 
-    def applyTemplate(self, template, args=[], kwargs={}):
+    def removeAppEntry(self, app_address):
+        target = self
+        for entry in app_address[:-1]:
+            if entry in target:
+                target = target[entry]
+            else:
+                return
+        if app_address[-1] in target:
+            del target[app_address[-1]]
+
+    def applyTemplate(self, template, args=None, kwargs=None):
+        if kwargs is None:
+            kwargs = {}
+        if args is None:
+            args = []
         if template == 'blank':
             self['devices'] = {}
             self['information'] = {}
         else:
             templateFunc = getattr(AppTemplates, template)
             templateFunc(self, *args, **kwargs)
-                

@@ -5,15 +5,31 @@ import Procedures.Pump_PumpOn
 import Procedures.User_InkCal_Calculate
 import time
 
-class StartofMotion(Procedure): 
+
+class StartofMotion(Procedure):
     def Prepare(self):
         self.name = 'StartofMotion'
-        self.requirements['motion'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'motion to start'}
-        self.pmove = Procedures.Motion_RefRelPriorityLineMotion(self.apparatus, self.executor)
+        self.requirements['motion'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'motion to start',
+        }
+        self.pmove = Procedures.Motion_RefRelPriorityLineMotion(
+            self.apparatus, self.executor
+        )
         self.pumpon = Procedures.Pump_PumpOn(self.apparatus, self.executor)
         self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
         # self.calUpdate = Procedures.User_InkCal_Calculate(self.apparatus, self.executor)
-        self.apparatus.createAppEntry(['information','ProcedureData','SpanningSample','cur_parameters', 'motionFile'])
+        self.apparatus.createAppEntry(
+            [
+                'information',
+                'ProcedureData',
+                'SpanningSample',
+                'cur_parameters',
+                'motionFile',
+            ]
+        )
 
     def Plan(self):
         # Renaming useful pieces of informaiton
@@ -21,16 +37,40 @@ class StartofMotion(Procedure):
         materialname = self.requirements['motion']['value']['material']
 
         # Retreiving necessary device names
-        nozzlename = self.apparatus.findDevice({'descriptors': ['nozzle', materialname]})
+        nozzlename = self.apparatus.findDevice(
+            {'descriptors': ['nozzle', materialname]}
+        )
         pumpname = self.apparatus.findDevice({'descriptors': ['pump', materialname]})
         motionname = self.apparatus.findDevice({'descriptors': 'motion'})
 
         # Assign apparatus addresses to procedures
-        self.pumpon.requirements['pumpon_time']['address'] = ['devices', pumpname, 'pumpon_time']
-        self.pumpon.requirements['mid_time']['address'] = ['devices', pumpname, 'mid_time']
-        self.pmove.requirements['refpoint']['address'] = ['information', 'alignments', nozzlename + '@start']
-        self.pmove.requirements['speed']['address'] = ['devices',motionname, 'default', 'speed']
-        self.pmove.requirements['axismask']['address'] = ['devices', motionname, nozzlename, 'axismask']
+        self.pumpon.requirements['pumpon_time']['address'] = [
+            'devices',
+            pumpname,
+            'pumpon_time',
+        ]
+        self.pumpon.requirements['mid_time']['address'] = [
+            'devices',
+            pumpname,
+            'mid_time',
+        ]
+        self.pmove.requirements['refpoint']['address'] = [
+            'information',
+            'alignments',
+            nozzlename + '@start',
+        ]
+        self.pmove.requirements['speed']['address'] = [
+            'devices',
+            motionname,
+            'default',
+            'speed',
+        ]
+        self.pmove.requirements['axismask']['address'] = [
+            'devices',
+            motionname,
+            nozzlename,
+            'axismask',
+        ]
 
         # Doing stuff
         self.motionset.Do({'Type': 'default'})
@@ -39,12 +79,44 @@ class StartofMotion(Procedure):
         #     self.calUpdate.Do({'material': materialname})
         self.motionset.Do({'Type': nozzlename})
         self.DoEproc(motionname, 'Run', {})
-        samplename = self.apparatus.getValue(['information','ProcedureData','SpanningSample','cur_parameters', 'samplename'])
+        samplename = self.apparatus.getValue(
+            [
+                'information',
+                'ProcedureData',
+                'SpanningSample',
+                'cur_parameters',
+                'samplename',
+            ]
+        )
         filename = 'Data\\' + str(round(time.time())) + samplename + '_motion.txt'
-        self.apparatus.setValue(['information','ProcedureData','SpanningSample','cur_parameters', 'motionFile'], filename)
-        axismask = self.apparatus.getValue(['devices', motionname, nozzlename, 'axismask'])
-        parameters = {'X': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'], 'Y': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'], axismask['Z']: ['pc', 'pf', 'vc', 'vf', 'ac', 'af']}
-        self.DoEproc(motionname, 'LogData_Start', {'file': filename, 'points': 20000, 'parameters': parameters, 'interval': 1})
+        self.apparatus.setValue(
+            [
+                'information',
+                'ProcedureData',
+                'SpanningSample',
+                'cur_parameters',
+                'motionFile',
+            ],
+            filename,
+        )
+        axismask = self.apparatus.getValue(
+            ['devices', motionname, nozzlename, 'axismask']
+        )
+        parameters = {
+            'X': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'],
+            'Y': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'],
+            axismask['Z']: ['pc', 'pf', 'vc', 'vf', 'ac', 'af'],
+        }
+        self.DoEproc(
+            motionname,
+            'LogData_Start',
+            {
+                'file': filename,
+                'points': 20000,
+                'parameters': parameters,
+                'interval': 1,
+            },
+        )
         if pumpname != 'No devices met requirments':
             pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
             self.DoEproc(pumpname, 'Set', {'pressure': pressure})

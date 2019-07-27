@@ -9,16 +9,39 @@ import time
 class User_InkCal_Measure(Procedure):
     def Prepare(self):
         self.name = 'User_InkCal_Measure'
-        self.requirements['material'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'parameters used to generate toolpath'}
-        self.requirements['filename'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of alignmentfile'}
+        self.requirements['material'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'parameters used to generate toolpath',
+        }
+        self.requirements['filename'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'name of alignmentfile',
+        }
         self.requirements['filename']['address'] = ['information', 'calibrationfile']
-        self.requirements['time'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'name of alignmentfile'}
-        self.requirements['time']['address'] = ['information', 'ink calibration', 'time']
-        self.pmotion = Procedures.Motion_RefRelPriorityLineMotion(self.apparatus, self.executor)
+        self.requirements['time'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'name of alignmentfile',
+        }
+        self.requirements['time']['address'] = [
+            'information',
+            'ink calibration',
+            'time',
+        ]
+        self.pmotion = Procedures.Motion_RefRelPriorityLineMotion(
+            self.apparatus, self.executor
+        )
         self.pumpon = Procedures.Pump_PumpOn(self.apparatus, self.executor)
         self.pumpoff = Procedures.Pump_PumpOff(self.apparatus, self.executor)
         self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
-        self.useroptions = Procedures.User_Consol_InputOptions(self.apparatus, self.executor)
+        self.useroptions = Procedures.User_Consol_InputOptions(
+            self.apparatus, self.executor
+        )
 
     def Plan(self):
         # Reassignments for convienence
@@ -29,12 +52,26 @@ class User_InkCal_Measure(Procedure):
         # FIND devices needed for procedure
         motion = self.apparatus.findDevice({'descriptors': ['motion']})
         system = self.apparatus.findDevice({'descriptors': ['system']})
-        nozzle = self.apparatus.findDevice({'descriptors': ['nozzle', material]})
+        _ = self.apparatus.findDevice({'descriptors': ['nozzle', material]})
         pump = self.apparatus.findDevice({'descriptors': ['pump', material]})
 
-        self.pmotion.requirements['axismask']['address'] = ['devices', motion, 'n'+material, 'axismask']
-        self.pmotion.requirements['refpoint']['address'] = ['information', 'alignments', 'n'+material+'@cal']
-        self.pmotion.requirements['speed']['address'] = ['devices', motion, 'default', 'speed']
+        self.pmotion.requirements['axismask']['address'] = [
+            'devices',
+            motion,
+            'n' + material,
+            'axismask',
+        ]
+        self.pmotion.requirements['refpoint']['address'] = [
+            'information',
+            'alignments',
+            'n' + material + '@cal',
+        ]
+        self.pmotion.requirements['speed']['address'] = [
+            'devices',
+            motion,
+            'default',
+            'speed',
+        ]
 
         # Do stuff
         # Go to calibration position
@@ -53,7 +90,9 @@ class User_InkCal_Measure(Procedure):
                 message = 'Is ' + initialweightstr + 'g the correct value?(y/n)'
                 options = ['y', 'n']
                 default = 'y'
-                self.useroptions.Do({'message': message, 'options': options, 'default': default})
+                self.useroptions.Do(
+                    {'message': message, 'options': options, 'default': default}
+                )
                 confirmation = self.useroptions.response
                 if confirmation == 'y':
                     initialweightok = True
@@ -81,7 +120,9 @@ class User_InkCal_Measure(Procedure):
                 message = 'Is ' + str(finalweightstr) + 'g the correct value?(y/n)'
                 options = ['y', 'n']
                 default = 'y'
-                self.useroptions.Do({'message': message, 'options': options, 'default': default})
+                self.useroptions.Do(
+                    {'message': message, 'options': options, 'default': default}
+                )
                 confirmation = self.useroptions.response
                 if confirmation == 'y':
                     finalweightok = True
@@ -89,7 +130,11 @@ class User_InkCal_Measure(Procedure):
                 print('That is not a number.  Try again.')
 
         # Construct the data entry for the calibration log
-        dataline = {'delta_weight': finalweight-initialweight, 'test_time': ptime, 'time': time.time()}
+        dataline = {
+            'delta_weight': finalweight - initialweight,
+            'test_time': ptime,
+            'time': time.time(),
+        }
         cfilename = material + filename
         # Load in the previous file
         with open(cfilename, 'r') as caljson:
@@ -98,5 +143,7 @@ class User_InkCal_Measure(Procedure):
         # Store the updated data
         with open(cfilename, 'w') as caljson:
             json.dump(file_data, caljson)
-        with open('Logs/' + str(int(round(time.time(), 0))) + cfilename, 'w') as caljson:
+        with open(
+            'Logs/' + str(int(round(time.time(), 0))) + cfilename, 'w'
+        ) as caljson:
             json.dump(file_data, caljson)

@@ -6,10 +6,30 @@ import time
 class Data_JSON_Store(Procedure):
     def Prepare(self):
         self.name = 'Data_JSON_Store'
-        self.requirements['filename'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'motion to start'}
-        self.requirements['value'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'value'}
-        self.requirements['label'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'label of data'}
-        self.requirements['newentry'] = {'source': 'apparatus', 'address': '', 'value': True, 'desc': 'new ene'}
+        self.requirements['filename'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'motion to start',
+        }
+        self.requirements['value'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'value',
+        }
+        self.requirements['label'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'label of data',
+        }
+        self.requirements['newentry'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': True,
+            'desc': 'new ene',
+        }
 
     def Plan(self):
         # Renaming useful pieces of informaiton

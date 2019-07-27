@@ -5,4 +5,4 @@ Created on Mon Jan 14 16:40:19 2019
 @author: jhardin
 """
 
-from .. import Devices
+from .. import Devices  # noqa: F401

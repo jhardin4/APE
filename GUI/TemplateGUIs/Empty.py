@@ -1,0 +1,2 @@
+def Empty():
+    return [], {}

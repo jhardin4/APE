@@ -1,13 +1,13 @@
-from zmqNode import zmqNode
 import Devices
-import APE_Interfaces
+from MultiProcess.zmqNode import zmqNode
+from MultiProcess import APE_Interfaces
 
 # This used for interfacing with an APE process
 # It is built on the zmqNode
 # Most Methods are just commonly used messages
 
 
-class Interface_Node():
+class Interface_Node:
     def __init__(self, I2A_address, I2PE_address):
         self.node = zmqNode('User')
         self.node.target = self

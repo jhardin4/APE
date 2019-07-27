@@ -5,12 +5,11 @@ Created on Mon May 27 07:41:08 2019
 @author: casey
 """
 
-#import json
+# import json
 #
-## read file
-#with open('C:/Users/casey/OneDrive/Desktop/APE GUI/Logs/copy.json', 'r') as myfile:
+# read file
+# with open('C:/Users/casey/OneDrive/Desktop/APE GUI/Logs/copy.json', 'r') as myfile:
 #    data=myfile.read()
-
 
 
 import json

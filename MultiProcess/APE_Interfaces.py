@@ -2,158 +2,174 @@
 import Devices
 
 
-class ApparatusInterface():
-    def __init__(self, node):
+class ApeInterface:
+    def __init__(self, node, recv_subject, target=''):
         self.loopBlocks = {}
-        self.valueReceived = True
-        self.returnedValue = 0
+        self.returnedValue = None
+        self.default_blocking = True
         self.node = node
-        self.apparatus_address = ''
-        self.defaultBlocking = True
+        self.recv_subject = recv_subject
+        self.default_target = target
 
-    def Connect_All(self, simulation=False):
-        kwargs = {'simulation': simulation}
-        message = {'subject': 'target.apparatus.Connect_All', 'kwargs': kwargs}
-        self.node.send('appa', message)
+    def _send_message(
+        self, subject, kwargs=None, args=None, reply=None, target=None, json_args=None
+    ):
+        if json_args is None:
+            json_args = {}
+        if target is None:
+            target = self.default_target
+        if reply is None:
+            reply = self.default_blocking
+        message = {'subject': subject}
+        if reply:
+            # Build expected reply
+            message['ereply'] = {
+                'subject': self.recv_subject,
+                'args': [subject, 'e_reply'],
+            }
+        if kwargs:
+            message['kwargs'] = kwargs
+        if args:
+            message['args'] = args
 
-    def Disconnect_All(self):
-        message = {'subject': 'target.apparatus.Disconnect_All'}
-        self.node.send('appa', message)
-
-    def setValue(self, app_address, value):
-        kwargs = {'infoAddress': app_address, 'value': value}
-        message = {'subject': 'target.apparatus.setValue', 'kwargs': kwargs}
-        self.node.send('appa', message)
-
-    def getValue(self, app_address):
-        # Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.apparatus.recv_value'
-        ereply['args'] = ['gotValue', 'e_reply']
-
-        # Build primary message
-        kwargs = {'infoAddress': app_address}
-        message = {'subject': 'target.apparatus.getValue', 'kwargs': kwargs, 'ereply': ereply}
-        self.loopBlocks['gotValue'] = False
-        self.node.send('appa', message)
-        while not self.loopBlocks['gotValue']:
-            self.node.listen('appa')
-        return self.returnedValue
-
-    def createAppEntry(self, AppAddress):
-        # Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.apparatus.recv_value'
-        ereply['args'] = ['madeEntry', 'e_reply']
-
-        # Build primary message
-        args = [AppAddress]
-        message = {'subject': 'target.apparatus.createAppEntry', 'args': args, 'ereply': ereply}
-        self.loopBlocks['madeEntry'] = False
-        self.node.send('appa', message)
-        while not self.loopBlocks['madeEntry']:
-            self.node.listen('appa')
-        return self.returnedValue
+        if reply:
+            self.loopBlocks[subject] = False
+        self.node.send(target, message, **json_args)
+        if reply:
+            while not self.loopBlocks[subject]:
+                self.node.listen(target)
+            return self.returnedValue
 
     def recv_value(self, target, value):
         self.loopBlocks[target] = True
         self.returnedValue = value
 
+
+class ApparatusInterface(ApeInterface):
+    def __init__(self, node):
+        super(ApparatusInterface, self).__init__(
+            node, recv_subject='target.apparatus.recv_value', target='appa'
+        )
+        self.apparatus_address = ''
+
+    def Connect_All(self, simulation=False):
+        self._send_message(
+            subject='target.apparatus.Connect_All', kwargs={'simulation': simulation}
+        )
+
+    def Disconnect_All(self):
+        self._send_message(subject='target.apparatus.Disconnect_All')
+
+    def setValue(self, app_address, value):
+        self._send_message(
+            subject='target.apparatus.setValue',
+            kwargs={'infoAddress': app_address, 'value': value},
+        )
+
+    def getValue(self, app_address):
+        return self._send_message(
+            subject='target.apparatus.getValue', kwargs={'infoAddress': app_address}
+        )
+
+    def checkAddress(self, app_address):
+        return self._send_message(
+            subject='target.apparatus.checkAddress', kwargs={'infoAddress': app_address}
+        )
+
+    def createAppEntry(self, app_address):
+        return self._send_message(
+            subject='target.apparatus.createAppEntry', args=[app_address]
+        )
+
+    def removeAppEntry(self, app_address):
+        return self._send_message(
+            subject='target.apparatus.removeAppEntry', args=[app_address]
+        )
+
     def LogProc(self, name, requirements):
-        args = [name, requirements]
-        message = {'subject': 'target.apparatus.LogProc', 'args': args}
-        self.node.send('appa', message)
+        self._send_message(
+            'target.apparatus.LogProc',
+            args=[name, requirements],
+            reply=False,
+            json_args={'default': lambda o: '<not serializable>'},
+        )
 
     def findDevice(self, reqs):
-        # Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.apparatus.recv_value'
-        ereply['args'] = ['devFound', 'e_reply']
+        return self._send_message(subject='target.apparatus.findDevice', args=[reqs])
 
-        # Build primary message
-        args = [reqs]
-        message = {'subject': 'target.apparatus.findDevice', 'args': args, 'ereply': ereply}
-        self.loopBlocks['devFound'] = False
-        self.node.send('appa', message)
-        while not self.loopBlocks['devFound']:
-            self.node.listen('appa')
-        return self.returnedValue
+    def serialClone(self, address=None):
+        return self._send_message(
+            subject='target.apparatus.serialClone', kwargs={'address': address}
+        )
 
-    def serialClone(self):
-        # Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.apparatus.recv_value'
-        ereply['args'] = ['clone', 'e_reply']
+    def applyTemplate(self, tName, args=None, kwargs=None):
+        if kwargs is None:
+            kwargs = {}
+        if args is None:
+            args = []
+        self._send_message(
+            subject='target.apparatus.applyTemplate',
+            args=[tName],
+            kwargs={'args': args, 'kwargs': kwargs},
+        )
 
-        # Build primary message
-        message = {'subject': 'target.apparatus.serialClone', 'ereply': ereply}
-        self.loopBlocks['clone'] = False
-        self.node.send('appa', message)
-        while not self.loopBlocks['clone']:
-            self.node.listen('appa')
-        return self.returnedValue
+    def logApparatus(self, fname):
+        self._send_message(
+            subject='target.apparatus.logApparatus', args=[fname], reply=False
+        )
 
-    def applyTemplate(self, tName, args=[], kwargs={}):
-        margs = [tName]
-        mkwargs = {'args':args, 'kwargs':kwargs}
-        message = {'subject': 'target.apparatus.applyTemplate', 'args': margs, 'kwargs': mkwargs}
-        self.node.send('appa', message)        
+    def importApparatus(self, fname):
+        self._send_message(subject='target.apparatus.importApparatus', args=[fname])
 
-class ExecutorInterface():
+    def DoEproc(self, device, method, details):
+        return self._send_message(
+            subject='target.apparatus.DoEproc', args=[device, method, details]
+        )
+
+
+class ExecutorInterface(ApeInterface):
     def __init__(self, node):
-        self.node = node
+        super(ExecutorInterface, self).__init__(
+            node, recv_subject='target.executor.recv_value', target='procexec'
+        )
         self.devicelist = {}
-        self.loopBlocks = {}
         self.localDefault = True
 
     def execute(self, eproclist):
-        message = {'subject': 'target.executor.execute', 'args': [eproclist]}
-        self.node.send('procexec', message)
+        self._send_message(subject='target.executor.execute', args=[eproclist])
 
     def createDevice(self, devName, devType, exec_address, rel_address):
         # Handle local creation of a device
-        if self.node.name == rel_address:
+        if self.node.name == rel_address == exec_address:
             self.devicelist[devName] = {}
             self.devicelist[devName]['Address'] = getattr(Devices, devType)(devName)
             self.devicelist[devName]['AddressType'] = 'pointer'
             self.devicelist[devName]['Address'].executor = self
+            return True
         else:
-            ereply = {}
-            ereply['subject'] = 'target.executor.recv_value'
-            ereply['args'] = ['devMade', 'e_reply']
-    
-            # Build primary message
-            args = [devName, devType, exec_address, rel_address]
-            message = {'subject': 'target.executor.createDevice',
-                       'args':args,
-                       'ereply': ereply}
-            self.loopBlocks['devMade'] = False
-            self.node.send(exec_address, message)
-            while not self.loopBlocks['devMade']:
-                self.node.listen(exec_address)   
+            return self._send_message(
+                subject='target.executor.createDevice',
+                args=[devName, devType, exec_address, rel_address],
+                target=exec_address,
+            )
 
     def getDescriptors(self, device, address):
-        #Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.executor.recv_value'
-        ereply['args'] = ['gotDescriptors', 'e_reply']
+        if address == self.node.name:
+            return self.devicelist[device]["Address"].getDescriptors()
 
-        # Build primary message
-        message = {'subject': 'target.executor.devicelist["' + device + '"]["Address"].getDescriptors', 'ereply': ereply}
-        self.loopBlocks['gotDescriptors'] = False
-        self.node.send(address, message)
-        while not self.loopBlocks['gotDescriptors']:
-            self.node.listen(address)
-        return self.returnedValue
-    
+        subject = f'target.executor.devicelist["{device}"]["Address"].getDescriptors'
+        return self._send_message(subject=subject, target=address)
+
     def setSimulation(self, device, value, address):
-        args=[value]
-        message = {'subject': 'target.executor.devicelist["' + device + '"]["Address"].setSimulation', 'args':args}
-        self.gotDescriptors = False
-        self.node.send(address, message)
+        if address == self.node.name:
+            self.devicelist[device]["Address"].setSimulation(value)
+            return
 
-     #def getRequirements(self, device, eproc, address):
-        #Build expected reply
+        subject = f'target.executor.devicelist["{device}"]["Address"].setSimulation'
+        self._send_message(subject=subject, args=[value], target=address)
+
+        # def getRequirements(self, device, eproc, address):
+        # Build expected reply
         '''
         ereply = {}
         ereply['subject'] = 'target.executor.recv_value'
@@ -168,79 +184,104 @@ class ExecutorInterface():
             self.node.listen(address)
         return self.returnedValue
         '''
+
     def getDependence(self, device, address):
-        #Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.executor.recv_value'
-        ereply['args'] = ['gotDependence', 'e_reply']
+        if address == self.node.name:
+            self.devicelist[device]["Address"].getDependence()
 
-        # Build primary message
-        message = {'subject': 'target.executor.devicelist["' + device + '"]["Address"].getDependence', 'ereply': ereply}
-        self.loopBlocks['gotDependence'] = False
-        self.node.send(address, message)
-        while not self.loopBlocks['gotDependence']:
-            self.node.listen(address)
-        return self.returnedValue
-    
+        subject = f'target.executor.devicelist["{device}"]["Address"].getDependence'
+        return self._send_message(subject=subject, target=address)
+
     def getDependencies(self, device, address):
-        #Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.executor.recv_value'
-        ereply['args'] = ['gotDependencies', 'e_reply']
+        if address == self.node.name:
+            return self.devicelist[device]["Address"].getDependencies()
 
-        # Build primary message
-        message = {'subject': 'target.executor.devicelist["' + device + '"]["Address"].getDependencies', 'ereply': ereply}
-        self.loopBlocks['gotDependencies'] = False
-        self.node.send(address, message)
-        while not self.loopBlocks['gotDependencies']:
-            self.node.listen(address)
-        return self.returnedValue        
-    
-    def recv_value(self, target, value):
-        self.loopBlocks[target] = True
-        self.returnedValue = value
-        
+        return self._send_message(
+            subject='target.executor.getDependencies',
+            args=[device, address],
+            target=address,
+        )
+
     def getRequirements(self, device, eproc, address):
-        #Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.executor.recv_value'
-        ereply['args'] = ['gotRequirements', 'e_reply']
+        if address == self.node.name:
+            return list(self.devicelist[device]['Address'].requirements[eproc])
 
-        # Build primary message
-        args = [device, eproc, address]
-        message = {'subject': 'target.executor.getRequirements', 'args':args, 'ereply': ereply}
-        self.loopBlocks['gotRequirements'] = False
-        self.node.send(address, message)
-        while not self.loopBlocks['gotRequirements']:
-            self.node.listen(address)
-        return self.returnedValue
+        return self._send_message(
+            subject='target.executor.getRequirements',
+            args=[device, eproc, address],
+            target=address,
+        )
 
     def getDevices(self, address):
-        #Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.executor.recv_value'
-        ereply['args'] = ['gotDevices', 'e_reply']
-        
-        # Build primary message
-        args = [address] 
-        message = {'subject': 'target.executor.getDevices', 'args': args, 'ereply': ereply}
-        self.loopBlocks['gotDevices'] = False
-        self.node.send(address, message)
-        while not self.loopBlocks['gotDevices']:
-            self.node.listen(address)
-        return self.returnedValue
+        if address == self.node.name:
+            return list(self.devicelist)
+
+        return self._send_message(
+            subject='target.executor.getDevices', args=[address], target=address
+        )
 
     def getEprocs(self, device, address):
-        #Build expected reply
-        ereply = {}
-        ereply['subject'] = 'target.executor.recv_value'
-        ereply['args'] = ['gotEprocs', 'e_reply']
+        if address == self.node.name:
+            return list(self.devicelist[device]['Address'].requirements)
 
-        # Build primary message
-        args = [device, address]
-        message = {'subject': 'target.executor.getEprocs', 'args':args, 'ereply': ereply}
-        self.loopBlocks['gotEprocs'] = False
-        self.node.send(address, message)
-        while not self.loopBlocks['gotEprocs']:
-            self.node.listen(address)
-        return self.returnedValue
+        return self._send_message(
+            subject='target.executor.getEprocs', args=[device, address], target=address
+        )
+
+    def getProcedures(self):
+        return self._send_message(subject='target.getProcedures')
+
+    def clearProcedures(self):
+        self._send_message(subject='target.clearProcedures')
+
+    def reloadProcedures(self):
+        self._send_message(subject='target.reloadProcedures')
+
+    def createProcedure(self, device, procedure, requirements):
+        self._send_message(
+            subject='target.createProcedure', args=[device, procedure, requirements]
+        )
+
+    def removeProcedure(self, device, procedure):
+        self._send_message(subject='target.removeProcedure', args=[device, procedure])
+
+    def do(self, device, procedure, requirements):
+        self._send_message(subject='target.do', args=[device, procedure, requirements])
+
+    def doProcedure(self, device, procedure):
+        self._send_message(subject='target.doProcedure', args=[device, procedure])
+
+    def doProclistItem(self, index):
+        self._send_message(subject='target.doProclistItem', args=[index])
+
+    def doProclist(self):
+        self._send_message(subject='target.doProclist')
+
+    def getProclist(self):
+        return self._send_message(subject='target.getProclist')
+
+    def clearProclist(self):
+        self._send_message(subject='target.clearProclist')
+
+    def exportProclist(self, fname):
+        self._send_message(subject='target.exportProclist', args=[fname])
+
+    def importProclist(self, fname):
+        self._send_message(subject='target.importProclist', args=[fname])
+
+    def insertProclistItem(self, index, device, procedure, requirements):
+        self._send_message(
+            subject='target.insertProclistItem',
+            args=[index, device, procedure, requirements],
+        )
+
+    def updateProclistItem(self, index, requirements):
+        self._send_message(
+            subject='target.updateProclistItem', args=[index, requirements]
+        )
+
+    def removeProclistItem(self, index):
+        self._send_message(subject='target.removeProclistItem', args=[index])
+
+    def swapProclistItems(self, index1, index2):
+        self._send_message(subject='target.swapProclistItems', args=[index1, index2])

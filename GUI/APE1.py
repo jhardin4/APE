@@ -6,7 +6,8 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -25,9 +26,9 @@ class Ui_MainWindow(object):
         self.tempapp = QtWidgets.QPushButton(self.atab)
         self.tempapp.setGeometry(QtCore.QRect(10, 20, 113, 32))
         self.tempapp.setObjectName("tempapp")
-#        self.oldapp = QtWidgets.QPushButton(self.atab)
-#        self.oldapp.setGeometry(QtCore.QRect(250, 20, 113, 32))
-#        self.oldapp.setObjectName("oldapp")
+        #        self.oldapp = QtWidgets.QPushButton(self.atab)
+        #        self.oldapp.setGeometry(QtCore.QRect(250, 20, 113, 32))
+        #        self.oldapp.setObjectName("oldapp")
         self.treeWidget = QtWidgets.QTreeWidget(self.atab)
         self.treeWidget.setGeometry(QtCore.QRect(60, 60, 271, 431))
         self.treeWidget.setObjectName("treeWidget")
@@ -57,7 +58,9 @@ class Ui_MainWindow(object):
         self.copybtn.setObjectName("copybtn")
         self.itable = QtWidgets.QTableWidget(self.atab)
         self.itable.setGeometry(QtCore.QRect(470, 310, 331, 192))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(4)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.itable.sizePolicy().hasHeightForWidth())
@@ -79,7 +82,7 @@ class Ui_MainWindow(object):
         self.connectbtn = QtWidgets.QPushButton(self.atab)
         self.connectbtn.setGeometry(QtCore.QRect(530, 270, 221, 32))
         self.connectbtn.setObjectName("connectbtn")
-        self.disconnectbtn =  QtWidgets.QPushButton(self.atab)
+        self.disconnectbtn = QtWidgets.QPushButton(self.atab)
         self.disconnectbtn.setGeometry(QtCore.QRect(530, 510, 221, 32))
         self.disconnectbtn.setObjectName("disconnectbtn")
         self.tabWidget.addTab(self.atab, "")
@@ -162,7 +165,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.blankapp.setText(_translate("MainWindow", "Refresh"))
         self.tempapp.setText(_translate("MainWindow", "Template"))
-        #self.oldapp.setText(_translate("MainWindow", "Old"))
+        # self.oldapp.setText(_translate("MainWindow", "Old"))
         self.treeWidget.headerItem().setText(0, _translate("MainWindow", "Apparatus"))
         self.label.setText(_translate("MainWindow", "Find"))
         self.label_2.setText(_translate("MainWindow", "Replace"))
@@ -177,7 +180,9 @@ class Ui_MainWindow(object):
         self.saveasbtn.setText(_translate("MainWindow", "Save As"))
         self.connectbtn.setText(_translate("MainWindow", "Connect All Devices"))
         self.disconnectbtn.setText(_translate("MainWindow", "Disconnect All Devices"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.atab), _translate("MainWindow", "Apparatus"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.atab), _translate("MainWindow", "Apparatus")
+        )
         item = self.rbox.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Requirement"))
         item = self.rbox.horizontalHeaderItem(1)
@@ -193,6 +198,9 @@ class Ui_MainWindow(object):
         self.abtn.setText(_translate("MainWindow", "Add"))
         self.runCurrentbtn.setText(_translate("MainWindow", "Run Current"))
         self.RunListbtn.setText(_translate("MainWindow", "Run List"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.ptab), _translate("MainWindow", "Procedure"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.utab), _translate("MainWindow", "Utilities"))
-
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.ptab), _translate("MainWindow", "Procedure")
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.utab), _translate("MainWindow", "Utilities")
+        )

@@ -1,9 +1,9 @@
-from zmqNode import zmqNode
-import threading
 import APE
+from MultiProcess.zmqNode import zmqNode
 from multiprocessing import Process
 
-class APE_GUI_Node():
+
+class APE_GUI_Node:
     def __init__(self):
         self.node = zmqNode()
         self.node.target = self
@@ -12,15 +12,17 @@ class APE_GUI_Node():
         self.node.logfile = 'GUINode.txt'
         self.node.connect('APE', address)
         self.node.start_listening()
-   
+
     def setValue(self, app_address, value):
-        kwargs = {'command': 'setValue', 'information': {'infoAddress': app_address, 'value': value}}
+        kwargs = {
+            'command': 'setValue',
+            'information': {'infoAddress': app_address, 'value': value},
+        }
         message = {'subject': 'target', 'action': 'CMD_Apparatus', 'kwargs': kwargs}
         self.node.send('APE', message)
-    
-    
+
     def getValue(self, app_address, local_method, local_args='', local_kwargs=''):
-        #Build expected reply
+        # Build expected reply
         ereply = {}
         ereply['subject'] = 'target'
         ereply['action'] = local_method  # This is a string not a method!
@@ -31,11 +33,17 @@ class APE_GUI_Node():
 
         # Build primary message
         kwargs = {'command': 'getValue', 'information': {'infoAddress': app_address}}
-        message = {'subject': 'target', 'action': 'CMD_Apparatus', 'kwargs': kwargs, 'ereply': ereply}
+        message = {
+            'subject': 'target',
+            'action': 'CMD_Apparatus',
+            'kwargs': kwargs,
+            'ereply': ereply,
+        }
         self.node.send('APE', message)
 
     def test_print(self, message):
         print(str(message))
+
 
 if __name__ == '__main__':
     address = "tcp://127.0.0.1:5562"
@@ -43,6 +51,6 @@ if __name__ == '__main__':
     proc_APE.start()
     banana = APE_GUI_Node()
     banana.startNode(address)
-    banana.getValue(['information', 'calibrationfile'], 'test_print', local_args=['e_reply'])
-    
-    
+    banana.getValue(
+        ['information', 'calibrationfile'], 'test_print', local_args=['e_reply']
+    )

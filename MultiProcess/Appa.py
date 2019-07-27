@@ -4,7 +4,7 @@ from MultiProcess.zmqNode import zmqNode
 from importlib import import_module
 
 
-class Appa():
+class Appa:
     def __init__(self, A2L_address, A2PE_address, A2G_address):
         # Create the node and set its target to Appa
         self.node = zmqNode('appa')

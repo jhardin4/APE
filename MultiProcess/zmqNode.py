@@ -12,11 +12,13 @@ It uses json objects as messages and and these objects have 4 parts:
 Recieving messages is non-blocking
 
 '''
+import traceback
+
 import zmq
 import threading
 
 
-class zmqNode():
+class zmqNode:
     def __init__(self, name):
         self.name = name
         self.connections = {}
@@ -45,6 +47,7 @@ class zmqNode():
 
     def disconnect(self, name=''):
         self.connections[name].close()
+        del self.connections[name]
 
     def build_message(self, subject='', action='', args='', kwargs='', ereply=''):
         message = {}
@@ -69,7 +72,7 @@ class zmqNode():
             message['ereply'] = ereply
         elif ereply != '':
             raise Exception('ereply did not contain and "e_reply" target.')
-        
+
         return message
 
     def findEReply(self, ereply):
@@ -84,9 +87,9 @@ class zmqNode():
                     return key
         return False
 
-    def send(self, name, message):
+    def send(self, name, message, **kwargs):
         try:
-            self.connections[name].send_json(message, flags=zmq.NOBLOCK)
+            self.connections[name].send_json(message, flags=zmq.NOBLOCK, **kwargs)
         except TypeError:
             raise Exception(str(message))
         except zmq.Again:
@@ -99,10 +102,10 @@ class zmqNode():
 
     def close(self):
         self.listening = False
-        threading.Timer(2*self.heart_beat, self.close_all).start()
+        threading.Timer(2 * self.heart_beat, self.close_all).start()
 
     def close_all(self):
-        for connection in self.connections:
+        for connection in list(self.connections.keys()):
             self.disconnect(connection)
         self.context.term()
 
@@ -110,16 +113,17 @@ class zmqNode():
         message = 'no message'
         try:
             message = self.connections[name].recv_json(flags=zmq.NOBLOCK)
-            self.cur_connection = name
         except zmq.Again:
             pass
-        self.handle(message)
+        self.handle(message, connection=name)
 
     def listen_all(self):
         for connection in self.connections:
             self.listen(name=connection)
         if self.listening:
-            self.timer_listen = threading.Timer(self.heart_beat, self.listen_all).start()
+            self.timer_listen = threading.Timer(
+                self.heart_beat, self.listen_all
+            ).start()
         else:
             if type(self.timer_listen) == threading.Timer:
                 self.timer_listen.cancel()
@@ -131,7 +135,7 @@ class zmqNode():
     def zprint(self, message='blank'):
         print(message)
 
-    def handle(self, message):
+    def handle(self, message, connection):
         if message == 'no message':
             return
 
@@ -139,19 +143,25 @@ class zmqNode():
         # targetMethod defaults to self
         targetMethod = self
         if 'subject' in message:
-                targetMethod = self.getMethod(message['subject'])
+            targetMethod = self.getMethod(message['subject'])
 
         # Pass the target method the correct data
-        if targetMethod != '':
-            if ('args' in message) and not ('kwargs' in message):
-                tempresult = targetMethod(*message['args'])
-            elif not ('args' in message) and ('kwargs' in message):
-                tempresult = targetMethod(**message['kwargs'])
-            elif ('args' in message) and ('kwargs' in message):
-                tempresult = targetMethod(*message['args'], **message['kwargs'])
-            else:
-                if targetMethod != self:
-                    tempresult = targetMethod()
+        tempresult = None
+        exception = None
+        try:
+            if targetMethod != '':
+                if ('args' in message) and not ('kwargs' in message):
+                    tempresult = targetMethod(*message['args'])
+                elif not ('args' in message) and ('kwargs' in message):
+                    tempresult = targetMethod(**message['kwargs'])
+                elif ('args' in message) and ('kwargs' in message):
+                    tempresult = targetMethod(*message['args'], **message['kwargs'])
+                else:
+                    if targetMethod != self:
+                        tempresult = targetMethod()
+        except Exception as e:
+            traceback.print_exc()
+            exception = e
 
         # Handle expected replies
         if 'ereply' in message:
@@ -163,29 +173,34 @@ class zmqNode():
             elif type(loc_ereply) == str:
                 message['ereply']['kwargs'][loc_ereply] = tempresult
             reply_message = self.build_message(**message['ereply'])
-            self.send(self.cur_connection, reply_message)
+            self.send(connection, reply_message)
 
-        self.addlog('Handled ' + self.cur_connection + ' ' + str(message))
+        if exception:
+            self.addlog(f'Error handling {connection} {message}: {exception}')
+        else:
+            self.addlog(f'Handled {connection} {message}')
 
     def getMethod(self, maddress):
         madd_list = maddress.split('.')
         targetMethod = self
         for step in madd_list:
-            keys = step.replace(']','').replace('"','').split('[')
+            keys = step.replace(']', '').replace('"', '').split('[')
             if hasattr(targetMethod, keys[0]):
                 targetMethod = getattr(targetMethod, keys[0])
             else:
-                raise Exception('Failed to find ' + str(keys[0]) + ' of ' + str(maddress))
+                raise Exception(
+                    'Failed to find ' + str(keys[0]) + ' of ' + str(maddress)
+                )
             if len(keys) > 1:
                 for n in range(1, len(keys)):
-                    targetMethod = targetMethod[keys[n]] 
+                    targetMethod = targetMethod[keys[n]]
         return targetMethod
 
     def addlog(self, message):
         if self.logging:
             try:
                 logfile = open(self.logfile, mode='a')
-            except:
+            except OSError:
                 logfile = open(self.logfile, mode='w')
             logfile.write(str(message) + '\n')
             logfile.close()

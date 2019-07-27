@@ -1,4 +1,4 @@
-# This Device represents a general G-Code motion system. 
+# This Device represents a general G-Code motion system.
 
 # Only import 'basic' python packages up here.  All others should be imported
 # within the methods.
@@ -28,7 +28,7 @@ class Sensor(Device):
     def Measure(self, address='', addresstype=''):
         pass
 
-    def Sensor_Calibrate():
+    def Sensor_Calibrate(self):
         pass
 
 

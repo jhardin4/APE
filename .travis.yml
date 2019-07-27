@@ -1,0 +1,15 @@
+sudo: required
+
+language: python
+
+services:
+  - docker
+
+install: true
+
+env:
+  - SHELL="./install_scripts/docker-dev.sh /bin/bash --login -c"
+
+script:
+- $SHELL "python -m pytest"
+- $SHELL "pre-commit run --all-files"

@@ -15,10 +15,20 @@ class IDS_ueye(Sensor):
         self.descriptors.append('camera')
         self.handle = ''
         self.requirements['Measure'] = {}
-        self.requirements['Measure']['file'] = {'value': '', 'source': 'direct', 'address': '', 'desc': 'filename to store image at'}
+        self.requirements['Measure']['file'] = {
+            'value': '',
+            'source': 'direct',
+            'address': '',
+            'desc': 'filename to store image at',
+        }
         self.requirements['Configure'] = {}
-        self.requirements['Configure']['gain'] = {'value': '', 'source': 'direct', 'address': '', 'desc': 'values for master and RGB gains (0-100)'}
-        
+        self.requirements['Configure']['gain'] = {
+            'value': '',
+            'source': 'direct',
+            'address': '',
+            'desc': 'values for master and RGB gains (0-100)',
+        }
+
     def Connect(self):
         self.fConnect()
         self.addlog(self.name + ' is availible.')
@@ -27,12 +37,13 @@ class IDS_ueye(Sensor):
     def fConnect(self):
         if not self.simulation:
             from Devices.Drivers import camera
+
             try:
-                self.handle = camera.ueye()
-            except:
+                self.handle = camera.UEye()
+            except Exception:
                 temp = input('Do you want to try to connect again?([y],n)')
                 if temp in ['', 'y', 'yes']:
-                    self.handle = camera.ueye()
+                    self.handle = camera.UEye()
         self.addlog(self.name + ' is connected.')
 
     def Disconnect(self):
@@ -49,12 +60,18 @@ class IDS_ueye(Sensor):
             self.handle.save_image(file)
         self.addlog(self.name + ' took image and saved at ' + str(file))
         return self.returnlog()
-    
+
     def Configure(self, **kwargs):
         if not self.simulation:
             if 'gain' in kwargs:
                 gain = kwargs['gain']
-                self.handle.set_gain(master=gain[0], red=gain[1], green=gain[2], blue=gain[3])
-            
-        self.addlog(self.name + ' configured the following settings:\n\t' + str([k for k in kwargs.keys()]))
+                self.handle.set_gain(
+                    master=gain[0], red=gain[1], green=gain[2], blue=gain[3]
+                )
+
+        self.addlog(
+            self.name
+            + ' configured the following settings:\n\t'
+            + str([k for k in kwargs.keys()])
+        )
         return self.returnlog()

@@ -4,9 +4,24 @@ from Core import Procedure
 class Data_User_Input_Options(Procedure):
     def Prepare(self):
         self.name = 'Data_User_Input_Options'
-        self.requirements['message'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'Message to be displayed'}
-        self.requirements['options'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'Possible answers'}
-        self.requirements['default'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'default response'}
+        self.requirements['message'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'Message to be displayed',
+        }
+        self.requirements['options'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'Possible answers',
+        }
+        self.requirements['default'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'default response',
+        }
         self.response = ''
 
     def Plan(self):
@@ -30,7 +45,7 @@ class Data_User_Input_Options(Procedure):
             option_string += options
             if option == default:
                 option_string += ']'
-            if option != options[len(options)-1]:
+            if option != options[len(options) - 1]:
                 option += ','
         option_string += ')'
         self.response = input('')

@@ -1,22 +1,41 @@
 from Core import Procedure
-import time
 from copy import deepcopy
 import Procedures.Data_JSON_Store
+
 
 class Planner_Combinatorial(Procedure):
     def Prepare(self):
         self.name = 'Planner_Combinatorial'
-        self.requirements['space'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'ranges of each dimension'}
-        self.requirements['Apparatus_Addresses'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'path to store image'}
-        self.requirements['file'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'location to store plan'}
-        self.requirements['priority'] = {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'priority of dimensions'}
+        self.requirements['space'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'ranges of each dimension',
+        }
+        self.requirements['Apparatus_Addresses'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'path to store image',
+        }
+        self.requirements['file'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'location to store plan',
+        }
+        self.requirements['priority'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'priority of dimensions',
+        }
         self.logfile = Procedures.Data_JSON_Store(self.apparatus, self.executor)
         self.counter = 0
         self.firstrun = True
         self.runlist = []
         # Setup Apparatus
-        if 'planner' not in self.apparatus['information']:
-            self.apparatus['information']['planner'] = {}
+        self.apparatus.createAppEntry(['information', 'planner'])
 
     def Plan(self):
         # Renaming useful pieces of information
@@ -52,14 +71,23 @@ class Planner_Combinatorial(Procedure):
                     oldlength = len(self.runlist)
                     for l in range(len(self.runlist)):
                         for p in range(len(space[dimension])):
-                                newline = deepcopy(self.runlist[l])
-                                newline[dimension] = space[dimension][p]
-                                self.runlist.append(newline)
+                            newline = deepcopy(self.runlist[l])
+                            newline[dimension] = space[dimension][p]
+                            self.runlist.append(newline)
                     self.runlist = self.runlist[oldlength:]
 
             self.firstrun = False
         # For each call, update the relevant values in the apparatus
         for dimension in self.runlist[self.counter]:
-            self.apparatus.setValue(addresses[dimension], self.runlist[self.counter][dimension])
-        self.logfile.Do({'filename': file, 'label': 'settings', 'value': self.runlist[self.counter], 'newentry': True})
+            self.apparatus.setValue(
+                addresses[dimension], self.runlist[self.counter][dimension]
+            )
+        self.logfile.Do(
+            {
+                'filename': file,
+                'label': 'settings',
+                'value': self.runlist[self.counter],
+                'newentry': True,
+            }
+        )
         self.counter += 1
