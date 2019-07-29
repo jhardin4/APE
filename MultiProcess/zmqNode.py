@@ -118,7 +118,7 @@ class zmqNode:
         self.handle(message, connection=name)
 
     def listen_all(self):
-        for connection in self.connections:
+        for connection in list(self.connections.keys()):
             self.listen(name=connection)
         if self.listening:
             self.timer_listen = threading.Timer(
