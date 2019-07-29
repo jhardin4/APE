@@ -37,11 +37,13 @@ class MainGui(QObject):
                 self._engine, PROJECT_PATH, main_file=sys.argv[0], live_qml=qml_main
             )  # live_qml is optional and can be used to customize the live coding environment
         else:
+            from .ape import base
             from .ape import nodes
             from .ape import apparatus
             from .ape import procedure
             from .ape import utilities
 
+            base.register_types()
             nodes.register_types()
             apparatus.register_types()
             procedure.register_types()
@@ -67,6 +69,8 @@ class MainGui(QObject):
 
     @staticmethod
     def start(live=False):
+        os.environ['QML_DISABLE_DISTANCEFIELD'] = '1'
+
         app = QApplication(sys.argv)
         app.setApplicationName("APE Main GUI")
 
