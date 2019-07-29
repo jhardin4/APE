@@ -79,3 +79,19 @@ with git repo versions. To generate a new hash (if necessary) run following comm
 ```bash
 ./install_scripts/docker-dev.sh -B
 ```
+
+
+## Live Coding
+
+Live-coding speeds up development of Qt/QML applications.
+
+Before using live-coding you need to install the [python-qt-live-coding](https://github.com/machinekoder/python-qt-live-coding) package from PyPi.
+
+```bash
+pip install python-qt-live-coding
+```
+
+The GUI can be started in live-coding mode using following commands:
+```bash
+python gui.py --live
+```
