@@ -13,3 +13,6 @@ env:
 script:
 - $SHELL "python -m pytest"
 - $SHELL "pre-commit run --all-files"
+
+after_failure:
+  - cat MSBuild_*.failure.txt
