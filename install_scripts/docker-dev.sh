@@ -206,6 +206,21 @@ if ! ${RUNNING}; then
     C_UID=$(id -u)
     C_GID=$(id -g)
 
+	if [[ $(uname -r) == *"Microsoft"* ]]; then
+		DOCKER_OPTS+=(
+            -v "$(cut -d'/' -f1-4 <<<"$(pwd)")/AppData/Local/Packages/CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc/LocalState/rootfs/home/${USER}":/home/${USER} \
+        )
+	else
+		DOCKER_OPTS+=(
+		-v /tmp/.X11-unix:/tmp/.X11-unix
+		-v /dev/dri:/dev/dri
+		-v $HOME:$HOME
+		-v $XDG_RUNTIME_DIR:$XDG_RUNTIME_DIR
+		-e DBUS_SESSION_BUS_ADDRESS
+		-v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+		)
+	fi
+
     set -x
     exec docker run --rm \
         ${DOCKER_INTERACTIVE} \
@@ -219,15 +234,9 @@ if ! ${RUNNING}; then
         -e USER \
         -e TERM \
         -e DISPLAY \
-        -e debian_chroot="${NAME}@${IMAGE_VERSION}" \
-        -v /tmp/.X11-unix:/tmp/.X11-unix \
-        -v /dev/dri:/dev/dri \
-        -v $HOME:$HOME \
         -v $PWD:$PWD \
-        -v $XDG_RUNTIME_DIR:$XDG_RUNTIME_DIR \
-        -e DBUS_SESSION_BUS_ADDRESS \
-        -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket \
-        -w $PWD \
+		"${DOCKER_OPTS[@]}" \
+		-w $PWD \
         -h ${NAME} --name ${NAME} \
         "${DOCKER_DEV_OPTS[@]}" \
         ${LINK_CONTAINER} \
