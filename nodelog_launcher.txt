@@ -286,3 +286,9 @@ Sent procexec {'subject': 'close'}
 Sent gui {'subject': 'close'}
 Sent appa {'subject': 'close'}
 Sent procexec {'subject': 'close'}
+Sent gui {'subject': 'close'}
+Sent appa {'subject': 'close'}
+Sent procexec {'subject': 'close'}
+Sent gui {'subject': 'close'}
+Sent appa {'subject': 'close'}
+Sent procexec {'subject': 'close'}

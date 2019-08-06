@@ -4318,3 +4318,291 @@ Handled appa {'subject': 'target.executor.getRequirements', 'args': ['dsdsd', 'C
 Handled appa {'subject': 'target.executor.execute', 'args': [[[{'devices': 'dsdsd', 'procedure': 'Connect', 'details': {'A3200name': 'gantry', 'A3200address': 'procexec', 'systemname': 'system', 'systemaddress': 'procexec', 'axis': 'ZZ2', 'DOaxis': 'ZZ1', 'DObit': 0, 'AIaxis': 'ZZ2', 'AIchannel': 0}}]]]}
 Handled launcher {'subject': 'close'}
 Handled launcher {'subject': 'close'}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}
+Handled gui {'subject': 'target.clearProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Sent gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', 'e_reply']}, 'args': ['User', 'User_GUI', 'gui', 'gui']}
+Handled gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['User', 'User_GUI', 'procexec', 'gui']}
+Sent gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', 'e_reply']}, 'args': ['User', 'User_GUI', 'gui', 'gui']}
+Handled gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['User', 'User_GUI', 'procexec', 'gui']}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].Connect', 'kwargs': {}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['User is connected.\n']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'User', 'procedure': 'Connect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['aeropump0', 'Nordson_UltimusV_A3200', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDescriptors', ['pump', 'pump', 'pressure', 'Nordson', 'Ultimus', 'UltimusV', 'A3200']]}
+Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDescriptors', ['pump', 'pump', 'pressure', 'Nordson', 'Ultimus', 'UltimusV', 'A3200']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDependence', True]}
+Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDependence', True]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['camera', 'IDS_ueye', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDescriptors', ['ueye', 'camera']]}
+Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDescriptors', ['ueye', 'camera']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDependence', False]}
+Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDependence', False]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}, 'args': ['camera', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'camera', 'procedure': 'Connect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['sensor', 'Aerotech', 'motion', 'A3200']]}
+Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['sensor', 'Aerotech', 'motion', 'A3200']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDependence', False]}
+Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDependence', False]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}, 'args': ['gantry', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'gantry', 'procedure': 'Connect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['pump0', 'Nordson_UltimusV', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].getDescriptors', ['pump', 'pump', 'pressure', 'Nordson', 'Ultimus', 'UltimusV']]}
+Handled appa {'subject': 'target.executor.devicelist["pump0"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].getDescriptors', ['pump', 'pump', 'pressure', 'Nordson', 'Ultimus', 'UltimusV']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["pump0"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].getDependence', False]}
+Handled appa {'subject': 'target.executor.devicelist["pump0"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].getDependence', False]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['COM']]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['COM']]}, 'args': ['pump0', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'pump0', 'procedure': 'Connect', 'details': {'COM': ''}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['system', 'System', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDescriptors', ['system']]}
+Handled appa {'subject': 'target.executor.devicelist["system"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDescriptors', ['system']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["system"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDependence', False]}
+Handled appa {'subject': 'target.executor.devicelist["system"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDependence', False]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}, 'args': ['system', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'system', 'procedure': 'Connect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDependencies', ['pump', 'A3200']]}
+Handled appa {'subject': 'target.executor.getDependencies', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDependencies', ['pump', 'A3200']]}, 'args': ['aeropump0', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['pumpname', 'pumpaddress', 'A3200name', 'A3200address', 'IOaxis', 'IObit']]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['pumpname', 'pumpaddress', 'A3200name', 'A3200address', 'IOaxis', 'IObit']]}, 'args': ['aeropump0', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'aeropump0', 'procedure': 'Connect', 'details': {'pumpname': 'pump0', 'pumpaddress': 'procexec', 'A3200name': 'gantry', 'A3200address': 'procexec', 'IOaxis': 'ZZ1', 'IObit': 2}}]]]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['aeropump0', 'camera', 'gantry', 'pump0', 'system']]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['aeropump0', 'camera', 'gantry', 'pump0', 'system']]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['aeropump0', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}, 'args': ['camera', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}, 'args': ['gantry', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['pump0', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}, 'args': ['system', 'procexec']}
+Handled launcher {'subject': 'close'}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}
+Handled gui {'subject': 'target.clearProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Sent gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', 'e_reply']}, 'args': ['User', 'User_GUI', 'gui', 'gui']}
+Handled gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['User', 'User_GUI', 'procexec', 'gui']}
+Sent gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', 'e_reply']}, 'args': ['User', 'User_GUI', 'gui', 'gui']}
+Handled gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['User', 'User_GUI', 'procexec', 'gui']}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].Connect', 'kwargs': {}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['User is connected.\n']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'User', 'procedure': 'Connect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['aeropump0', 'Nordson_UltimusV_A3200', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDescriptors', ['pump', 'pump', 'pressure', 'Nordson', 'Ultimus', 'UltimusV', 'A3200']]}
+Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDescriptors', ['pump', 'pump', 'pressure', 'Nordson', 'Ultimus', 'UltimusV', 'A3200']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDependence', True]}
+Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDependence', True]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['camera', 'IDS_ueye', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDescriptors', ['ueye', 'camera']]}
+Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDescriptors', ['ueye', 'camera']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDependence', False]}
+Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDependence', False]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}, 'args': ['camera', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'camera', 'procedure': 'Connect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['motion', 'sensor', 'Aerotech', 'A3200']]}
+Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['motion', 'sensor', 'Aerotech', 'A3200']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDependence', False]}
+Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDependence', False]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}, 'args': ['gantry', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'gantry', 'procedure': 'Connect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['pump0', 'Nordson_UltimusV', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].getDescriptors', ['pump', 'pump', 'pressure', 'Nordson', 'Ultimus', 'UltimusV']]}
+Handled appa {'subject': 'target.executor.devicelist["pump0"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].getDescriptors', ['pump', 'pump', 'pressure', 'Nordson', 'Ultimus', 'UltimusV']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["pump0"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].getDependence', False]}
+Handled appa {'subject': 'target.executor.devicelist["pump0"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["pump0"]["Address"].getDependence', False]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['COM']]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['COM']]}, 'args': ['pump0', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'pump0', 'procedure': 'Connect', 'details': {'COM': ''}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
+Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['system', 'System', 'procexec', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDescriptors', ['system']]}
+Handled appa {'subject': 'target.executor.devicelist["system"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDescriptors', ['system']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].setSimulation', None]}
+Handled appa {'subject': 'target.executor.devicelist["system"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].setSimulation', None]}, 'args': [True]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDependence', False]}
+Handled appa {'subject': 'target.executor.devicelist["system"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDependence', False]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}, 'args': ['system', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'system', 'procedure': 'Connect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDependencies', ['pump', 'A3200']]}
+Handled appa {'subject': 'target.executor.getDependencies', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDependencies', ['pump', 'A3200']]}, 'args': ['aeropump0', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['pumpname', 'pumpaddress', 'A3200name', 'A3200address', 'IOaxis', 'IObit']]}
+Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['pumpname', 'pumpaddress', 'A3200name', 'A3200address', 'IOaxis', 'IObit']]}, 'args': ['aeropump0', 'Connect', 'procexec']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'aeropump0', 'procedure': 'Connect', 'details': {'pumpname': 'pump0', 'pumpaddress': 'procexec', 'A3200name': 'gantry', 'A3200address': 'procexec', 'IOaxis': 'ZZ1', 'IObit': 2}}]]]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['aeropump0', 'camera', 'gantry', 'pump0', 'system']]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['aeropump0', 'camera', 'gantry', 'pump0', 'system']]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['aeropump0', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}, 'args': ['camera', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}, 'args': ['gantry', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['pump0', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}, 'args': ['system', 'procexec']}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Generate', 'parameters']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Generate', 'generator']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.createProcedure', None]}
+Handled gui {'subject': 'target.createProcedure', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.createProcedure', None]}, 'args': ['', 'Toolpath_Generate', {}]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'Toolpath_Generate', 'requirements': {}}]]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'Toolpath_Generate', 'requirements': {}}]]}}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Generate', 'parameters']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'ProcedureData', 'Toolpath_Generate', 'generator']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.createProcedure', None]}
+Handled gui {'subject': 'target.createProcedure', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.createProcedure', None]}, 'args': ['', 'Toolpath_Generate', {'dataArgs': ['PMMA']}]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'Toolpath_Generate', 'requirements': {'dataArgs': ['PMMA']}}]]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'Toolpath_Generate', 'requirements': {'dataArgs': ['PMMA']}}]]}}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', {'Xoffset': 0, 'Yoffset': 0, 'Zoffset': 0, 'angtol': 1e-07, 'disttol': 1e-12, 'length': 5, 'materialname': 'PMMA', 'materials': [{'alpha': 0.5, 'color': 'b', 'linestyle': '-', 'linewidth': 3, 'material': 'PMMA'}, {'alpha': 1, 'color': 'r', 'linestyle': ':', 'linewidth': 2, 'material': 'PMMAslide'}], 'tiph': 0.8}]}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'generator']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'XlineTPGen']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', [[{'parse': 'start'}, {'motion': {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, 'parse': 'startofmotion'}, {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, {'motion': {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, 'parse': 'endofmotion'}, {'parse': 'end'}]]]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Generate', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Generate', {'parameters': {'source': 'apparatus', 'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'], 'value': {'Xoffset': 0, 'Yoffset': 0, 'Zoffset': 0, 'angtol': 1e-07, 'disttol': 1e-12, 'length': 5, 'materialname': 'PMMA', 'materials': [{'alpha': 0.5, 'color': 'b', 'linestyle': '-', 'linewidth': 3, 'material': 'PMMA'}, {'alpha': 1, 'color': 'r', 'linestyle': ':', 'linewidth': 2, 'material': 'PMMAslide'}], 'tiph': 0.8}, 'desc': 'parameters used to generate toolpath'}, 'generator': {'source': 'apparatus', 'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'generator'], 'value': 'XlineTPGen', 'desc': 'name of generator'}, 'target': {'source': 'apparatus', 'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'], 'value': [[{'parse': 'start'}, {'motion': {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, 'parse': 'startofmotion'}, {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, {'motion': {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, 'parse': 'endofmotion'}, {'parse': 'end'}]], 'desc': 'where to store the toolpath'}, 'dataArgs': {'source': 'apparatus', 'address': '', 'value': ['PMMA'], 'desc': 'arguments to make parameter structure'}}]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Generate', 'end']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.doProcedure', None]}
+Error handling gui {'subject': 'target.doProcedure', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.doProcedure', None]}, 'args': ['', 'Toolpath_Generate']}: No module named 'XlineTPGen'
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', {'Xoffset': 0, 'Yoffset': 0, 'Zoffset': 0, 'angtol': 1e-07, 'disttol': 1e-12, 'length': 5, 'materialname': 'PMMA', 'materials': [{'alpha': 0.5, 'color': 'b', 'linestyle': '-', 'linewidth': 3, 'material': 'PMMA'}, {'alpha': 1, 'color': 'r', 'linestyle': ':', 'linewidth': 2, 'material': 'PMMAslide'}], 'tiph': 0.8}]}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'generator']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'XlineTPGen']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', [[{'parse': 'start'}, {'motion': {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, 'parse': 'startofmotion'}, {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, {'motion': {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, 'parse': 'endofmotion'}, {'parse': 'end'}]]]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Generate', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Generate', {'parameters': {'source': 'apparatus', 'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'], 'value': {'Xoffset': 0, 'Yoffset': 0, 'Zoffset': 0, 'angtol': 1e-07, 'disttol': 1e-12, 'length': 5, 'materialname': 'PMMA', 'materials': [{'alpha': 0.5, 'color': 'b', 'linestyle': '-', 'linewidth': 3, 'material': 'PMMA'}, {'alpha': 1, 'color': 'r', 'linestyle': ':', 'linewidth': 2, 'material': 'PMMAslide'}], 'tiph': 0.8}, 'desc': 'parameters used to generate toolpath'}, 'generator': {'source': 'apparatus', 'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'generator'], 'value': 'XlineTPGen', 'desc': 'name of generator'}, 'target': {'source': 'apparatus', 'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'], 'value': [[{'parse': 'start'}, {'motion': {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, 'parse': 'startofmotion'}, {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, {'motion': {'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA', 'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}}, 'parse': 'endofmotion'}, {'parse': 'end'}]], 'desc': 'where to store the toolpath'}, 'dataArgs': {'source': 'apparatus', 'address': '', 'value': ['PMMA'], 'desc': 'arguments to make parameter structure'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'system'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'system']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Generate', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_system_Run', {'address': 'XlineTPGen.GenerateToolpath', 'addresstype': 'pointer', 'arguments': [{'Xoffset': 0, 'Yoffset': 0, 'Zoffset': 0, 'angtol': 1e-07, 'disttol': 1e-12, 'length': 5, 'materialname': 'PMMA', 'materials': [{'alpha': 0.5, 'color': 'b', 'linestyle': '-', 'linewidth': 3, 'material': 'PMMA'}, {'alpha': 1, 'color': 'r', 'linestyle': ':', 'linewidth': 2, 'material': 'PMMAslide'}], 'tiph': 0.8}, [0]]}]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Generate', 'end']}
+Sent appa {'subject': 'target.apparatus.setValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.setValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'], 'value': [[{'parse': 'start'}, {'parse': 'startofmotion', 'motion': {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}}, {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}, {'parse': 'endofmotion', 'motion': {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}}, {'parse': 'end'}]]}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.setValue', None]}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', {'Xoffset': 0, 'Yoffset': 0, 'Zoffset': 0, 'angtol': 1e-07, 'disttol': 1e-12, 'length': 5, 'materialname': 'PMMA', 'materials': [{'alpha': 0.5, 'color': 'b', 'linestyle': '-', 'linewidth': 3, 'material': 'PMMA'}, {'alpha': 1, 'color': 'r', 'linestyle': ':', 'linewidth': 2, 'material': 'PMMAslide'}], 'tiph': 0.8}]}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', [[{'parse': 'start'}, {'parse': 'startofmotion', 'motion': {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}}, {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}, {'parse': 'endofmotion', 'motion': {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}}, {'parse': 'end'}]]]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Plot', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Plot', {'parameters': {'source': 'apparatus', 'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'], 'value': {'Xoffset': 0, 'Yoffset': 0, 'Zoffset': 0, 'angtol': 1e-07, 'disttol': 1e-12, 'length': 5, 'materialname': 'PMMA', 'materials': [{'alpha': 0.5, 'color': 'b', 'linestyle': '-', 'linewidth': 3, 'material': 'PMMA'}, {'alpha': 1, 'color': 'r', 'linestyle': ':', 'linewidth': 2, 'material': 'PMMAslide'}], 'tiph': 0.8}, 'desc': 'parameters used to generate toolpath'}, 'target': {'source': 'apparatus', 'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'], 'value': [[{'parse': 'start'}, {'parse': 'startofmotion', 'motion': {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}}, {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}, {'parse': 'endofmotion', 'motion': {'startpoint': {'X': 0, 'Y': 0, 'Z': 0.8}, 'endpoint': {'X': 5, 'Y': 0, 'Z': 0.8}, 'material': 'PMMA'}}, {'parse': 'end'}]], 'desc': 'where to store the toolpath'}, 'newfigure': {'source': 'apparatus', 'address': '', 'value': True, 'desc': 'Make a new figure?'}}]}
+Sent appa {'subject': 'target.apparatus.setValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.setValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name'], 'value': 'Logs/1565122803image.png'}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.setValue', None]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Plot', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Generate', 'end']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.doProcedure', None]}
+Handled gui {'subject': 'target.doProcedure', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.doProcedure', None]}, 'args': ['', 'Toolpath_Generate']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['aeropump0', 'camera', 'gantry', 'pump0', 'system']]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['aeropump0', 'camera', 'gantry', 'pump0', 'system']]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['aeropump0', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}, 'args': ['camera', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}, 'args': ['gantry', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['pump0', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}
+Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}, 'args': ['system', 'procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'Toolpath_Generate', 'requirements': {'dataArgs': ['PMMA']}}]]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'Toolpath_Generate', 'requirements': {'dataArgs': ['PMMA']}}]]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Handled launcher {'subject': 'close'}

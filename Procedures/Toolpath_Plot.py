@@ -8,13 +8,13 @@ class Toolpath_Plot(Procedure):
         self.name = 'Toolpath_Plot'
         self.requirements['parameters'] = {
             'source': 'apparatus',
-            'address': '',
+            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'],
             'value': '',
             'desc': 'parameters used to generate toolpath',
         }
         self.requirements['target'] = {
             'source': 'apparatus',
-            'address': '',
+            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'],
             'value': '',
             'desc': 'where to store the toolpath',
         }
@@ -24,17 +24,6 @@ class Toolpath_Plot(Procedure):
             'value': '',
             'desc': 'Make a new figure?',
         }
-        self.requirements['parameters']['address'] = [
-            'information',
-            'toolpaths',
-            'parameters',
-        ]
-        self.requirements['target']['address'] = [
-            'information',
-            'toolpaths',
-            'toolpath',
-        ]
-
         self.apparatus.createAppEntry(
             ['information', 'ProcedureData', 'Toolpath_Plot', 'image_file_name']
         )
