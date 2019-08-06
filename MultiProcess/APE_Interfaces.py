@@ -71,6 +71,11 @@ class ApparatusInterface(ApeInterface):
             subject='target.apparatus.getValue', kwargs={'infoAddress': app_address}
         )
 
+    def getSimulation(self):
+        return self._send_message(
+            subject='target.apparatus.getSimulation'
+        )
+
     def checkAddress(self, app_address):
         return self._send_message(
             subject='target.apparatus.checkAddress', kwargs={'infoAddress': app_address}

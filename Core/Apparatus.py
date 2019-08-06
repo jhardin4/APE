@@ -220,6 +220,9 @@ class Apparatus(dict):
                 raise InvalidApparatusAddressException(f'Key not found: {infoAddress}')
         return level
 
+    def getSimulation(self):
+        return self.simulation
+
     def checkAddress(self, infoAddress=''):
         try:
             _ = self.getValue(infoAddress)
