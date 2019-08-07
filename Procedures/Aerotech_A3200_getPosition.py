@@ -1,5 +1,5 @@
 from Core import Procedure
-
+import Procedures.User_Consol_Input
 
 class Aerotech_A3200_getPosition(Procedure):
     def Prepare(self):
@@ -16,14 +16,18 @@ class Aerotech_A3200_getPosition(Procedure):
             'value': '',
             'desc': 'AppAddress where the result is stored',
         }
+        # Set a default target for the returned value
         self.requirements['target']['value'] = [
             'information',
             'procedures',
             'Aerotech_A3200_getPosition',
             'result',
         ]
+        # Create the Apparatus entry
         self.apparatus.createAppEntry(self.requirements['target']['value'])
         self.response = ''
+        # Create required procedures
+        self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
 
     def Plan(self):
         # Renaming useful pieces of informaiton
@@ -35,8 +39,6 @@ class Aerotech_A3200_getPosition(Procedure):
 
         # Retreiving necessary device names
 
-        # Getting necessary eprocs
-
         # Assign apparatus addresses to procedures
 
         # Doing stuff
@@ -47,7 +49,24 @@ class Aerotech_A3200_getPosition(Procedure):
         elif motionType == 'zmqNode':
             details['address'] = {'global': 'appa', 'AppAddress': target}
             details['addresstype'] = 'zmqNode_AppAddress'
-
-        self.DoEproc(motionName, 'getPosition', details)
-        self.response = target[0]
+        # Handle the simulation response
+        if self.apparatus.getSimulation():
+            message = 'What are simulation values for ' + str(axisList) + '?'
+            default = ''
+            self.userinput.Do(
+                {'message': message, 'default': default}
+            )
+            tempposition = self.userinput.response
+            if tempposition == '':
+                tempposition = [0 for dim in axisList]
+            else:
+                tempposition = tempposition.replace('[', '')
+                tempposition = tempposition.replace(']', '')
+                tempposition = tempposition.split(',')
+                tempposition = [float(x) for x in tempposition]
+            self.response = tempposition
+        else:
+            
+            self.DoEproc(motionName, 'getPosition', details)
+            self.response = target[0]
         self.Report(string=self.response)

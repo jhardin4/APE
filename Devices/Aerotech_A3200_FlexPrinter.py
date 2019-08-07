@@ -478,11 +478,10 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
     def getPosition(self, address='', addresstype='', axislist=''):
         if addresstype == '':
             addresstype = 'pointer'
+        result = 'No postion collected'
         # Get the postion from the driver
         if not self.simulation:
             result = self.handle.get_position(axislist)
-        else:
-            result = input('What are simulation values for ' + str(axislist) + '?')
 
         # Store it at the target location
         self.StoreMeasurement(address, addresstype, result)

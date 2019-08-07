@@ -14,6 +14,7 @@ class User_FlexPrinter_Alignments_Update(Procedure):
         self.getPos = Procedures.Aerotech_A3200_getPosition(
             self.apparatus, self.executor
         )
+        self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
 
     def Plan(self):
         alignmentname = self.requirements['alignmentname']['value']
@@ -24,19 +25,15 @@ class User_FlexPrinter_Alignments_Update(Procedure):
         _ = self.apparatus.findDevice({'descriptors': 'motion'})
 
         # Doing stuff
-        input('Move to ' + alignmentname + ',and press ENTER when there.')
+        message = 'Move to ' + alignmentname + ',and press ENTER when there.'
+        default = ''
+        self.userinput.Do(
+            {'message': message, 'default': default}
+        )        
         dimlist = list(alignment)
-        if self.apparatus.simulation:
-            tempposition = input(
-                'What is the simulated value of the form ' + str(dimlist) + '?'
-            )
-            tempposition = tempposition.replace('[', '')
-            tempposition = tempposition.replace(']', '')
-            tempposition = tempposition.split(',')
-            tempposition = [float(x) for x in tempposition]
-        else:
-            self.getPos.Do({'axisList': dimlist})
-            tempposition = self.getPos.response
+
+        self.getPos.Do({'axisList': dimlist})
+        tempposition = self.getPos.response
 
         n = 0
         for dim in dimlist:
