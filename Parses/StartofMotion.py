@@ -79,44 +79,7 @@ class StartofMotion(Procedure):
         #     self.calUpdate.Do({'material': materialname})
         self.motionset.Do({'Type': nozzlename})
         self.DoEproc(motionname, 'Run', {})
-        samplename = self.apparatus.getValue(
-            [
-                'information',
-                'ProcedureData',
-                'SpanningSample',
-                'cur_parameters',
-                'samplename',
-            ]
-        )
-        filename = 'Data\\' + str(round(time.time())) + samplename + '_motion.txt'
-        self.apparatus.setValue(
-            [
-                'information',
-                'ProcedureData',
-                'SpanningSample',
-                'cur_parameters',
-                'motionFile',
-            ],
-            filename,
-        )
-        axismask = self.apparatus.getValue(
-            ['devices', motionname, nozzlename, 'axismask']
-        )
-        parameters = {
-            'X': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'],
-            'Y': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'],
-            axismask['Z']: ['pc', 'pf', 'vc', 'vf', 'ac', 'af'],
-        }
-        self.DoEproc(
-            motionname,
-            'LogData_Start',
-            {
-                'file': filename,
-                'points': 20000,
-                'parameters': parameters,
-                'interval': 1,
-            },
-        )
+
         if pumpname != 'No devices met requirments':
             pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
             self.DoEproc(pumpname, 'Set', {'pressure': pressure})

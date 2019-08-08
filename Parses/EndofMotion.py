@@ -53,7 +53,6 @@ class EndofMotion(Procedure):
         self.DoEproc(motionname, 'Run', {})  # Run the motion up to this point
         if pumpname != 'No devices met requirments':
             self.pumpoff.Do({'name': pumpname})
-        self.DoEproc(motionname, 'LogData_Stop', {})
         self.motionset.Do({'Type': 'default'})
         self.DoEproc(motionname, 'Move', {'point': point, 'speed': speed})
         self.DoEproc(motionname, 'Run', {})

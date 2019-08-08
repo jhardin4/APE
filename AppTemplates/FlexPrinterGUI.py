@@ -43,8 +43,8 @@ def FlexPrinterGUI(apparatus, materials, tools):
         devices['n' + material] = {
             'ID': '',
             'OD': '',
-            'TraceHeight': '',
-            'TraceWidth': '',
+            'traceheight': '',
+            'tracewidth': '',
             'type': '',
             'addresstype': '',
             'descriptors': ['nozzle', material],
@@ -58,11 +58,11 @@ def FlexPrinterGUI(apparatus, materials, tools):
         }
         # motion details for nozzles
         devices['gantry']['n' + material] = {
-            'speed': '',
+            'speed': 40,
             'MotionRamp': devices['gantry']['default']['MotionRamp'],
             'MaxAccel': devices['gantry']['default']['MaxAccel'],
+            'axismask': {'Z': zaxis},
         }
-        devices['gantry']['n' + material] = {'axismask': {'Z': zaxis}}
         devices['gantry']['n' + material + 'slide'] = {}
         devices['gantry']['n' + material + 'slide'] = {
             'speed': devices['gantry']['default']['speed'],
@@ -107,10 +107,10 @@ def FlexPrinterGUI(apparatus, materials, tools):
             'COM': '',
             'pressure': 0,
             'vacuum': 0,
-            'pumprestime': 0,
-            'pumpontime': 0,
-            'pumpofftime': 0,
-            'midtime': 0,
+            'pumpres_time': 0,
+            'pumpon_time': 0,
+            'pumpoff_time': 0,
+            'mid_time': 0,
             'addresstype': 'zmqNode',
             'descriptors': [],
             'address': 'procexec',
@@ -123,10 +123,10 @@ def FlexPrinterGUI(apparatus, materials, tools):
             'IObit': 2,
             'pressure': 0,
             'vacuum': 0,
-            'pumprestime': 0,
-            'pumpontime': 0,
-            'pumpofftime': 0,
-            'midtime': 0,
+            'pumpres_time': 0,
+            'pumpon_time': 0,
+            'pumpoff_time': 0,
+            'mid_time': 0,
             'addresstype': 'zmqNode',
             'descriptors': [],
             'address': 'procexec',
@@ -151,7 +151,7 @@ def FlexPrinterGUI(apparatus, materials, tools):
             devices[tool['name']]['AIchannel'] = 0
 
             # Alignment information
-            devices['gantry'][tool['name']] = {'axismask': {'Z': tool['axis']}}
+            devices['gantry'][tool['name']] = {'speed': 40, 'axismask': {'Z': tool['axis']}}
             apparatus['information']['alignmentnames'].append(tool['name'] + '@mark')
             apparatus['information']['alignments'][tool['name'] + '@mark'] = {
                 'X': '',
@@ -170,7 +170,7 @@ def FlexPrinterGUI(apparatus, materials, tools):
             devices[tool['name']]['settle_time'] = 5
 
             # Alignment information
-            devices['gantry']['camera'] = {'axismask': {'Z': tool['axis']}}
+            devices['gantry']['camera'] = {'speed': 40, 'axismask': {'Z': tool['axis']}}
             apparatus['information']['alignmentnames'].append(tool['name'] + '@mark')
             apparatus['information']['alignments'][tool['name'] + '@mark'] = {
                 'X': '',
