@@ -24,9 +24,11 @@ class ToolPathPlot(AppInterfaceObject):
 
         self._toolpaths = []
         data: AppImageData = self._app_interface.app_image
-        path = data.get_key('information/toolpaths/toolpath')
+        path = data.get_key('information/ProcedureData/Toolpath_Generate/toolpath')
+
         if path is not None and isinstance(path.value, list):
-            self._toolpaths = list(range(len(path.value)))
+            self._toolpaths = path.value  # list(range(len(path.value)))
+            print(self._toolpaths)
         self.toolpathsChanged.emit()
 
     @Property(list, notify=toolpathsChanged)
