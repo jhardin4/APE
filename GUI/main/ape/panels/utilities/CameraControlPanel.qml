@@ -4,11 +4,10 @@ import QtQuick.Layouts 1.1
 import ape.controls 1.0
 import ape.utilities 1.0
 
-GroupBox {
-  title: qsTr("Camera Control")
+UtilityGroupBox {
   id: root
-  property bool ready: ueyeDevices.devices.length > 0
-  visible: ready
+  title: qsTr("Camera Control")
+  ready: ueyeDevices.devices.length > 0
 
   UEyeDevices {
     id: ueyeDevices
@@ -17,6 +16,7 @@ GroupBox {
 
   ColumnLayout {
     anchors.fill: parent
+    visible: root.enabled
 
     UEyeView {
       id: view

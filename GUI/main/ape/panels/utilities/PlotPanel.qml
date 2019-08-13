@@ -1,15 +1,14 @@
-import QtQuick 2.0
+import QtQuick 2.3
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
 import ape.base 1.0
 import ape.controls 1.0
 import ape.utilities 1.0
 
-GroupBox {
-  title: qsTr("Plot")
+UtilityGroupBox {
   id: root
-  property bool ready: plot.toolpaths.length > 0
-  visible: ready
+  title: qsTr("Plot")
+  ready: plot.toolpaths.length > 0
 
   ToolPathPlot {
     id: plot
@@ -19,10 +18,15 @@ GroupBox {
 
   ColumnLayout {
     anchors.fill: parent
+    visible: root.enabled
+
     Image {
       id: plotImage
       Layout.fillWidth: true
       Layout.fillHeight: true
+      fillMode: Image.PreserveAspectFit
+      smooth: true
+      mipmap: true
     }
 
     RowLayout {

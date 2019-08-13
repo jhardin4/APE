@@ -4,11 +4,10 @@ import QtQuick.Layouts 1.1
 import ape.controls 1.0
 import ape.utilities 1.0
 
-GroupBox {
+UtilityGroupBox {
   title: qsTr("Motion Control")
   id: root
-  property bool ready: motionDevices.devices.length > 0
-  visible: ready
+  ready: motionDevices.devices.length > 0
 
   QtObject {
     id: d
@@ -41,6 +40,7 @@ GroupBox {
 
   ColumnLayout {
     anchors.fill: parent
+    visible: root.enabled
 
     RowLayout {
       Label {
