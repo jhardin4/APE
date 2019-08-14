@@ -14204,3 +14204,55 @@ Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparat
 Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['Toolpath_Plot', 'end']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.do', None]}
 Handled gui {'subject': 'target.do', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.do', None]}, 'args': ['', 'Toolpath_Plot', {'newfigure': True}]}
+Handled launcher {'subject': 'close'}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}
+Handled gui {'subject': 'target.clearProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Handled launcher {'subject': 'close'}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}
+Handled gui {'subject': 'target.clearProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Handled launcher {'subject': 'close'}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}
+Handled gui {'subject': 'target.clearProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
+Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
+Handled launcher {'subject': 'close'}

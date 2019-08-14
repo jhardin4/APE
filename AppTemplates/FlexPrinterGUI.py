@@ -8,6 +8,7 @@ def FlexPrinterGUI(apparatus, materials, tools):
         'descriptors': ['motion'],
         'addresstype': 'zmqNode',
         'address': 'procexec',
+        'axes': ['X', 'Y', 'ZZ1', 'ZZ2', 'ZZ3', 'ZZ4']
     }
     devices['gantry']['default'] = {
         'speed': 40,
