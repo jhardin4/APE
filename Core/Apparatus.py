@@ -24,10 +24,13 @@ class Apparatus(dict):
         self.simulation = False
         self.dependent_Devices = []
         self.logpath = 'Logs//'
+        self.AppID = str(int(round(time.time(), 0)))
+        self.PLFirstWrite = True
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
-        # self.executor = executor
+        ProcLogFileName = self.logpath + self.AppID + 'proclog.json'
+        self.ProcLogFile = open(ProcLogFileName, mode='w')
 
         for device in self['devices']:
             self['devices'][device]['Connected'] = False
@@ -198,7 +201,7 @@ class Apparatus(dict):
         for device in self['devices']:
             self.Disconnect(device)
         self.logApparatus()
-
+        self.ProcLogFile.close()
         # need to change Connected in devices to False to show all devices disconnected
 
         # code after this was added to wok on disconnect button
@@ -343,14 +346,30 @@ class Apparatus(dict):
         elif information == 'end':
             self.proclog_depthindex -= 1
         else:
-            info = self.buildInfoEntry(information)
+            info = self.safeCopy(information)
             procLogLine = []
 
             for n in range(self.proclog_depthindex):
                 procLogLine.append('->')
 
-            procLogLine.append({'name': procName, 'information': info})
+            procLogLine.append({'name': procName, 'information': info, 'time': time.time()})
             self.proclog.append(procLogLine)
+            self.UpdateLog(procLogLine)
+
+    def UpdateLog(self, entry):
+        if self.PLFirstWrite:
+            json.dump([], self.ProcLogFile)
+            self.PLFirstWrite = False
+            eof = self.ProcLogFile.seek(0, 2)
+            self.ProcLogFile.seek(eof-1, 0)
+
+        else:
+            eof = self.ProcLogFile.seek(0, 2)
+            self.ProcLogFile.seek(eof-1, 0)
+            self.ProcLogFile.write(', ')
+
+        json.dump(entry, self.ProcLogFile)
+        self.ProcLogFile.write(']')
 
     def buildInfoEntry(self, information):
         simpleinfo = {}
@@ -379,32 +398,38 @@ class Apparatus(dict):
         return simpleinfo
 
     def serialClone(self, abranch=None, address=None):
+        # Default target is the apparatus object
         if abranch is None:
             abranch = self
 
+        # If a specific portion of abranch is specified via a list of indexes
+        # navigate to the portion
         if address:
             for entry in address:
                 if entry in abranch:
                     abranch = abranch[entry]
                 else:
                     return None
+        # Return a safe copy of the abranch
+        return self.safeCopy(abranch)
 
-        if isinstance(abranch, dict):
+    def safeCopy(self, target):
+        if isinstance(target, dict):
             tempdict = {}
-            for key, value in abranch.items():
+            for key, value in target.items():
                 tempdict[key] = self.serialClone(abranch=value)
             return tempdict
 
-        elif isinstance(abranch, list):
+        elif isinstance(target, list):
             templist = []
-            for item in abranch:
+            for item in target:
                 templist.append(self.serialClone(abranch=item))
             return templist
 
-        elif isinstance(abranch, (bool, int, float, str)):
-            return abranch
+        elif isinstance(target, (bool, int, float, str)):
+            return target
         else:
-            return str(type(abranch))
+            return str(type(target))
 
     def logApparatus(self, fname=None):
         if not fname:
