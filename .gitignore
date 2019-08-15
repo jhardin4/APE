@@ -1,8 +1,8 @@
 ### Project ignores
 Logs/
 
-nodelog_appa.txt
-nodelog_procexec.txt
+nodelog_Appa.txt
+nodelog_ProcExec.txt
 nodelog_gui.txt
 nodelog_launcher.txt
 
