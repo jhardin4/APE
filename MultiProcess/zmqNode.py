@@ -27,9 +27,13 @@ class zmqNode:
         self.heart_beat = 0.010  # how long to go between checks
         self.listening = False
         self.log = ''
-        self.logfile = 'nodelog_' + name + '.txt'
+        self.logfile_name = 'nodelog_' + name + '.txt'
         self.timer_listen = ''
         self.logging = False
+        try:
+            self.logfile = open(self.logfile_name, mode='a')
+        except OSError:
+            self.logfile = open(self.logfile_name, mode='w')
 
     def setTarget(self, target):
         self.target = target
@@ -198,12 +202,7 @@ class zmqNode:
 
     def addlog(self, message):
         if self.logging:
-            try:
-                logfile = open(self.logfile, mode='a')
-            except OSError:
-                logfile = open(self.logfile, mode='w')
-            logfile.write(str(message) + '\n')
-            logfile.close()
+            self.logfile.write(str(message) + '\n')
 
 
 if __name__ == '__main__':

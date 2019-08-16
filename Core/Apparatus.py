@@ -201,10 +201,8 @@ class Apparatus(dict):
         for device in self['devices']:
             self.Disconnect(device)
         self.logApparatus()
-        self.ProcLogFile.close()
-        # need to change Connected in devices to False to show all devices disconnected
-
-        # code after this was added to wok on disconnect button
+        if not self.PLFirstWrite:
+            self.ProcLogFile.close()
 
     def getValue(self, infoAddress=''):
         if infoAddress == '':
@@ -417,13 +415,13 @@ class Apparatus(dict):
         if isinstance(target, dict):
             tempdict = {}
             for key, value in target.items():
-                tempdict[key] = self.serialClone(abranch=value)
+                tempdict[key] = self.safeCopy(target=value)
             return tempdict
 
         elif isinstance(target, list):
             templist = []
             for item in target:
-                templist.append(self.serialClone(abranch=item))
+                templist.append(self.safeCopy(target=item))
             return templist
 
         elif isinstance(target, (bool, int, float, str)):

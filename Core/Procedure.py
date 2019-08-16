@@ -47,7 +47,7 @@ class Procedure:
         for req in self.requirements:
             if (
                 self.requirements[req]['source'] == 'apparatus'
-                and self.requirements[req]['address'] != ''
+                and self.requirements[req]['address'] not in ['', None]
             ):
                 try:
                     tempvalue = self.apparatus.getValue(

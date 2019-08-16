@@ -4,12 +4,6 @@ Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedure
 Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
 Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
-Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
-Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
-Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}
 Handled gui {'subject': 'target.clearProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
@@ -24,8 +18,8 @@ Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.cre
 Handled gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['User', 'User_GUI', 'procexec', 'gui']}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
 Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'procexec', 'procexec']}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['sensor', 'Aerotech', 'A3200', 'motion']]}
-Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['sensor', 'Aerotech', 'A3200', 'motion']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['sensor', 'Aerotech', 'motion', 'A3200']]}
+Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['sensor', 'Aerotech', 'motion', 'A3200']]}}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].setSimulation', None]}
 Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].setSimulation', None]}, 'args': [True]}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDependence', False]}
@@ -55,18 +49,6 @@ Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].set
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDependence', True]}
 Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDependence', True]}}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
-Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['camera', 'IDS_ueye', 'procexec', 'procexec']}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDescriptors', ['ueye', 'camera']]}
-Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDescriptors', ['ueye', 'camera']]}}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].setSimulation', None]}
-Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].setSimulation', None]}, 'args': [True]}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDependence', False]}
-Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDependence', False]}}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}
-Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}, 'args': ['camera', 'Connect', 'procexec']}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
-Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'camera', 'procedure': 'Connect', 'details': {}}]]]}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
 Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['system', 'System', 'procexec', 'procexec']}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDescriptors', ['system']]}
 Handled appa {'subject': 'target.executor.devicelist["system"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDescriptors', ['system']]}}
@@ -92,18 +74,199 @@ Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.ge
 Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['pumpname', 'pumpaddress', 'A3200name', 'A3200address', 'IOaxis', 'IObit']]}, 'args': ['aeropump0', 'Connect', 'procexec']}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
 Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'aeropump0', 'procedure': 'Connect', 'details': {'pumpname': 'pump0', 'pumpaddress': 'procexec', 'A3200name': 'gantry', 'A3200address': 'procexec', 'IOaxis': 'ZZ1', 'IObit': 2}}]]]}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['gantry', 'pump0', 'aeropump0', 'camera', 'system']]}
-Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['gantry', 'pump0', 'aeropump0', 'camera', 'system']]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['gantry', 'pump0', 'aeropump0', 'system']]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['gantry', 'pump0', 'aeropump0', 'system']]}, 'args': ['procexec']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}
 Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}, 'args': ['gantry', 'procexec']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
 Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['pump0', 'procexec']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
 Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['aeropump0', 'procexec']}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}
-Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}, 'args': ['camera', 'procexec']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}
 Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}, 'args': ['system', 'procexec']}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'StartUp', 'file']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'StartUp', 'info']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'procedures', 'User_Consol_InputOptions', 'result']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'procedures', 'User_Consol_Input', 'result']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.createProcedure', None]}
+Handled gui {'subject': 'target.createProcedure', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.createProcedure', None]}, 'args': ['', 'User_StartUp', {}]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'User_StartUp', 'requirements': {}}]]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'User_StartUp', 'requirements': {}}]]}}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'StartUp', 'file']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', {}]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_StartUp', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_StartUp', {'filename': {'source': 'apparatus', 'address': ['information', 'StartUp', 'file'], 'value': {}, 'desc': 'name of start up file'}}]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', {'message': {'source': 'apparatus', 'address': '', 'value': 'Import start up information from file from file?', 'desc': 'Message to be displayed'}, 'options': {'source': 'apparatus', 'address': '', 'value': ['y', 'n'], 'desc': 'Possible answers'}, 'default': {'source': 'apparatus', 'address': '', 'value': 'y', 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_InputOptions', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInputOptions', {'message': 'Import start up information from file from file?', 'options': ['y', 'n'], 'default': 'y', 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInputOptions', 'kwargs': {'message': 'Import start up information from file from file?', 'options': ['y', 'n'], 'default': 'y', 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['n\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', {'message': {'source': 'apparatus', 'address': '', 'value': 'What is your name?', 'desc': 'Message to be displayed'}, 'default': {'source': 'apparatus', 'address': '', 'value': None, 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_Input', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInput', {'message': 'What is your name?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInput', 'kwargs': {'message': 'What is your name?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['Bob\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'Bob']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'Bob']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', {'message': {'source': 'apparatus', 'address': '', 'value': 'What is the lab temperature in Celsius?', 'desc': 'Message to be displayed'}, 'default': {'source': 'apparatus', 'address': '', 'value': None, 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_Input', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInput', {'message': 'What is the lab temperature in Celsius?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInput', 'kwargs': {'message': 'What is the lab temperature in Celsius?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['23\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', '23']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', '23']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', {'message': {'source': 'apparatus', 'address': '', 'value': 'What is the lab relative humidity in percent?', 'desc': 'Message to be displayed'}, 'default': {'source': 'apparatus', 'address': '', 'value': None, 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_Input', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInput', {'message': 'What is the lab relative humidity in percent?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInput', 'kwargs': {'message': 'What is the lab relative humidity in percent?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['23\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', '23']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', '23']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', {'message': {'source': 'apparatus', 'address': '', 'value': 'What are you hoping to accomplish with this experiment?', 'desc': 'Message to be displayed'}, 'default': {'source': 'apparatus', 'address': '', 'value': None, 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_Input', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInput', {'message': 'What are you hoping to accomplish with this experiment?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInput', 'kwargs': {'message': 'What are you hoping to accomplish with this experiment?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['Bleh and stuff\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'Bleh and stuff']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'Bleh and stuff']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', {'message': {'source': 'apparatus', 'address': '', 'value': 'How is this experiment different than the last?', 'desc': 'Message to be displayed'}, 'default': {'source': 'apparatus', 'address': '', 'value': None, 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_Input', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInput', {'message': 'How is this experiment different than the last?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInput', 'kwargs': {'message': 'How is this experiment different than the last?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['Not\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'Not']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'Not']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', {'message': {'source': 'apparatus', 'address': '', 'value': 'Name\nWhat is your name?\nBob\n\nTemperature\nWhat is the lab temperature in Celsius?\n23\n\nHumidity\nWhat is the lab relative humidity in percent?\n23\n\nReason\nWhat are you hoping to accomplish with this experiment?\nBleh and stuff\n\nDifference\nHow is this experiment different than the last?\nNot\n\nWould you like to redo any questions?', 'desc': 'Message to be displayed'}, 'options': {'source': 'apparatus', 'address': '', 'value': ['y', 'n'], 'desc': 'Possible answers'}, 'default': {'source': 'apparatus', 'address': '', 'value': 'n', 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_InputOptions', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInputOptions', {'message': 'Name\nWhat is your name?\nBob\n\nTemperature\nWhat is the lab temperature in Celsius?\n23\n\nHumidity\nWhat is the lab relative humidity in percent?\n23\n\nReason\nWhat are you hoping to accomplish with this experiment?\nBleh and stuff\n\nDifference\nHow is this experiment different than the last?\nNot\n\nWould you like to redo any questions?', 'options': ['y', 'n'], 'default': 'n', 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInputOptions', 'kwargs': {'message': 'Name\nWhat is your name?\nBob\n\nTemperature\nWhat is the lab temperature in Celsius?\n23\n\nHumidity\nWhat is the lab relative humidity in percent?\n23\n\nReason\nWhat are you hoping to accomplish with this experiment?\nBleh and stuff\n\nDifference\nHow is this experiment different than the last?\nNot\n\nWould you like to redo any questions?', 'options': ['y', 'n'], 'default': 'n', 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['y\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'y']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'y']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', {'message': {'source': 'apparatus', 'address': '', 'value': 'Which question would you like to redo?', 'desc': 'Message to be displayed'}, 'options': {'source': 'apparatus', 'address': '', 'value': ['Name', 'Temperature', 'Humidity', 'Reason', 'Difference'], 'desc': 'Possible answers'}, 'default': {'source': 'apparatus', 'address': '', 'value': '', 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_InputOptions', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInputOptions', {'message': 'Which question would you like to redo?', 'options': ['Name', 'Temperature', 'Humidity', 'Reason', 'Difference'], 'default': '', 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInputOptions', 'kwargs': {'message': 'Which question would you like to redo?', 'options': ['Name', 'Temperature', 'Humidity', 'Reason', 'Difference'], 'default': '', 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['Name\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'Name']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'Name']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', {'message': {'source': 'apparatus', 'address': '', 'value': 'What is your name?', 'desc': 'Message to be displayed'}, 'default': {'source': 'apparatus', 'address': '', 'value': None, 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_Input', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInput', {'message': 'What is your name?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInput', 'kwargs': {'message': 'What is your name?', 'default': None, 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['Fred\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_Input', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'Fred']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'Fred']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_Input', 'end']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', {'message': {'source': 'apparatus', 'address': '', 'value': 'Name\nWhat is your name?\nFred\n\nTemperature\nWhat is the lab temperature in Celsius?\n23\n\nHumidity\nWhat is the lab relative humidity in percent?\n23\n\nReason\nWhat are you hoping to accomplish with this experiment?\nBleh and stuff\n\nDifference\nHow is this experiment different than the last?\nNot\n\nWould you like to redo any questions?', 'desc': 'Message to be displayed'}, 'options': {'source': 'apparatus', 'address': '', 'value': ['y', 'n'], 'desc': 'Possible answers'}, 'default': {'source': 'apparatus', 'address': '', 'value': 'n', 'desc': 'default response'}, 'target': {'source': 'apparatus', 'address': '', 'value': ['information', 'procedures', 'User_Consol_InputOptions', 'result'], 'desc': 'AppAddress where the result is stored'}}]}
+Sent appa {'subject': 'target.apparatus.findDevice', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'e_reply']}, 'args': [{'descriptors': 'consol'}]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.findDevice', 'User']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['devices', 'User', 'addresstype']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'zmqNode']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'start']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['eproc_User_GetInputOptions', {'message': 'Name\nWhat is your name?\nFred\n\nTemperature\nWhat is the lab temperature in Celsius?\n23\n\nHumidity\nWhat is the lab relative humidity in percent?\n23\n\nReason\nWhat are you hoping to accomplish with this experiment?\nBleh and stuff\n\nDifference\nHow is this experiment different than the last?\nNot\n\nWould you like to redo any questions?', 'options': ['y', 'n'], 'default': 'n', 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}, 'addressType': 'zmqNode_AppAddress'}]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].GetInputOptions', 'kwargs': {'message': 'Name\nWhat is your name?\nFred\n\nTemperature\nWhat is the lab temperature in Celsius?\n23\n\nHumidity\nWhat is the lab relative humidity in percent?\n23\n\nReason\nWhat are you hoping to accomplish with this experiment?\nBleh and stuff\n\nDifference\nHow is this experiment different than the last?\nNot\n\nWould you like to redo any questions?', 'options': ['y', 'n'], 'default': 'n', 'address': {'global': 'appa', 'AppAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}, 'addressType': 'zmqNode_AppAddress'}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['n\n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'end']}
+Sent appa {'subject': 'target.apparatus.getValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'procedures', 'User_Consol_InputOptions', 'result']}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.getValue', 'n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'n']}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_Consol_InputOptions', 'end']}
+Sent appa {'subject': 'target.apparatus.setValue', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.setValue', 'e_reply']}, 'kwargs': {'infoAddress': ['information', 'StartUp', 'info'], 'value': {'Name': {'message': 'What is your name?', 'default': None, 'answer': 'Fred'}, 'Temperature': {'message': 'What is the lab temperature in Celsius?', 'default': None, 'answer': '23'}, 'Humidity': {'message': 'What is the lab relative humidity in percent?', 'default': None, 'answer': '23'}, 'Reason': {'message': 'What are you hoping to accomplish with this experiment?', 'default': None, 'answer': 'Bleh and stuff'}, 'Difference': {'message': 'How is this experiment different than the last?', 'default': None, 'answer': 'Not'}}}}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.setValue', None]}
+Sent appa {'subject': 'target.apparatus.LogProc', 'args': ['User_StartUp', 'end']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.doProcedure', None]}
+Error handling gui {'subject': 'target.doProcedure', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.doProcedure', None]}, 'args': ['', 'User_StartUp']}: expected str, bytes or os.PathLike object, not dict
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'gantry', 'procedure': 'Disconnect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'pump0', 'procedure': 'Disconnect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'aeropump0', 'procedure': 'Disconnect', 'details': {}}]]]}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'system', 'procedure': 'Disconnect', 'details': {}}]]]}
+Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].Disconnect', 'kwargs': {}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
+Handled gui {'subject': 'target.executor.logResponse', 'args': ['User is disconnected.\n']}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
+Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'User', 'procedure': 'Disconnect', 'details': {}}]]]}
 Handled launcher {'subject': 'close'}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
 Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
@@ -119,22 +282,14 @@ Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedure
 Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
 Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}
-Handled gui {'subject': 'target.clearProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.clearProclist', None]}}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}
-Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', []]}, 'args': ['procexec']}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}
-Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', []]}}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}
-Handled gui {'subject': 'target.getProclist', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProclist', []]}}
 Sent gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', 'e_reply']}, 'args': ['User', 'User_GUI', 'gui', 'gui']}
 Handled gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
 Handled gui {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['User', 'User_GUI', 'procexec', 'gui']}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
 Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['gantry', 'Aerotech_A3200_FlexPrinter', 'procexec', 'procexec']}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['A3200', 'motion', 'Aerotech', 'sensor']]}
-Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['A3200', 'motion', 'Aerotech', 'sensor']]}}
+Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['A3200', 'Aerotech', 'motion', 'sensor']]}
+Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDescriptors', ['A3200', 'Aerotech', 'motion', 'sensor']]}}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].setSimulation', None]}
 Handled appa {'subject': 'target.executor.devicelist["gantry"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].setSimulation', None]}, 'args': [True]}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["gantry"]["Address"].getDependence', False]}
@@ -164,18 +319,6 @@ Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].set
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDependence', True]}
 Handled appa {'subject': 'target.executor.devicelist["aeropump0"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["aeropump0"]["Address"].getDependence', True]}}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
-Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['camera', 'IDS_ueye', 'procexec', 'procexec']}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDescriptors', ['ueye', 'camera']]}
-Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDescriptors', ['ueye', 'camera']]}}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].setSimulation', None]}
-Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].setSimulation', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].setSimulation', None]}, 'args': [True]}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDependence', False]}
-Handled appa {'subject': 'target.executor.devicelist["camera"]["Address"].getDependence', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["camera"]["Address"].getDependence', False]}}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}
-Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', []]}, 'args': ['camera', 'Connect', 'procexec']}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
-Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'camera', 'procedure': 'Connect', 'details': {}}]]]}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}
 Handled appa {'subject': 'target.executor.createDevice', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.createDevice', True]}, 'args': ['system', 'System', 'procexec', 'procexec']}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDescriptors', ['system']]}
 Handled appa {'subject': 'target.executor.devicelist["system"]["Address"].getDescriptors', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.devicelist["system"]["Address"].getDescriptors', ['system']]}}
@@ -201,30 +344,26 @@ Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.ge
 Handled appa {'subject': 'target.executor.getRequirements', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getRequirements', ['pumpname', 'pumpaddress', 'A3200name', 'A3200address', 'IOaxis', 'IObit']]}, 'args': ['aeropump0', 'Connect', 'procexec']}
 Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
 Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'aeropump0', 'procedure': 'Connect', 'details': {'pumpname': 'pump0', 'pumpaddress': 'procexec', 'A3200name': 'gantry', 'A3200address': 'procexec', 'IOaxis': 'ZZ1', 'IObit': 2}}]]]}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['gantry', 'pump0', 'aeropump0', 'camera', 'system']]}
-Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['gantry', 'pump0', 'aeropump0', 'camera', 'system']]}, 'args': ['procexec']}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['gantry', 'pump0', 'aeropump0', 'system']]}
+Handled gui {'subject': 'target.executor.getDevices', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getDevices', ['gantry', 'pump0', 'aeropump0', 'system']]}, 'args': ['procexec']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}
 Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Move', 'Set_Motion', 'set_DO', 'Run', 'getPosition', 'getAI', 'Load', 'LogData_Start', 'LogData_Stop']]}, 'args': ['gantry', 'procexec']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
 Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['pump0', 'procexec']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}
 Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect']]}, 'args': ['aeropump0', 'procexec']}
-Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}
-Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Measure', 'Configure']]}, 'args': ['camera', 'procexec']}
 Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}
 Handled gui {'subject': 'target.executor.getEprocs', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.getEprocs', ['On', 'Off', 'Set', 'Connect', 'Disconnect', 'Dwell', 'Run']]}, 'args': ['system', 'procexec']}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
-Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'gantry', 'procedure': 'Disconnect', 'details': {}}]]]}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
-Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'pump0', 'procedure': 'Disconnect', 'details': {}}]]]}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
-Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'aeropump0', 'procedure': 'Disconnect', 'details': {}}]]]}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
-Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'camera', 'procedure': 'Disconnect', 'details': {}}]]]}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
-Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'system', 'procedure': 'Disconnect', 'details': {}}]]]}
-Sent gui {'subject': 'target.executor.devicelist["User"]["Address"].Disconnect', 'kwargs': {}, 'ereply': {'subject': 'target.executor.logResponse', 'args': ['e_reply']}}
-Handled gui {'subject': 'target.executor.logResponse', 'args': ['User is disconnected.\n']}
-Sent appa {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}
-Handled appa {'subject': 'target.executor.execute', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.executor.execute', None]}, 'args': [[[{'devices': 'User', 'procedure': 'Disconnect', 'details': {}}]]]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'StartUp', 'file']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'StartUp', 'info']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'procedures', 'User_Consol_InputOptions', 'result']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent appa {'subject': 'target.apparatus.createAppEntry', 'ereply': {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', 'e_reply']}, 'args': [['information', 'procedures', 'User_Consol_Input', 'result']]}
+Handled appa {'subject': 'target.apparatus.recv_value', 'args': ['target.apparatus.createAppEntry', None]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.createProcedure', None]}
+Handled gui {'subject': 'target.createProcedure', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.createProcedure', None]}, 'args': ['', 'User_StartUp', {}]}
+Sent gui {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'User_StartUp', 'requirements': {}}]]}
+Handled gui {'subject': 'target.getProcedures', 'ereply': {'subject': 'target.executor.recv_value', 'args': ['target.getProcedures', [{'device': '', 'procedure': 'User_StartUp', 'requirements': {}}]]}}
 Handled launcher {'subject': 'close'}
