@@ -13,16 +13,9 @@ class Aerotech_A3200_getPosition(Procedure):
         self.requirements['target'] = {
             'source': 'apparatus',
             'address': '',
-            'value': '',
+            'value': ['information','ProcedureData', 'Aerotech_A3200_getPosition', 'result'],
             'desc': 'AppAddress where the result is stored',
         }
-        # Set a default target for the returned value
-        self.requirements['target']['value'] = [
-            'information',
-            'procedures',
-            'Aerotech_A3200_getPosition',
-            'result',
-        ]
         # Create the Apparatus entry
         self.apparatus.createAppEntry(self.requirements['target']['value'])
         self.response = ''
@@ -68,5 +61,5 @@ class Aerotech_A3200_getPosition(Procedure):
         else:
             
             self.DoEproc(motionName, 'getPosition', details)
-            self.response = target[0]
+            self.response = self.apparatus.getValue(target)
         self.Report(string=self.response)
