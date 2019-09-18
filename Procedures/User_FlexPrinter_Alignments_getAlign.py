@@ -2,6 +2,7 @@ from Core import Procedure
 import Procedures.Aerotech_A3200_getPosition
 import Procedures.User_Consol_InputOptions
 import json
+import time
 
 
 class User_FlexPrinter_Alignments_getAlign(Procedure):
