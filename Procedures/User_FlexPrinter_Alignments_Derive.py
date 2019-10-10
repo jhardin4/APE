@@ -1,4 +1,5 @@
 from Core import Procedure
+import Procedures.User_Consol_Input
 
 
 class User_FlexPrinter_Alignments_Derive(Procedure):
@@ -16,6 +17,7 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
             'value': '',
             'desc': 'prime material',
         }
+        self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
 
     def Plan(self):
         measuredlist = self.requirements['Measured_List']['value']
@@ -23,6 +25,32 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
         alignments = self.apparatus.getValue(['information', 'alignments'])
 
         motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+
+        # Check that the alignments are valid and return results of analysis
+        cur_alignments = alignments
+        missing_alignments = []
+        incomplete_alignments = []
+        for alignment in measuredlist:
+            if alignment not in cur_alignments:
+                missing_alignments.append(alignment)
+            else:
+                incomplete = False
+                for dim in cur_alignments[alignment]:
+                    if not isinstance(cur_alignments[alignment][dim], (int, float)):
+                        incomplete = True
+                if incomplete:
+                    incomplete_alignments.append(alignment)
+        message = ''
+        if len(missing_alignments) > 0:
+            message += 'Missing Alignments:\n'
+            message += str(missing_alignments)
+        if len(incomplete_alignments) > 0:
+            message += 'Incomplete Alignments:\n'
+            message += str(incomplete_alignments)
+        default = ''
+        if message is not '':
+            self.userinput.Do({'message': message, 'default': default})
+            return
 
         toollist = [n.partition('@')[0] for n in measuredlist]
 

@@ -4,7 +4,7 @@ from Core import Procedure
 class SampleTray_Start(Procedure):
     def Prepare(self):
         self.name = 'SampleTray_Start'
-        self.requirements['trayname'] = {
+        self.requirements['tray'] = {
             'source': 'apparatus',
             'address': '',
             'value': '',
@@ -17,13 +17,12 @@ class SampleTray_Start(Procedure):
             'desc': 'pointer to defiend procedure to be performed at each position in tray',
         }
         # Setup Apparatus
-        self.apparatus.createAppEntry(['information', 'trays', 'original_alignments'])
+        self.apparatus.createAppEntry(['information', 'ProcedureData', self.name, 'original_alignments'])
 
     def Plan(self):
         # Renaming useful pieces of information
-        trayname = self.requirements['trayname']['value']
+        tray = self.requirements['tray']['value']
         procedure = self.requirements['procedure']['value']
-        tray = self.apparatus.getValue(['information', 'trays', trayname])
 
         # Retrieving necessary device names
 
@@ -41,7 +40,7 @@ class SampleTray_Start(Procedure):
                     ['information', 'alignments', alignment]
                 )
                 self.apparatus.setValue(
-                    ['information', 'trays', 'original_alignments', alignment], value
+                    ['information', 'ProcedureData', self.name, 'original_alignments', alignment], value
                 )
 
         # Do experiments
@@ -59,7 +58,8 @@ class SampleTray_Start(Procedure):
                                 self.apparatus.getValue(
                                     [
                                         'information',
-                                        'trays',
+                                        'ProcedureData',
+                                        self.name,
                                         'original_alignments',
                                         alignment,
                                         dim,
@@ -77,6 +77,6 @@ class SampleTray_Start(Procedure):
         for alignment in self.apparatus.getValue(['information', 'alignments']):
             if '@start' in alignment:
                 value = self.apparatus.getValue(
-                    ['information', 'trays', 'original_alignments', alignment]
+                    ['information', 'ProcedureData', self.name, 'original_alignments', alignment]
                 )
                 self.apparatus.setValue(['information', 'alignments', alignment], value)

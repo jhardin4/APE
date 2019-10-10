@@ -45,9 +45,6 @@ class Camera_Capture_ImageXY(Procedure):
         # Retrieving information from apparatus
         zaxis = self.apparatus.getValue(['devices', motionname, cname, 'axismask'])['Z']
 
-        # Getting necessary eprocs
-        runmove = self.apparatus.GetEproc(motionname, 'Run')
-
         # Assign apparatus addresses to procedures
         self.move.requirements['speed']['address'] = [
             'devices',
@@ -100,5 +97,5 @@ class Camera_Capture_ImageXY(Procedure):
                 'priority': [['X', 'Y'], ['Z']],
             }
         )
-        runmove.Do()
+        self.DoEproc(motionname, 'Run', {})
         self.measure.Do({'file': file, 'camera_name': cname})

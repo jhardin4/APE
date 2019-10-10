@@ -1,6 +1,6 @@
 from Core import Procedure
 import Procedures.Toolpath_Plot
-from importlib import import_module
+from importlib import import_module, reload
 
 
 class Toolpath_Generate(Procedure):
@@ -60,6 +60,7 @@ class Toolpath_Generate(Procedure):
         # Import the specific toolpath generation file and make a parameters
         # entry using the parameter generator in that file
         TPGen = import_module(generator)
+        reload(TPGen)
         tempPara = TPGen.Make_TPGen_Data(*dataArgs)
 
         # Determine if a new set of parameters needs to be created
