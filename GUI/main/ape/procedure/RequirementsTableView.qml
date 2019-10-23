@@ -5,6 +5,7 @@ import ape.core 1.0
 C1.TableView {
   id: root
   property int editingRow: -1
+  property bool readOnly: false
 
   selectionMode: C1.SelectionMode.SingleSelection
 
@@ -87,6 +88,7 @@ C1.TableView {
         text: String(styleData.value)
         selectByMouse: true
         visible: item.editing
+        readOnly: root.readOnly
         enabled: visible
         color: Style.blue1
 

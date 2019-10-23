@@ -15,6 +15,7 @@ class Executor(ApeInterface):
         self.ready4next = True
         self.node = node
         self.prevDevice = ''
+        self.curDevice = ''
 
     def execute(self, eproclist):
         # This could take a list of multiple lists of eprocs but typically it
@@ -23,10 +24,10 @@ class Executor(ApeInterface):
             for eproc in line:
                 # This loop creates the blocking action for non-blocking
                 # message passing.
-                while not self.ready4next:
-                    pass
-                    # it is important for the listen to be in the loop to
-                    # ensure that there is a way out
+                # while not self.ready4next:
+                #     pass
+                # it is important for the listen to be in the loop to
+                # ensure that there is a way out
                 self.Send(eproc)
 
     def loadDevice(self, devName, devAddress, devAddressType):
@@ -58,6 +59,7 @@ class Executor(ApeInterface):
             )
 
     def Send(self, eproc):
+        self.curDevice = self.devicelist[eproc['devices']]['Address']
         if self.devicelist[eproc['devices']]['AddressType'] == 'pointer':
             if not self.debug:
                 try:
@@ -116,7 +118,8 @@ class Executor(ApeInterface):
                 self.node.listen(self.prevDevice)
 
     def logResponse(self, message):
-        self.ready4next = True
+        if self.prevDevice == self.curDevice:
+            self.ready4next = True
         if self.logging:
             loghandle = open('Logs/' + self.logaddress, mode='a')
             loghandle.write(str(message))
@@ -160,7 +163,7 @@ class Executor(ApeInterface):
             return list(self.devicelist[device]['Address'].requirements[eproc])
         else:
             return self._send_message(
-                subject='target.getRequirements',
+                subject='target.executor.getRequirements',
                 args=[device, eproc, address],
                 target=address,
             )

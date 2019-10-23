@@ -28,8 +28,14 @@ C1.TableView {
   }
 
   C1.TableViewColumn {
-    title: qsTr("Procedures")
+    title: qsTr("Procedure")
     role: "name"
-    width: root.width - 2
+    width: root.width / 2
+  }
+
+  C1.TableViewColumn {
+    title: qsTr("Instance")
+    role: "uuid"
+    width: root.width / 2 - 2
   }
 }

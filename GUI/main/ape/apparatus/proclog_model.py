@@ -85,7 +85,19 @@ class ProclogModel(QStandardItemModel, ProclogModelRoles):
                 data_item.setData('', self.ValueRole)
                 for k, v in info.items():
                     entry_item = QStandardItem(k)
-                    entry_item.setData(str(v), self.ValueRole)
+                    if isinstance(v, dict) and 'address' in v and 'value' in v:
+                        value_item = QStandardItem('value')
+                        value_item.setData(str(v['value']), self.ValueRole)
+                        value_item.setData(False, self.IsProcedureRole)
+                        entry_item.appendRow(value_item)
+                        value_item = QStandardItem('address')
+                        value_item.setData(str(v['address']), self.ValueRole)
+                        value_item.setData(False, self.IsProcedureRole)
+                        entry_item.appendRow(value_item)
+                        value = ''
+                    else:
+                        value = str(v)
+                    entry_item.setData(value, self.ValueRole)
                     entry_item.setData(False, self.IsProcedureRole)
                     data_item.appendRow(entry_item)
                 item.appendRow(data_item)

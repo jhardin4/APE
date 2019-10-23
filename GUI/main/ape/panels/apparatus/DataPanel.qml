@@ -48,7 +48,7 @@ GroupBox {
       text: qsTr("New from Template")
       onClicked: {
         nodeHandler.appInterface.disconnectAll()
-        nodeHandler.procInterface.clearProclist()
+        nodeHandler.procInterface.clearProcedures()
         nodeHandler.appInterface.startTemplate(false)
         nodeHandler.refreshAll()
       }

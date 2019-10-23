@@ -3,7 +3,6 @@ import Procedures.Aerotech_A3200_Set
 import Procedures.Motion_RefRelPriorityLineMotion
 import Procedures.Pump_PumpOn
 import Procedures.User_InkCal_Calculate
-import time
 
 
 class StartofMotion(Procedure):

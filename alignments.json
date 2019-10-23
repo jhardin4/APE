@@ -1,0 +1,4 @@
+<<<<<<< HEAD
+=======
+{"camera@mark": {"X": 0.0, "Y": 0.0, "ZZ3": 0.0}, "initial": {"X": 0.0, "Y": 0.0, "ZZ1": 0.0, "ZZ2": 0.0, "ZZ3": 0.0, "ZZ4": 0.0}, "nPMMA@cal": {"X": 0.0, "Y": 0.0, "ZZ1": 0.0}, "nPMMA@mark": {"X": 0.0, "Y": 0.0, "ZZ1": 0.0}, "nPMMA@start": {"X": 0.0, "Y": 0.0, "ZZ1": 0.0}, "safeZZ1": {"ZZ1": 0.0}, "safeZZ2": {"ZZ2": 0.0}, "safeZZ3": {"ZZ3": 0.0}, "safeZZ4": {"ZZ4": 0.0}, "nPMMAslide@start": {"X": 0.0, "Y": 0.0, "ZZ1": 0.0}, "camera@start": {"X": 0.0, "Y": 0.0, "ZZ3": 0.0}, "cameraslide@start": {"X": 0.0, "Y": 0.0, "ZZ3": 0.0}, "camera@cal": {"X": 0.0, "Y": 0.0, "ZZ3": 0.0}}
+>>>>>>> develop2

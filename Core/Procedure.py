@@ -45,10 +45,9 @@ class Procedure:
         # Once set, values are held until changed
         # Handle apparatus values
         for req in self.requirements:
-            if (
-                self.requirements[req]['source'] == 'apparatus'
-                and self.requirements[req]['address'] not in ['', None]
-            ):
+            if self.requirements[req]['source'] == 'apparatus' and self.requirements[
+                req
+            ]['address'] not in ('', None):
                 try:
                     tempvalue = self.apparatus.getValue(
                         self.requirements[req]['address']
@@ -56,9 +55,7 @@ class Procedure:
                     self.requirements[req]['value'] = tempvalue
                 except InvalidApparatusAddressException:
                     raise Exception(
-                        'ApparatusAddress '
-                        + str(self.requirements[req]['address'])
-                        + ' was not found.'
+                        f"ApparatusAddress {self.requirements[req]['address']} was not found."
                     )
 
         for value in values:
@@ -75,7 +72,7 @@ class Procedure:
                 Reqs_Met = False
 
         if not Reqs_Met:
-            raise Exception('Requirements ' + str(UnmetReqs) + ' where not met.')
+            raise Exception(f'Requirements {UnmetReqs} where not met.')
 
     def GetDetails(self):
         details = {}

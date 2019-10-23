@@ -80,8 +80,7 @@ Item {
           onClicked: {
             var row = instancesTableView.currentRow
             nodeHandler.procInterface.createProcedure(
-                  treeView.selectedProcedure[0], treeView.selectedProcedure[1],
-                  procReqView.model)
+                  treeView.selectedProcedure[0], treeView.selectedProcedure[1])
             nodeHandler.procInterface.refreshProcedures()
             instancesTableView.selectRow(row)
           }
@@ -105,22 +104,17 @@ Item {
             id: procReqView
             Layout.fillHeight: true
             Layout.fillWidth: true
+            readOnly: true
             visible: treeView.currentIndex.valid
                      || !(reqTableView.visible || instReqTableView.visible)
-
-            onValueUpdate: {
-              var newModel = JSON.parse(JSON.stringify(model))
-              newModel[row]["value"] = value
-              newModel[row]["modified"] = true
-              model = newModel
-            }
           }
 
           RequirementsTableView {
             id: reqTableView
             Layout.fillWidth: true
             Layout.fillHeight: true
-            visible: proclistTableView.currentRow > -1
+            visible: (proclistTableView.currentRow > -1)
+                     && (proclistTableView.model.length > 0)
 
             onValueUpdate: {
               var tableRow = proclistTableView.currentRow
@@ -134,12 +128,18 @@ Item {
 
             model: (proclistTableView.currentRow
                     > -1) ? getModel(
-                              proclistTableView.model[proclistTableView.currentRow]) : []
+                              proclistTableView.model[proclistTableView.currentRow],
+                              true) : []
 
-            function getModel(base) {
+            function getModel(base, inst) {
               // extend requirements with additional default requirements
-              var reqs = nodeHandler.procInterface.getRequirements(
-                    base["device"], base["procedure"])
+              if (inst) {
+                var reqs = nodeHandler.procInterface.getRequirements(
+                      base["device"], base["procedure"], base["uuid"])
+              } else {
+                var reqs = nodeHandler.procInterface.getRequirements(
+                      base["device"], base["procedure"])
+              }
               var base_reqs = base["requirements"]
               for (var i = 0; i < base_reqs.length; ++i) {
                 var found = false
@@ -162,22 +162,23 @@ Item {
             id: instReqTableView
             Layout.fillWidth: true
             Layout.fillHeight: true
-            visible: instancesTableView.currentRow > -1
+            visible: (instancesTableView.currentRow > -1)
+                     && (instancesTableView.model.length > 0)
 
             onValueUpdate: {
               var tableRow = instancesTableView.currentRow
               var reqs = instReqTableView.model
               reqs[row]["value"] = value
-              nodeHandler.procInterface.createProcedure(
-                    instancesTableView.selectedProcedure[0],
-                    instancesTableView.selectedProcedure[1], reqs)
+              nodeHandler.procInterface.updateProcedure(
+                    instancesTableView.selectedUuid, reqs)
               nodeHandler.procInterface.refreshProcedures()
               instancesTableView.selectRow(tableRow)
             }
 
             model: (instancesTableView.currentRow
                     > -1) ? reqTableView.getModel(
-                              instancesTableView.model[instancesTableView.currentRow]) : []
+                              instancesTableView.model[instancesTableView.currentRow],
+                              false) : []
           }
         }
       }
@@ -199,7 +200,8 @@ Item {
             id: instancesTableView
             Layout.fillHeight: true
             Layout.fillWidth: true
-
+            property string selectedUuid: (currentRow > -1)
+                                          && model.length > 0 ? model[currentRow]['uuid'] : ''
             model: nodeHandler.procInterface.procedures
 
             onCurrentRowChanged: {
@@ -217,8 +219,7 @@ Item {
               enabled: instancesTableView.currentRow > -1
               onClicked: {
                 nodeHandler.procInterface.doProcedure(
-                      instancesTableView.selectedProcedure[0],
-                      instancesTableView.selectedProcedure[1])
+                      instancesTableView.selectedUuid, instReqTableView.model)
                 nodeHandler.appInterface.refreshProclog()
               }
             }
@@ -255,21 +256,19 @@ Item {
         }
 
         Button {
-          text: qsTr("Add<br>>")
+          text: qsTr("Add\n>")
           enabled: instancesTableView.currentRow > -1
           onClicked: {
             var row = instancesTableView.currentRow
             nodeHandler.procInterface.addProclistItem(
-                  instancesTableView.selectedProcedure[0],
-                  instancesTableView.selectedProcedure[1],
-                  instReqTableView.model)
+                  instancesTableView.selectedUuid, instReqTableView.model)
             nodeHandler.procInterface.refreshProclist()
             instancesTableView.selectRow(row)
           }
         }
 
         Button {
-          text: qsTr("Remove<br>&lt;")
+          text: qsTr("Remove\n<")
           enabled: proclistTableView.currentRow > -1
           onClicked: {
             nodeHandler.procInterface.removeProclistItem(
@@ -279,7 +278,7 @@ Item {
         }
 
         Button {
-          text: qsTr("Clear<br>&lt;&lt;")
+          text: qsTr("Clear\n<<")
           enabled: proclistTableView.rowCount > 0
           onClicked: {
             nodeHandler.procInterface.clearProclist()
@@ -292,19 +291,18 @@ Item {
         }
 
         Button {
-          text: qsTr("Remove<br>*")
+          text: qsTr("Remove\n*")
           enabled: instancesTableView.currentRow > -1
           onClicked: {
             nodeHandler.procInterface.removeProcedure(
-                  instancesTableView.selectedProcedure[0],
-                  instancesTableView.selectedProcedure[1])
+                  instancesTableView.selectedUuid)
             nodeHandler.procInterface.refreshProcedures()
             nodeHandler.procInterface.refreshProclist()
           }
         }
 
         Button {
-          text: qsTr("Clear All<br>**")
+          text: qsTr("Clear All\n**")
           enabled: instancesTableView.rowCount > 0
           onClicked: {
             nodeHandler.procInterface.clearProcedures()

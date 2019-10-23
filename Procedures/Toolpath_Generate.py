@@ -8,19 +8,34 @@ class Toolpath_Generate(Procedure):
         self.name = 'Toolpath_Generate'
         self.requirements['parameters'] = {
             'source': 'apparatus',
-            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'],
+            'address': [
+                'information',
+                'ProcedureData',
+                'Toolpath_Generate',
+                'parameters',
+            ],
             'value': '',
             'desc': 'parameters used to generate toolpath',
         }
         self.requirements['generator'] = {
             'source': 'apparatus',
-            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'generator'],
+            'address': [
+                'information',
+                'ProcedureData',
+                'Toolpath_Generate',
+                'generator',
+            ],
             'value': '',
             'desc': 'name of generator',
         }
         self.requirements['target'] = {
             'source': 'apparatus',
-            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'],
+            'address': [
+                'information',
+                'ProcedureData',
+                'Toolpath_Generate',
+                'toolpath',
+            ],
             'value': '',
             'desc': 'where to store the toolpath',
         }
@@ -53,7 +68,13 @@ class Toolpath_Generate(Procedure):
         # from the default parameters location
         if dataArgs == '':
             material = self.apparatus.getValue(
-                ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters', 'materialname']
+                [
+                    'information',
+                    'ProcedureData',
+                    'Toolpath_Generate',
+                    'parameters',
+                    'materialname',
+                ]
             )
             dataArgs = [material]
 
@@ -75,7 +96,8 @@ class Toolpath_Generate(Procedure):
         if newPara:
             parameters = tempPara
             self.apparatus.setValue(
-                ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'], tempPara
+                ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'],
+                tempPara,
             )
 
         systemname = self.apparatus.findDevice({'descriptors': 'system'})
@@ -89,5 +111,5 @@ class Toolpath_Generate(Procedure):
                 'arguments': [parameters, temptarget],
             },
         )
-        self.apparatus.setValue(self.requirements['target']['address'], temptarget)
+        self.apparatus.setValue(target, temptarget)
         self.printTP.Do({'newfigure': True})

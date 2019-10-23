@@ -38,6 +38,11 @@ UtilityGroupBox {
     }
   }
 
+  MotionDevices {
+    id: motionDevices
+    appInterface: nodeHandler.appInterface
+  }
+
   ColumnLayout {
     anchors.fill: parent
     visible: root.enabled
@@ -80,9 +85,8 @@ UtilityGroupBox {
       enabled: deviceCombo.currentIndex > -1
 
       Repeater {
-        //model: ["X", "Y", "Z", "A", "B", "C"]
-        model: nodeHandler.appInterface.getValue(
-             "devices/" + deviceCombo.currentText + "/axes")
+        model: !root.enabled ? [] : nodeHandler.appInterface.getValue(
+                                 "devices/" + deviceCombo.currentText + "/axes")
         ColumnLayout {
           Button {
             Layout.fillWidth: true

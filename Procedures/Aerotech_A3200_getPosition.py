@@ -1,6 +1,7 @@
 from Core import Procedure
 import Procedures.User_Consol_Input
 
+
 class Aerotech_A3200_getPosition(Procedure):
     def Prepare(self):
         self.name = 'Aerotech_A3200_getPosition'
@@ -13,7 +14,12 @@ class Aerotech_A3200_getPosition(Procedure):
         self.requirements['target'] = {
             'source': 'apparatus',
             'address': '',
-            'value': ['information','ProcedureData', 'Aerotech_A3200_getPosition', 'result'],
+            'value': [
+                'information',
+                'ProcedureData',
+                'Aerotech_A3200_getPosition',
+                'result',
+            ],
             'desc': 'AppAddress where the result is stored',
         }
         # Create the Apparatus entry
@@ -46,9 +52,7 @@ class Aerotech_A3200_getPosition(Procedure):
         if self.apparatus.getSimulation():
             message = 'What are simulation values for ' + str(axisList) + '?'
             default = ''
-            self.userinput.Do(
-                {'message': message, 'default': default}
-            )
+            self.userinput.Do({'message': message, 'default': default})
             tempposition = self.userinput.response
             if tempposition == '':
                 tempposition = [0 for dim in axisList]
@@ -59,7 +63,7 @@ class Aerotech_A3200_getPosition(Procedure):
                 tempposition = [float(x) for x in tempposition]
             self.response = tempposition
         else:
-            
+
             self.DoEproc(motionName, 'getPosition', details)
             self.response = self.apparatus.getValue(target)
         self.Report(string=self.response)
