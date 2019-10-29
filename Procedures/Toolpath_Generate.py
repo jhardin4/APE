@@ -61,7 +61,7 @@ class Toolpath_Generate(Procedure):
     def Plan(self):
         parameters = self.requirements['parameters']['value']
         generator = self.requirements['generator']['value']
-        target = self.requirements['target']['value']
+        target = self.requirements['target']['address']
         dataArgs = self.requirements['dataArgs']['value']
 
         # If no arguments for the generator are given, use the material name

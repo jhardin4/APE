@@ -34,6 +34,7 @@ class Planner_Combinatorial(Procedure):
         self.counter = 0
         self.firstrun = True
         self.runlist = []
+        self.Done = False
         # Setup Apparatus
         self.apparatus.createAppEntry(['information', 'planner'])
 
@@ -78,16 +79,19 @@ class Planner_Combinatorial(Procedure):
 
             self.firstrun = False
         # For each call, update the relevant values in the apparatus
-        for dimension in self.runlist[self.counter]:
-            self.apparatus.setValue(
-                addresses[dimension], self.runlist[self.counter][dimension]
+        if self.counter > len(self.runlist) - 1:
+            self.Done = True
+        else:
+            for dimension in self.runlist[self.counter]:
+                self.apparatus.setValue(
+                    addresses[dimension], self.runlist[self.counter][dimension]
+                )
+            self.logfile.Do(
+                {
+                    'filename': file,
+                    'label': 'settings',
+                    'value': self.runlist[self.counter],
+                    'newentry': True,
+                }
             )
-        self.logfile.Do(
-            {
-                'filename': file,
-                'label': 'settings',
-                'value': self.runlist[self.counter],
-                'newentry': True,
-            }
-        )
-        self.counter += 1
+            self.counter += 1

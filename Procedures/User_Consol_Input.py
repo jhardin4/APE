@@ -56,7 +56,7 @@ class User_Consol_Input(Procedure):
             details['address'] = {'global': 'appa', 'AppAddress': target}
             details['addressType'] = 'zmqNode_AppAddress'
 
-        self.DoEproc('User', 'GetInput', details)
+        self.DoEproc(console_name, 'GetInput', details)
         if console_type == 'pointer':
             self.response = target[0]
         elif console_type == 'zmqNode':

@@ -37,8 +37,23 @@ class Executor(ApeInterface):
         self.devicelist[devName]['Address'].executor = self
 
     def createDevice(self, devName, devType, exec_address, rel_address):
-        # Handle local creation of a device
-        if self.node.name == rel_address:
+        # Handle purely local creation of a device
+        if self.node is None:
+            self.devicelist[devName] = {}
+            if devType != '':
+                try:
+                    device = getattr(Devices, devType)(devName)
+                except AttributeError:
+                    return False
+            else:
+                device = Devices.Device(devName)
+            self.devicelist[devName]['Address'] = device
+            self.devicelist[devName]['AddressType'] = 'pointer'
+            if devType != '':
+                self.devicelist[devName]['Address'].executor = self
+            return True
+        # Handle local creation at remote request
+        elif self.node.name == rel_address:
             try:
                 device = getattr(Devices, devType)(devName)
             except AttributeError:
@@ -48,6 +63,7 @@ class Executor(ApeInterface):
             self.devicelist[devName]['AddressType'] = 'pointer'
             self.devicelist[devName]['Address'].executor = self
             return True
+        # Handle remote creation of a device
         else:
             self.devicelist[devName] = {}
             self.devicelist[devName]['Address'] = rel_address
@@ -127,6 +143,8 @@ class Executor(ApeInterface):
             self.log = ''
 
     def getDependencies(self, device, address):
+        if address == '':
+            return self.devicelist[device]["Address"].getDependencies()
         if address == self.node.name:
             return self.devicelist[device]["Address"].getDependencies()
         else:
@@ -159,11 +177,49 @@ class Executor(ApeInterface):
             )
 
     def getRequirements(self, device, eproc, address):
-        if address == self.node.name:
+        if address == '':
+            return list(self.devicelist[device]['Address'].requirements[eproc])
+        elif address == self.node.name:
             return list(self.devicelist[device]['Address'].requirements[eproc])
         else:
             return self._send_message(
                 subject='target.executor.getRequirements',
                 args=[device, eproc, address],
+                target=address,
+            )
+
+    def getDescriptors(self, device, address):
+        if address == '':
+            return self.devicelist[device]['Address'].descriptors
+        elif address == self.node.name:
+            return self.devicelist[device]['Address'].descriptors
+        else:
+            return self._send_message(
+                subject='target.executor.getDescriptors',
+                args=[device, address],
+                target=address,
+            )
+
+    def setSimulation(self, device, value, address):
+        if address == '':
+            self.devicelist[device]['Address'].simulation = value
+        elif address == self.node.name:
+            self.devicelist[device]['Address'].simulation = value
+        else:
+            return self._send_message(
+                subject='target.executor.setSimulation',
+                args=[device, value, address],
+                target=address,
+            )
+
+    def getDependence(self, device, address):
+        if address == '':
+            return (len(self.devicelist[device]['Address'].dependencies) > 0)
+        elif address == self.node.name:
+            return (len(self.devicelist[device]['Address'].dependencies) > 0)
+        else:
+            return self._send_message(
+                subject='target.executor.getDependence',
+                args=[device, device, address],
                 target=address,
             )

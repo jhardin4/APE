@@ -14,7 +14,7 @@ class SampleTray_Start(Procedure):
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'pointer to defiend procedure to be performed at each position in tray',
+            'desc': 'pointer to defined procedure to be performed at each position in tray',
         }
         # Setup Apparatus
         self.apparatus.createAppEntry(
