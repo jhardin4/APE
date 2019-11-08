@@ -43,6 +43,7 @@ class Aerotech_A3200_getPosition(Procedure):
         # Doing stuff
         details = {'axislist': axisList}
         if motionType == 'pointer':
+            target = [0]
             details['address'] = target
             details['addresstype'] = 'pointer'
         elif motionType == 'zmqNode':
@@ -65,5 +66,8 @@ class Aerotech_A3200_getPosition(Procedure):
         else:
 
             self.DoEproc(motionName, 'getPosition', details)
-            self.response = self.apparatus.getValue(target)
+            if motionType == 'pointer':
+                self.response = target[0]
+            elif motionType == 'zmqNode':
+                self.response = self.apparatus.getValue(target)
         self.Report(string=self.response)
