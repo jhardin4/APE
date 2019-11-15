@@ -47,8 +47,8 @@ class User_InkCal_Calculate(Procedure):
         density = self.apparatus.getValue(
             ['information', 'materials', material, 'density']
         )
-        trace_width = self.apparatus.getValue(['devices', nozzle, 'tracewidth'])
-        trace_height = self.apparatus.getValue(['devices', nozzle, 'traceheight'])
+        trace_width = self.apparatus.getValue(['devices', nozzle, 'trace_width'])
+        trace_height = self.apparatus.getValue(['devices', nozzle, 'trace_height'])
         pumpres_time = self.apparatus.getValue(['devices', pump, 'pumpres_time'])
 
         if self.apparatus.getValue(

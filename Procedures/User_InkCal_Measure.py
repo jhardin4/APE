@@ -2,6 +2,7 @@ from Core import Procedure
 import Procedures.Pump_PumpOn
 import Procedures.Pump_PumpOff
 import Procedures.Motion_RefRelPriorityLineMotion
+import Procedures.Aerotech_A3200_Set
 import json
 import time
 
@@ -39,6 +40,7 @@ class User_InkCal_Measure(Procedure):
         self.pumpon = Procedures.Pump_PumpOn(self.apparatus, self.executor)
         self.pumpoff = Procedures.Pump_PumpOff(self.apparatus, self.executor)
         self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
+        self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
         self.useroptions = Procedures.User_Consol_InputOptions(
             self.apparatus, self.executor
         )
@@ -75,6 +77,7 @@ class User_InkCal_Measure(Procedure):
 
         # Do stuff
         # Go to calibration position
+        self.motionset.Do({'Type': 'default'})
         self.pmotion.Do({'priority': [['Z'], ['X', 'Y']]})
         self.DoEproc(motion, 'Run', {})
 
