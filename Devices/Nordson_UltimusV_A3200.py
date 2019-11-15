@@ -22,7 +22,7 @@ class Nordson_UltimusV_A3200(Nordson_UltimusV):
         self.IOaxis = ''
         self.IObit = ''
         self.dependent_device = True
-        self.defaulttask = 1
+        self.defaulttask = 3
         self.dependencies = ['pump', 'A3200']
 
         self.requirements['Connect']['pumpname'] = {

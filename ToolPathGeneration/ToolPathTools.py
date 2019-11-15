@@ -3,8 +3,8 @@ import math
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import csv
-# import ToolPathGeneration.CompGeo as cg
-import CompGeo as cg  # Used for testing this file.  Comment out otherwise.
+import ToolPathGeneration.CompGeo as cg
+# import CompGeo as cg  # Used for testing this file.  Comment out otherwise.
 import json
 
 # -----GOAL-----

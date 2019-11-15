@@ -11,8 +11,6 @@ MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 
-import XlineTPGen as TPGen  # Toolpath generator
-
 materials = [{'test_material': 'ZZ1'}]
 # These are other tools that can be added in. Comment out the ones not used.
 tools = []
@@ -36,37 +34,31 @@ MyApparatus['devices']['aeropump0']['pressure'] = 550
 MyApparatus['devices']['aeropump0']['vacuum'] = 0
 MyApparatus['devices']['pump0']['COM'] = 7
 
+# Connect to all the devices in the setup
+MyApparatus.Connect_All(simulation=True)
+# Renaming some elements for the variable explorer
+information = MyApparatus['information']
+proclog = MyApparatus['proclog']
+
+# Setup information
 MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
 MyApparatus['information']['materials'][mat0]['do_speedcal'] = True
 MyApparatus['information']['materials'][mat0]['do_pumpcal'] = False
-
-MyApparatus.createAppEntry(['information', 'ProcedureData', 'Toolpath_Generate', 'generator'])
-MyApparatus.createAppEntry(['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'])
-TP_gen = MyApparatus['information']['ProcedureData']['Toolpath_Generate']
-TP_gen['parameters'] = TPGen.Make_TPGen_Data(mat0)
-TP_gen['generator'] = 'XlineTPGen'
-TP_gen['parameters']['zlayers'] = 4
-TP_gen['parameters']['tiph'] = 0.5
-TP_gen['parameters']['ltl'] = 0.075
-TP_gen['parameters']['padl'] = 10.0
-TP_gen['parameters']['padw'] = 1
-TP_gen['parameters']['linew'] = 0.5  # needs to be changed in toolpath
-TP_gen['parameters']['R'] = 3
-TP_gen['parameters']['nreps'] = 0
-
-information = MyApparatus['information']
-proclog = MyApparatus['proclog']
 MyApparatus['information']['ink calibration']['time'] = 60
 
-
-# Connect to all the devices in the setup
-MyApparatus.Connect_All(simulation=True)
+# Setup toolpath generation and run a default
+GenTP = Procedures.Toolpath_Generate(MyApparatus, MyExecutor)
+GenTP.setMaterial(mat0)
+GenTP.setGenerator('TemplateTPGen')
+GenTP.setParameters()  # Creates the parameter structure for TPGen
+TP_gen = MyApparatus['information']['ProcedureData']['Toolpath_Generate']
+TP_gen['parameters']['tiph'] = 4
+TP_gen['parameters']['length'] = 5
 
 # Create instances of the procedures that will be used
 # Procedures that will almost always be used at this level
 AlignPrinter = Procedures.User_FlexPrinter_Alignments_Align(MyApparatus, MyExecutor)
 CalInk = Procedures.User_InkCal_Calibrate(MyApparatus, MyExecutor)
-GenTP = Procedures.Toolpath_Generate(MyApparatus, MyExecutor)
 PrintTP = Procedures.Toolpath_Print(MyApparatus, MyExecutor)
 TraySetup = Procedures.SampleTray_XY_Setup(MyApparatus, MyExecutor)
 TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)

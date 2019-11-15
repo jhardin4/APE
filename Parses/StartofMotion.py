@@ -77,9 +77,4 @@ class StartofMotion(Procedure):
         # if materialname in self.apparatus.getValue(['information', 'materials']):
         #     self.calUpdate.Do({'material': materialname})
         self.motionset.Do({'Type': nozzlename})
-        self.DoEproc(motionname, 'Run', {})
 
-        if pumpname != 'No devices met requirments':
-            pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
-            self.DoEproc(pumpname, 'Set', {'pressure': pressure})
-            self.pumpon.Do({'name': pumpname})

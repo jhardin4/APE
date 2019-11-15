@@ -1,7 +1,7 @@
 from Core import Procedure
 import Procedures.Aerotech_A3200_Set
 import Procedures.Pump_PumpOff
-
+import Procedures.Pump_PumpOn
 
 class EndofMotion(Procedure):
     def Prepare(self):
@@ -13,6 +13,7 @@ class EndofMotion(Procedure):
             'desc': 'motion to start',
         }
         self.pumpoff = Procedures.Pump_PumpOff(self.apparatus, self.executor)
+        self.pumpon = Procedures.Pump_PumpOn(self.apparatus, self.executor)
         self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
 
     def Plan(self):
@@ -50,6 +51,10 @@ class EndofMotion(Procedure):
         speed = self.apparatus.getValue(['devices', motionname, 'default', 'speed'])
 
         # Doing stuff
+        if pumpname != 'No devices met requirments':
+            pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
+            self.DoEproc(pumpname, 'Set', {'pressure': pressure})
+            self.pumpon.Do({'name': pumpname})
         self.DoEproc(motionname, 'Run', {})  # Run the motion up to this point
         if pumpname != 'No devices met requirments':
             self.pumpoff.Do({'name': pumpname})

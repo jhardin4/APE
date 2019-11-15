@@ -57,6 +57,14 @@ class Toolpath_Generate(Procedure):
         self.apparatus.createAppEntry(
             ['information', 'ProcedureData', 'Toolpath_Generate', 'generator']
         )
+        # This creates an dummy entry for 
+        self.material_name_add = [
+                'information',
+                'ProcedureData',
+                'Toolpath_Generate',
+                'parameters',
+                'materialname',
+                ]
 
     def Plan(self):
         parameters = self.requirements['parameters']['value']
@@ -64,8 +72,58 @@ class Toolpath_Generate(Procedure):
         target = self.requirements['target']['address']
         dataArgs = self.requirements['dataArgs']['value']
 
-        # If no arguments for the generator are given, use the material name
-        # from the default parameters location
+        # Set up the parameters for the toolpath generator
+        self.setParameters(parameters=parameters, generator=generator, dataArgs=dataArgs)
+        # Run the toolpath generator
+        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        temptarget = [0]
+        self.DoEproc(
+            systemname,
+            'Run',
+            {
+                'address': generator + '.GenerateToolpath',
+                'addresstype': 'pointer',
+                'arguments': [parameters, temptarget],
+            },
+        )
+        self.apparatus.setValue(target, temptarget)
+        self.printTP.Do({'newfigure': True})
+
+    def setMaterial(self, material):
+        self.apparatus.createAppEntry([
+                'information',
+                'ProcedureData',
+                'Toolpath_Generate',
+                'parameters',
+                'materialname',
+                ])
+        self.apparatus.setValue(
+                [
+                    'information',
+                    'ProcedureData',
+                    'Toolpath_Generate',
+                    'parameters',
+                    'materialname',
+                ],
+                material)
+
+    def setGenerator(self, generator):
+        self.apparatus.setValue(
+                self.requirements['generator']['address'], generator
+                )
+
+    def setParameters(self, parameters='', generator='', dataArgs=''):
+        # Update values to ensure the right ones are used
+        values = {}
+        if parameters != '':
+            values['parameters'] = parameters
+        if parameters != '':
+            values['generator'] = generator
+        if parameters != '':
+            values['dataArgs'] = dataArgs
+        self.GetRequirements(values)
+        parameters = self.requirements['parameters']['value']
+        generator = self.requirements['generator']['value']
         if dataArgs == '':
             material = self.apparatus.getValue(
                 [
@@ -99,17 +157,3 @@ class Toolpath_Generate(Procedure):
                 ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'],
                 tempPara,
             )
-
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
-        temptarget = [0]
-        self.DoEproc(
-            systemname,
-            'Run',
-            {
-                'address': generator + '.GenerateToolpath',
-                'addresstype': 'pointer',
-                'arguments': [parameters, temptarget],
-            },
-        )
-        self.apparatus.setValue(target, temptarget)
-        self.printTP.Do({'newfigure': True})
