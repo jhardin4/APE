@@ -66,6 +66,8 @@ class Nordson_UltimusV_A3200(Nordson_UltimusV):
         self.requirements['Connect'].pop('COM', None)
 
     def On(self, task='', mode='cmd'):
+        if task == '':
+            task = self.defaulttask
         self.log += self.A3200handle.Set_DO(
             axis=self.IOaxis, bit=self.IObit, value=1, task=task, motionmode=mode
         )
@@ -74,6 +76,8 @@ class Nordson_UltimusV_A3200(Nordson_UltimusV):
         return self.returnlog()
 
     def Off(self, task='', mode='cmd'):
+        if task == '':
+            task = self.defaulttask
         self.fOff(task, mode)
         return self.returnlog()
 
