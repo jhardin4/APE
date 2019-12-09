@@ -8,13 +8,23 @@ class Toolpath_Plot(Procedure):
         self.name = 'Toolpath_Plot'
         self.requirements['parameters'] = {
             'source': 'apparatus',
-            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'],
+            'address': [
+                'information',
+                'ProcedureData',
+                'Toolpath_Generate',
+                'parameters',
+            ],
             'value': '',
             'desc': 'parameters used to generate toolpath',
         }
         self.requirements['target'] = {
             'source': 'apparatus',
-            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'],
+            'address': [
+                'information',
+                'ProcedureData',
+                'Toolpath_Generate',
+                'toolpath',
+            ],
             'value': '',
             'desc': 'where to store the toolpath',
         }

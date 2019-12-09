@@ -14,10 +14,12 @@ class SampleTray_Start(Procedure):
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'pointer to defiend procedure to be performed at each position in tray',
+            'desc': 'pointer to defined procedure to be performed at each position in tray',
         }
         # Setup Apparatus
-        self.apparatus.createAppEntry(['information', 'ProcedureData', self.name, 'original_alignments'])
+        self.apparatus.createAppEntry(
+            ['information', 'ProcedureData', self.name, 'original_alignments']
+        )
 
     def Plan(self):
         # Renaming useful pieces of information
@@ -40,7 +42,14 @@ class SampleTray_Start(Procedure):
                     ['information', 'alignments', alignment]
                 )
                 self.apparatus.setValue(
-                    ['information', 'ProcedureData', self.name, 'original_alignments', alignment], value
+                    [
+                        'information',
+                        'ProcedureData',
+                        self.name,
+                        'original_alignments',
+                        alignment,
+                    ],
+                    value,
                 )
 
         # Do experiments
@@ -77,6 +86,12 @@ class SampleTray_Start(Procedure):
         for alignment in self.apparatus.getValue(['information', 'alignments']):
             if '@start' in alignment:
                 value = self.apparatus.getValue(
-                    ['information', 'ProcedureData', self.name, 'original_alignments', alignment]
+                    [
+                        'information',
+                        'ProcedureData',
+                        self.name,
+                        'original_alignments',
+                        alignment,
+                    ]
                 )
                 self.apparatus.setValue(['information', 'alignments', alignment], value)

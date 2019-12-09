@@ -3,7 +3,7 @@ import logging
 from qtpy.QtCore import QObject, Slot, Signal, Property
 
 from MultiProcess.APE_Interfaces import ApparatusInterface, ExecutorInterface
-from MultiProcess.zmqNode import zmqNode
+from .zmq_node import QZmqNode
 
 logger = logging.getLogger('GuiNode')
 
@@ -66,7 +66,7 @@ class GuiNode(QObject):
             return
 
         # Create the node
-        self._node = zmqNode('gui')
+        self._node = QZmqNode(name='gui')
         self._node.logging = True
         # self.User = Devices.User_GUI('User')
         # Create an interface for the executor and apparatus

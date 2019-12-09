@@ -3,7 +3,6 @@ import Procedures.Aerotech_A3200_Set
 import Procedures.Motion_RefRelPriorityLineMotion
 import Procedures.Pump_PumpOn
 import Procedures.User_InkCal_Calculate
-import time
 
 
 class StartofMotion(Procedure):
@@ -75,12 +74,8 @@ class StartofMotion(Procedure):
         # Doing stuff
         self.motionset.Do({'Type': 'default'})
         self.pmove.Do({'relpoint': startpoint, 'priority': [['X', 'Y'], ['Z']]})
+        self.DoEproc(motionname, 'Run', {})
         # if materialname in self.apparatus.getValue(['information', 'materials']):
         #     self.calUpdate.Do({'material': materialname})
         self.motionset.Do({'Type': nozzlename})
-        self.DoEproc(motionname, 'Run', {})
 
-        if pumpname != 'No devices met requirments':
-            pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
-            self.DoEproc(pumpname, 'Set', {'pressure': pressure})
-            self.pumpon.Do({'name': pumpname})

@@ -73,6 +73,8 @@ class MainGui(QObject):
 
         app = QApplication(sys.argv)
         app.setApplicationName("APE Main GUI")
+        app.setOrganizationName("UES")
+        app.setOrganizationDomain("www.ues.com")
 
         gui = MainGui(live=live)
         signal.signal(signal.SIGINT, lambda *args: gui.shutdown())

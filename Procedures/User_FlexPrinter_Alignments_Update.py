@@ -27,9 +27,7 @@ class User_FlexPrinter_Alignments_Update(Procedure):
         # Doing stuff
         message = 'Move to ' + alignmentname + ',and press ENTER when there.'
         default = ''
-        self.userinput.Do(
-            {'message': message, 'default': default}
-        )        
+        self.userinput.Do({'message': message, 'default': default})
         dimlist = list(alignment)
 
         self.getPos.Do({'axisList': dimlist})

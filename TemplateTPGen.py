@@ -45,7 +45,6 @@ def Make_TPGen_Data(material):
 
     return TPGen_Data
 
-
 def GenerateToolpath(data, target):
     # Unpack data
 
@@ -68,15 +67,14 @@ def GenerateToolpath(data, target):
     toolpath3D.append({'parse': 'start'})
     zpos = tiph
     # CONSTRUCTING TOOLPATH
-    startpoint = {'X': x_offset, 'Y': y_offset, 'Z': z_offset + zpos}
-    endpoint = {
-        'X': startpoint['X'] + length,
-        'Y': startpoint['Y'],
-        'Z': startpoint['Z'],
-    }
-    toolpath3D.append(
-        {'startpoint': startpoint, 'endpoint': endpoint, 'material': materialname}
-    )
+    # Defining the points
+    pointlist= []
+    pointlist.append({'X': x_offset, 'Y': y_offset})
+    pointlist.append({'X': x_offset + length, 'Y': y_offset})
+    
+    toolpath2D = tpt.nPt2ToolPath(pointlist, materialname)
+    toolpath3D = [*toolpath3D, *tpt.Toolpath2Dto3D(toolpath2D, zpos+z_offset)]
+
     toolpath3D.append({'parse': 'end'})
     # ADDING in Parsing
 
@@ -100,3 +98,4 @@ if __name__ == '__main__':
     data = Make_TPGen_Data('bleh')
     target = [0]
     GenerateToolpath(data, target)
+

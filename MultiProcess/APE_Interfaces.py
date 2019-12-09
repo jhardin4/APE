@@ -72,9 +72,7 @@ class ApparatusInterface(ApeInterface):
         )
 
     def getSimulation(self):
-        return self._send_message(
-            subject='target.apparatus.getSimulation'
-        )
+        return self._send_message(subject='target.apparatus.getSimulation')
 
     def checkAddress(self, app_address):
         return self._send_message(
@@ -195,7 +193,7 @@ class ExecutorInterface(ApeInterface):
             self.devicelist[device]["Address"].getDependence()
 
         subject = f'target.executor.devicelist["{device}"]["Address"].getDependence'
-        return self._send_message(subject=subject, target=address)
+        return self._send_message(subject=subject, target=address, reply=True)
 
     def getDependencies(self, device, address):
         if address == self.node.name:
@@ -205,6 +203,7 @@ class ExecutorInterface(ApeInterface):
             subject='target.executor.getDependencies',
             args=[device, address],
             target=address,
+            reply=True,
         )
 
     def getRequirements(self, device, eproc, address):
@@ -215,6 +214,7 @@ class ExecutorInterface(ApeInterface):
             subject='target.executor.getRequirements',
             args=[device, eproc, address],
             target=address,
+            reply=True,
         )
 
     def getDevices(self, address):
@@ -222,7 +222,10 @@ class ExecutorInterface(ApeInterface):
             return list(self.devicelist)
 
         return self._send_message(
-            subject='target.executor.getDevices', args=[address], target=address
+            subject='target.executor.getDevices',
+            args=[address],
+            target=address,
+            reply=True,
         )
 
     def getEprocs(self, device, address):
@@ -234,7 +237,7 @@ class ExecutorInterface(ApeInterface):
         )
 
     def getProcedures(self):
-        return self._send_message(subject='target.getProcedures')
+        return self._send_message(subject='target.getProcedures', reply=True)
 
     def clearProcedures(self):
         self._send_message(subject='target.clearProcedures')
@@ -242,28 +245,33 @@ class ExecutorInterface(ApeInterface):
     def reloadProcedures(self):
         self._send_message(subject='target.reloadProcedures')
 
-    def createProcedure(self, device, procedure, requirements):
-        self._send_message(
-            subject='target.createProcedure', args=[device, procedure, requirements]
+    def createProcedure(self, device, procedure):
+        return self._send_message(
+            subject='target.createProcedure', args=[device, procedure], reply=True
         )
 
-    def removeProcedure(self, device, procedure):
-        self._send_message(subject='target.removeProcedure', args=[device, procedure])
+    def updateProcedure(self, uuid, requirements):
+        self._send_message(subject='target.updateProcedure', args=[uuid, requirements])
+
+    def removeProcedure(self, uuid):
+        self._send_message(subject='target.removeProcedure', args=[uuid])
 
     def do(self, device, procedure, requirements):
         self._send_message(subject='target.do', args=[device, procedure, requirements])
 
-    def doProcedure(self, device, procedure):
-        self._send_message(subject='target.doProcedure', args=[device, procedure])
+    def doProcedure(self, uuid, requirements):
+        self._send_message(
+            subject='target.doProcedure', reply=False, args=[uuid, requirements]
+        )
 
     def doProclistItem(self, index):
-        self._send_message(subject='target.doProclistItem', args=[index])
+        self._send_message(subject='target.doProclistItem', reply=False, args=[index])
 
     def doProclist(self):
-        self._send_message(subject='target.doProclist')
+        self._send_message(subject='target.doProclist', reply=False)
 
     def getProclist(self):
-        return self._send_message(subject='target.getProclist')
+        return self._send_message(subject='target.getProclist', reply=True)
 
     def clearProclist(self):
         self._send_message(subject='target.clearProclist')
@@ -274,10 +282,9 @@ class ExecutorInterface(ApeInterface):
     def importProclist(self, fname):
         self._send_message(subject='target.importProclist', args=[fname])
 
-    def insertProclistItem(self, index, device, procedure, requirements):
+    def insertProclistItem(self, index, uuid, requirements):
         self._send_message(
-            subject='target.insertProclistItem',
-            args=[index, device, procedure, requirements],
+            subject='target.insertProclistItem', args=[index, uuid, requirements]
         )
 
     def updateProclistItem(self, index, requirements):

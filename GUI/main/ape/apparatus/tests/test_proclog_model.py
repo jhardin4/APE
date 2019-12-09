@@ -28,7 +28,16 @@ def simple_data():
             '->',
             {
                 'name': 'escape',
-                'information': {'spot': '', "care": ['detail', 'bargain']},
+                'information': {
+                    'spot': '',
+                    "care": ['detail', 'bargain'],
+                    "minister": {
+                        "source": "apparatus",
+                        "address": "",
+                        "value": "royalty",
+                        "desc": "wise price",
+                    },
+                },
             },
         ],
         ['->', {'name': 'curve', 'information': "foo"}],
@@ -49,12 +58,18 @@ def test_creting_proclog_model_from_simple_data_works(simple_data):
     assert model.rowCount(item_index) == 1
     assert model.data(item_index, ProclogModel.NameRole) == 'escape'
     data_index = model.index(0, 0, item_index)
-    assert model.rowCount(data_index) == 2
+    assert model.rowCount(data_index) == 3
     assert model.data(model.index(0, 0, data_index), ProclogModel.NameRole) == 'spot'
     assert (
         model.data(model.index(1, 0, data_index), ProclogModel.ValueRole)
         == "['detail', 'bargain']"
     )
+    value_index = model.index(2, 0, data_index)
+    assert model.rowCount(value_index) == 2
+    assert (
+        model.data(model.index(0, 0, value_index), ProclogModel.ValueRole) == "royalty"
+    )
+    assert model.data(model.index(1, 0, value_index), ProclogModel.ValueRole) == ""
     index = model.index(1, 0, QModelIndex())
     assert model.rowCount(index) == 1
     info_index = model.index(0, 0, index)

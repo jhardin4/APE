@@ -11,7 +11,7 @@ Item {
 
   QtObject {
     id: d
-    property bool big: root.width > root.bigWidth
+    property bool big: false //root.width > root.bigWidth
 
     //onBigChanged: changeBig()
     function changeBig() {

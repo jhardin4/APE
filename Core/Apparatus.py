@@ -1,3 +1,5 @@
+from io import SEEK_END, SEEK_SET
+
 import Devices
 import json
 import time
@@ -31,18 +33,18 @@ class Apparatus(dict):
         self.simulation = simulation
         ProcLogFileName = self.logpath + self.AppID + 'proclog.json'
         self.ProcLogFile = open(ProcLogFileName, mode='w')
+        self.PLFirstWrite = True
 
         for device in self['devices']:
             self['devices'][device]['Connected'] = False
             if self['devices'][device]['addresstype'] == 'pointer':
                 # Create instance of the Device
-                self['devices'][device]['address'] = getattr(
-                    Devices, self['devices'][device]['type']
-                )(device)
-                self.executor.loadDevice(
-                    device, self['devices'][device]['address'], 'pointer'
+                self.executor.createDevice(
+                    device,
+                    self['devices'][device]['type'],
+                    '',
+                    self['devices'][device]['address'],
                 )
-
                 # Register the device with the Executor
                 # self['devices'][device]['address'].ERegister(executor)
 
@@ -54,7 +56,9 @@ class Apparatus(dict):
                     self['devices'][device]['descriptors'] = list(
                         {
                             *self['devices'][device]['descriptors'],
-                            *self['devices'][device]['address'].descriptors,
+                            *self.executor.getDescriptors(
+                                device, self['devices'][device]['address']
+                            ),
                         }
                     )
                 else:
@@ -63,10 +67,14 @@ class Apparatus(dict):
                     ].descriptors
 
                 # Set Device simulation state
-                self['devices'][device]['address'].simulation = simulation
+                self.executor.setSimulation(
+                    device, simulation, self['devices'][device]['address']
+                )
 
                 # Check if the device is dependent on other devices and conncect if not dependent
-                if self['devices'][device]['address'].dependent_device:
+                if self.executor.getDependence(
+                    device, self['devices'][device]['address']
+                ):
                     # Add to dependent device list for later processing
                     self.dependent_Devices.append(device)
                 else:
@@ -119,20 +127,9 @@ class Apparatus(dict):
         self.logApparatus()
 
     def Connect(self, deviceName):
-        # use default executor if none is given
-        # if executor == '':
-        #    executor = self.executor
-
-        # Get Arguments of Connect for the device
-        # self['devices'][deviceName]['address'].CreateEprocs(self, self.executor)
-        if self['devices'][deviceName]['addresstype'] == 'pointer':
-            arguments = list(
-                self['devices'][deviceName]['address'].requirements['Connect']
-            )
-        if self['devices'][deviceName]['addresstype'] == 'zmqNode':
-            arguments = self.executor.getRequirements(
-                deviceName, 'Connect', self['devices'][deviceName]['address']
-            )
+        arguments = self.executor.getRequirements(
+            deviceName, 'Connect', self['devices'][deviceName]['address']
+        )
         # Try to collect the required arguments together
         details = {}
         for element in arguments:
@@ -144,7 +141,6 @@ class Apparatus(dict):
                     raise Exception(errorstr)
 
         # Run the Connect method of the Device with the right arguments
-        # deviceconnect.Do(details)
         self.DoEproc(deviceName, 'Connect', details)
 
         # Note in the apparatus that the device is connected
@@ -156,12 +152,9 @@ class Apparatus(dict):
         while len(self.dependent_Devices) > 0:
             device = self.dependent_Devices.pop(0)
             Ready2Connect = True
-            if self['devices'][device]['addresstype'] == 'pointer':
-                depList = self.executor.getDependencies(device)
-            elif self['devices'][device]['addresstype'] == 'zmqNode':
-                depList = self.executor.getDependencies(
-                    device, self['devices'][device]['address']
-                )
+            depList = self.executor.getDependencies(
+                device, self['devices'][device]['address']
+            )
 
             for devname in depList:
                 parent_devname = self['devices'][device][devname + 'name']
@@ -249,6 +242,27 @@ class Apparatus(dict):
             except KeyError:
                 raise InvalidApparatusAddressException(f'Key not found: {infoAddress}')
         level[lastlevel] = value
+
+    def add_device_entry(self, name, dtype='', details={}):
+        # Check to see if name is already in use
+        if name in self['devices']:
+            raise Exception(f'{name} is already in use.')
+        # Check to make sure the Device exists
+        if dtype != '':
+            try:
+                getattr(Devices, dtype)
+            except AttributeError:
+                raise Exception(f'{dtype} was not found in Devices')
+        # Make the basic device entry
+        self['devices'][name] = {
+            'type': dtype,
+            'addresstype': 'pointer',
+            'descriptors': [],
+            'address': ''
+        }
+        # Fill in other elements
+        for detail in details:
+            self['devices'][name][detail] = details[detail]
 
     def findDevices(self, key, value=None):
         if value is None:
@@ -350,7 +364,9 @@ class Apparatus(dict):
             for n in range(self.proclog_depthindex):
                 procLogLine.append('->')
 
-            procLogLine.append({'name': procName, 'information': info, 'time': time.time()})
+            procLogLine.append(
+                {'name': procName, 'information': info, 'time': time.time()}
+            )
             self.proclog.append(procLogLine)
             self.UpdateLog(procLogLine)
 
@@ -358,12 +374,11 @@ class Apparatus(dict):
         if self.PLFirstWrite:
             json.dump([], self.ProcLogFile)
             self.PLFirstWrite = False
-            eof = self.ProcLogFile.seek(0, 2)
-            self.ProcLogFile.seek(eof-1, 0)
-
+            eof = self.ProcLogFile.seek(0, SEEK_END)
+            self.ProcLogFile.seek(eof - 1, SEEK_SET)
         else:
-            eof = self.ProcLogFile.seek(0, 2)
-            self.ProcLogFile.seek(eof-1, 0)
+            eof = self.ProcLogFile.seek(0, SEEK_END)
+            self.ProcLogFile.seek(eof - 1, SEEK_SET)
             self.ProcLogFile.write(', ')
 
         json.dump(entry, self.ProcLogFile)

@@ -9,11 +9,6 @@ import Qt.labs.settings 1.0
 Item {
   id: root
 
-  MotionDevices {
-    id: motionDevices
-    appInterface: nodeHandler.appInterface
-  }
-
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Style.singleMargin

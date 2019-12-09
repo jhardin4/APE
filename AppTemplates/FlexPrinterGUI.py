@@ -8,7 +8,7 @@ def FlexPrinterGUI(apparatus, materials, tools):
         'descriptors': ['motion'],
         'addresstype': 'zmqNode',
         'address': 'procexec',
-        'axes': ['X', 'Y', 'ZZ1', 'ZZ2', 'ZZ3', 'ZZ4']
+        'axes': ['X', 'Y', 'ZZ1', 'ZZ2', 'ZZ3', 'ZZ4'],
     }
     devices['gantry']['default'] = {
         'speed': 40,
@@ -152,7 +152,10 @@ def FlexPrinterGUI(apparatus, materials, tools):
             devices[tool['name']]['AIchannel'] = 0
 
             # Alignment information
-            devices['gantry'][tool['name']] = {'speed': 40, 'axismask': {'Z': tool['axis']}}
+            devices['gantry'][tool['name']] = {
+                'speed': 40,
+                'axismask': {'Z': tool['axis']},
+            }
             apparatus['information']['alignmentnames'].append(tool['name'] + '@mark')
             apparatus['information']['alignments'][tool['name'] + '@mark'] = {
                 'X': '',

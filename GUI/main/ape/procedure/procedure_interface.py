@@ -91,7 +91,8 @@ class ProcedureInterface(QObject):
         self.eprocsChanged.emit()
 
     @Slot(str, str, result=list)
-    def getRequirements(self, device, procedure):
+    @Slot(str, str, str, result=list)
+    def getRequirements(self, device, procedure, uuid=None):
         if not self._gui_node:
             logger.warning('Cannot fetch requirements without guiNode')
             return
@@ -109,19 +110,30 @@ class ProcedureInterface(QObject):
                 apparatus = Apparatus()
                 executor = Executor()
                 f = getattr(module, procedure)(apparatus, executor)
-                return [
-                    {'key': k, "value": value_to_str(v['value'])}
-                    for k, v in f.requirements.items()
-                ]
+                result = {
+                    k: value_to_str(v['value']) for k, v in f.requirements.items()
+                }
             except Exception as e:
                 logger.warning(
                     f'Cannot fetch requirements of {device}_{procedure}: {str(e)}'
                 )
-                return []
+                result = {}
         else:
             node = self._device_nodes.get(device, 'procexec')
             reqs = self._gui_node.executor.getRequirements(device, procedure, node)
-            return [{'key': k, 'value': ''} for k in reqs]
+            result = {k: '' for k in reqs}
+
+        if uuid:
+            proc = None
+            for proc in self._procedures:
+                if proc['uuid'] == uuid:
+                    break
+            if not proc:
+                logger.error(f'No proecedure with UUID {uuid} found.')
+
+            result.update({item['key']: item['value'] for item in proc['requirements']})
+
+        return [{'key': k, 'value': v} for k, v in result.items()]
 
     @staticmethod
     def _convert_procedure_list(procedures):
@@ -130,10 +142,11 @@ class ProcedureInterface(QObject):
                 entry['name'] = f'{entry["device"]}_{entry["procedure"]}'
             else:
                 entry['name'] = entry['procedure']
-            raw_reqs = entry["requirements"]
-            entry["requirements"] = [
-                {'key': k, 'value': value_to_str(v)} for k, v in raw_reqs.items()
-            ]
+            if 'requirements' in entry:
+                raw_reqs = entry["requirements"]
+                entry["requirements"] = [
+                    {'key': k, 'value': value_to_str(v)} for k, v in raw_reqs.items()
+                ]
         return procedures
 
     @Slot()
@@ -168,18 +181,15 @@ class ProcedureInterface(QObject):
             if entry['value']
         }
 
-    @Slot(str, str, list)
-    def addProclistItem(self, device, procedure, requirements):
+    @Slot(str, list)
+    def addProclistItem(self, uuid, requirements):
         if not self._gui_node:
             logger.warning('Cannot add requirements without guiNode')
             return
 
-        if device in ('Procedures', 'Project_Procedures'):
-            device = ''
-
         reqs = self._convert_req_model_to_list(requirements)
         self._gui_node.executor.insertProclistItem(
-            index=-1, device=device, procedure=procedure, requirements=reqs
+            index=-1, uuid=uuid, requirements=reqs
         )
 
     @Slot(int)
@@ -258,17 +268,15 @@ class ProcedureInterface(QObject):
         self._gui_node.executor.do(device, procedure, reqs)
         logger.debug('done')
 
-    @Slot(str, str)
-    def doProcedure(self, device, procedure):
+    @Slot(str, list)
+    def doProcedure(self, uuid, requirements):
         if not self._gui_node:
             logger.warning('Cannot do procedure without guiNode')
             return
 
-        if device in ('Procedures', 'Project_Procedures'):
-            device = ''
-
-        logger.debug(f'do procedure {device}_{procedure}')
-        self._gui_node.executor.doProcedure(device, procedure)
+        reqs = self._convert_req_model_to_list(requirements)
+        logger.debug(f'do procedure {uuid} with requirements {reqs}')
+        self._gui_node.executor.doProcedure(uuid, reqs)
         logger.debug('done')
 
     @Slot()
@@ -299,8 +307,8 @@ class ProcedureInterface(QObject):
 
         self._gui_node.executor.reloadProcedures()
 
-    @Slot(str, str, list)
-    def createProcedure(self, device, procedure, requirements):
+    @Slot(str, str, result=str)
+    def createProcedure(self, device, procedure):
         if not self._gui_node:
             logger.warning('Cannot create procedure without guiNode')
             return
@@ -308,19 +316,24 @@ class ProcedureInterface(QObject):
         if device in ('Procedures', 'Project_Procedures'):
             device = ''
 
-        reqs = self._convert_req_model_to_list(requirements)
-        self._gui_node.executor.createProcedure(device, procedure, reqs)
+        return self._gui_node.executor.createProcedure(device, procedure)
 
-    @Slot(str, str)
-    def removeProcedure(self, device, procedure):
+    @Slot(str, list)
+    def updateProcedure(self, uuid, requirements):
+        if not self._gui_node:
+            logger.warning('Cannot update procedure without guiNode')
+            return
+
+        reqs = self._convert_req_model_to_list(requirements)
+        self._gui_node.executor.updateProcedure(uuid=uuid, requirements=reqs)
+
+    @Slot(str)
+    def removeProcedure(self, uuid):
         if not self._gui_node:
             logger.warning('Cannot remove procedure without guiNode')
             return
 
-        if device in ('Procedures', 'Project_Procedures'):
-            device = ''
-
-        self._gui_node.executor.removeProcedure(device, procedure)
+        self._gui_node.executor.removeProcedure(uuid)
 
     @Slot(QUrl)
     def saveAs(self, url):

@@ -1,3 +1,4 @@
+from qtpy.QtCore import QCoreApplication
 from qtpy.QtWidgets import QInputDialog, QLineEdit
 from Devices import Sensor
 
@@ -35,17 +36,19 @@ class User_GUI(Sensor):
         ok = False
         item = ''
         if options != '':
-            i = 0
-            # if there is no default, the default will be the first value
-            d = 0
-            for option in options:
-                # Add in special formatting if a default is given
-                if option == default:
-                    d = i
-                else:
-                    i = i + 1
-            # this will create the pop up window
-            item, ok = QInputDialog.getItem(None, 'Input', message, options, d, False)
+            input_dialog = QInputDialog()
+            input_dialog.setComboBoxItems(options)
+            input_dialog.setComboBoxEditable(False)
+            if default:  # of there is no default, the first item will be the default
+                input_dialog.setTextValue(default)
+            input_dialog.setWindowTitle("Input")
+            input_dialog.setLabelText(message)
+            input_dialog.setModal(False)
+            input_dialog.show()
+            while input_dialog.isVisible():
+                QCoreApplication.processEvents()
+            ok = input_dialog.result()
+            item = input_dialog.textValue()
         response = item if ok and item else 'stop'
 
         if response == 'stop':
@@ -56,9 +59,17 @@ class User_GUI(Sensor):
         return self.returnlog()
 
     def GetInput(self, message='', default='', address='', addressType=''):
-        item, ok = QInputDialog.getText(
-            None, 'Input', message, QLineEdit.Normal, default
-        )
+        input_dialog = QInputDialog()
+        input_dialog.setTextEchoMode(QLineEdit.Normal)
+        input_dialog.setTextValue(default)
+        input_dialog.setWindowTitle("Input")
+        input_dialog.setLabelText(message)
+        input_dialog.setModal(False)
+        input_dialog.show()
+        while input_dialog.isVisible():
+            QCoreApplication.processEvents()
+        ok = input_dialog.result()
+        item = input_dialog.textValue()
         response = item if ok else 'stop'
 
         if response == '':

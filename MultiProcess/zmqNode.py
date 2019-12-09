@@ -28,7 +28,7 @@ class zmqNode:
         self.listening = False
         self.log = ''
         self.logfile_name = 'nodelog_' + name + '.txt'
-        self.timer_listen = ''
+        self.timer_listen = None
         self.logging = False
         try:
             self.logfile = open(self.logfile_name, mode='a')
@@ -119,6 +119,8 @@ class zmqNode:
             message = self.connections[name].recv_json(flags=zmq.NOBLOCK)
         except zmq.Again:
             pass
+        except KeyError:
+            return  # connection already closed
         self.handle(message, connection=name)
 
     def listen_all(self):
@@ -128,9 +130,9 @@ class zmqNode:
             self.timer_listen = threading.Timer(
                 self.heart_beat, self.listen_all
             ).start()
-        else:
-            if type(self.timer_listen) == threading.Timer:
-                self.timer_listen.cancel()
+        elif isinstance(self.timer_listen, threading.Timer):
+            self.timer_listen.cancel()
+            self.timer_listen = None
 
     def listen_once(self):
         for connection in self.connections:

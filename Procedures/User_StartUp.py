@@ -12,27 +12,36 @@ class User_StartUp(Procedure):
             'source': 'apparatus',
             'address': ['information', 'StartUp', 'file'],
             'value': '',
-            'desc': 'name of start up file'
+            'desc': 'name of start up file',
         }
         self.apparatus.createAppEntry(['information', 'StartUp', 'file'])
         self.apparatus.createAppEntry(['information', 'StartUp', 'info'])
-        self.useroptions = Procedures.User_Consol_InputOptions(self.apparatus, self.executor)
+        self.useroptions = Procedures.User_Consol_InputOptions(
+            self.apparatus, self.executor
+        )
         self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
 
     def Plan(self):
         filename = self.requirements['filename']['value']
         # List off the basic questions to be asked at the start of a run
         questions = {}
-        questions['Name'] = {'message': 'What is your name?', 
-                 'default': None}
-        questions['Temperature'] = {'message': 'What is the lab temperature in Celsius?', 
-                 'default': None}
-        questions['Humidity'] = {'message': 'What is the lab relative humidity in percent?',
-                 'default': None}        
-        questions['Reason'] = {'message': 'What are you hoping to accomplish with this experiment?',
-                 'default': None}
-        questions['Difference'] = {'message': 'How is this experiment different than the last?', 
-                 'default': None}         
+        questions['Name'] = {'message': 'What is your name?', 'default': None}
+        questions['Temperature'] = {
+            'message': 'What is the lab temperature in Celsius?',
+            'default': None,
+        }
+        questions['Humidity'] = {
+            'message': 'What is the lab relative humidity in percent?',
+            'default': None,
+        }
+        questions['Reason'] = {
+            'message': 'What are you hoping to accomplish with this experiment?',
+            'default': None,
+        }
+        questions['Difference'] = {
+            'message': 'How is this experiment different than the last?',
+            'default': None,
+        }
 
         # Doing stuff
 
@@ -40,9 +49,11 @@ class User_StartUp(Procedure):
         message = 'Import start up information from file from file?'
         options = ['y', 'n']
         default = 'y'
-        self.useroptions.Do({'message': message, 'options': options, 'default': default})
+        self.useroptions.Do(
+            {'message': message, 'options': options, 'default': default}
+        )
         doQuestions = self.useroptions.response
-        if doQuestions is 'y':
+        if doQuestions == 'y':
             message = 'What filename?'
             default = filename
             self.userinput.Do({'message': message, 'default': default})
@@ -59,25 +70,35 @@ class User_StartUp(Procedure):
 
         # If answers to questions were not collected from a file, collect them directly
         for question in questions:
-            if ('answer' not in questions[question]) or questions[question]['answer'] is None:
-                    questions[question]['answer'] = self.AskQuestion(questions[question])
+            if ('answer' not in questions[question]) or questions[question][
+                'answer'
+            ] is None:
+                questions[question]['answer'] = self.AskQuestion(questions[question])
 
         # Check if any questions need to be redone
         infoOK = False
         while not infoOK:
-            message = self.PrintInfo(questions) + 'Would you like to redo any questions?'
+            message = (
+                self.PrintInfo(questions) + 'Would you like to redo any questions?'
+            )
             options = ['y', 'n']
             default = 'n'
-            self.useroptions.Do({'message': message, 'options': options, 'default': default})
+            self.useroptions.Do(
+                {'message': message, 'options': options, 'default': default}
+            )
             redoQuestion = self.useroptions.response
-            if redoQuestion is 'y':
+            if redoQuestion == 'y':
                 message = 'Which question would you like to redo?'
                 options = list(questions)
                 default = ''
-                self.useroptions.Do({'message': message, 'options': options, 'default': default})
+                self.useroptions.Do(
+                    {'message': message, 'options': options, 'default': default}
+                )
                 which_question = self.useroptions.response
                 if which_question in questions:
-                    questions[which_question]['answer'] = self.AskQuestion(questions[which_question])
+                    questions[which_question]['answer'] = self.AskQuestion(
+                        questions[which_question]
+                    )
                 else:
                     print('Question is not in list.')
             else:
@@ -90,7 +111,7 @@ class User_StartUp(Procedure):
         with open(filename, 'w') as TPjson:
             json.dump(questions, TPjson)
 
-        with open('Logs/'+str(int(round(time.time(), 0)))+filename, 'w') as TPjson:
+        with open('Logs/' + str(int(round(time.time(), 0))) + filename, 'w') as TPjson:
             json.dump(questions, TPjson)
 
     def PrintInfo(self, information):
@@ -108,7 +129,9 @@ class User_StartUp(Procedure):
         # Handle the two potential kinds of questions
         if 'options' in question:
             options = question['options']
-            self.useroptions.Do({'message': message, 'options': options, 'default': default})
+            self.useroptions.Do(
+                {'message': message, 'options': options, 'default': default}
+            )
             return self.useroptions.response
         else:
             self.userinput.Do({'message': message, 'default': default})
