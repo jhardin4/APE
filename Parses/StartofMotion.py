@@ -74,6 +74,7 @@ class StartofMotion(Procedure):
         # Doing stuff
         self.motionset.Do({'Type': 'default'})
         self.pmove.Do({'relpoint': startpoint, 'priority': [['X', 'Y'], ['Z']]})
+        self.DoEproc(motionname, 'Run', {})
         # if materialname in self.apparatus.getValue(['information', 'materials']):
         #     self.calUpdate.Do({'material': materialname})
         self.motionset.Do({'Type': nozzlename})

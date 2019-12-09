@@ -38,6 +38,16 @@ class EndofMotion(Procedure):
             pumpname,
             'mid_time',
         ]
+        self.pumpon.requirements['pumpon_time']['address'] = [
+            'devices',
+            pumpname,
+            'pumpon_time',
+        ]
+        self.pumpon.requirements['mid_time']['address'] = [
+            'devices',
+            pumpname,
+            'mid_time',
+        ]
         # Assumes that the +Z axis is the safe direction
         axismask = self.apparatus.getValue(
             ['devices', motionname, nozzlename, 'axismask']

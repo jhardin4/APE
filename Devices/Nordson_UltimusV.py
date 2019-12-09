@@ -6,6 +6,7 @@
 #
 
 from Devices import Pump
+import threading
 
 
 class Nordson_UltimusV(Pump):
@@ -34,7 +35,20 @@ class Nordson_UltimusV(Pump):
             'address': '',
             'desc': 'vacuum when the pump is OFF',
         }
-
+        self.requirements['DelayedOn'] = {}
+        self.requirements['DelayedOn']['delay'] = {
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'time to wait before turning on pump',
+        }
+        self.requirements['DelayedOff'] = {}
+        self.requirements['DelayedOff']['delay'] = {
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'time to wait before turning off pump',
+        }
         self.pressure = 0
         self.vacuum = 0
         self.driver_address = ''
@@ -53,6 +67,26 @@ class Nordson_UltimusV(Pump):
         self.on = False
         self.addlog(self.name + ' is off.')
 
+        return self.returnlog()
+
+    def DelayedOn(self, delay):
+        if not self.simulation:
+            t = threading.Timer(delay, self.driver_address.startPump)
+        else:
+            t = threading.Timer(delay, print, ['Pump On'])
+        t.start()
+        self.addlog(self.name + ' will turn on in ' + str(delay) + ' s.')
+        self.on = True
+        return self.returnlog()
+
+    def DelayedOff(self, delay):
+        if not self.simulation:
+            t = threading.Timer(delay, self.driver_address.stopPump)
+        else:
+            t = threading.Timer(delay, print, ['Pump Off'])
+        t.start()
+        self.addlog(self.name + ' will turn off in ' + str(delay) + ' s.')
+        self.on = False
         return self.returnlog()
 
     def Connect(self, COM=''):
