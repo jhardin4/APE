@@ -7,6 +7,7 @@
 #
 from Devices import Sensor
 from Devices import Motion
+import time
 
 
 class Aerotech_A3200_FlexPrinter(Motion, Sensor):
@@ -417,7 +418,6 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
         )
 
         self.fRun(motionmode, task)
-
         return self.returnlog()
 
     def MotionCMD(self, point, speed, motiontype):

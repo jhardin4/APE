@@ -50,6 +50,7 @@ class Device:
         # Information for handling connections
         self.apparatus_connection = 'pointer'
         self.executor = ''
+        self.timetest = 0
 
     def On(self):
         # Example of turning the device on

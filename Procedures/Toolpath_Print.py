@@ -1,7 +1,7 @@
 from Core import Procedure
 import Parses
 import Procedures.Motion_RefRelLinearMotion
-
+import time
 
 class Toolpath_Print(Procedure):
     def Prepare(self):
@@ -72,3 +72,4 @@ class Toolpath_Print(Procedure):
                         'axismask': axismask,
                     }
                 )
+                
