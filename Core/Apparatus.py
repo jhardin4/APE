@@ -16,6 +16,11 @@ class Apparatus(dict):
         self['devices'] = {}
         self['information'] = {}
         self['eproclist'] = []
+        self['public release'] = '88ABW-2019-6134'
+        self['APE version'] = {}
+        self['APE version']['time'] = 1577732817
+        self['APE version']['branch'] = 'jhardin'
+        self['APE version']['dev'] = 'James Hardin'
         self.proclog = []
         self[
             'proclog'
@@ -28,6 +33,8 @@ class Apparatus(dict):
         self.logpath = 'Logs//'
         self.AppID = str(int(round(time.time(), 0)))
         self.PLFirstWrite = True
+        self.timetest = 0
+        self.starttime = 0
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
@@ -372,14 +379,18 @@ class Apparatus(dict):
 
     def UpdateLog(self, entry):
         if self.PLFirstWrite:
+            starttime = time.time()
             json.dump([], self.ProcLogFile)
             self.PLFirstWrite = False
             eof = self.ProcLogFile.seek(0, SEEK_END)
             self.ProcLogFile.seek(eof - 1, SEEK_SET)
+            self.timetest += time.time() - starttime
         else:
+            starttime = time.time()
             eof = self.ProcLogFile.seek(0, SEEK_END)
             self.ProcLogFile.seek(eof - 1, SEEK_SET)
             self.ProcLogFile.write(', ')
+            self.timetest += time.time() - starttime
 
         json.dump(entry, self.ProcLogFile)
         self.ProcLogFile.write(']')

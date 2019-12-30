@@ -16,6 +16,7 @@ class Executor(ApeInterface):
         self.node = node
         self.prevDevice = ''
         self.curDevice = ''
+        self.loghandle = open('Logs/' + self.logaddress, mode='w')
 
     def execute(self, eproclist):
         # This could take a list of multiple lists of eprocs but typically it
@@ -137,9 +138,7 @@ class Executor(ApeInterface):
         if self.prevDevice == self.curDevice:
             self.ready4next = True
         if self.logging:
-            loghandle = open('Logs/' + self.logaddress, mode='a')
-            loghandle.write(str(message))
-            loghandle.close()
+            self.loghandle.write(str(message))
             self.log = ''
 
     def getDependencies(self, device, address):

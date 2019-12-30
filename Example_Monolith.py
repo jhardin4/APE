@@ -64,7 +64,6 @@ TraySetup = Procedures.SampleTray_XY_Setup(MyApparatus, MyExecutor)
 TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)
 Planner = Procedures.Planner_Combinatorial(MyApparatus, MyExecutor)
 
-
 class Sample(Core.Procedure):
     def Prepare(self):
         self.name = 'Sample'
