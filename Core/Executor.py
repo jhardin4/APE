@@ -138,7 +138,6 @@ class Executor(ApeInterface):
         if self.prevDevice == self.curDevice:
             self.ready4next = True
         if self.logging:
-            print(self.log)
             self.loghandle.write(str(message))
             self.loghandle.flush()
             self.log = ''
