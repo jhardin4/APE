@@ -1,0 +1,4 @@
+This is a general folder for some example scripts.
+
+Most of these files will require that they be moved in order ot use so please note that information
+in the comments of the files
