@@ -1,0 +1,1 @@
+Move to root APE directory then run from there.  These demonstrate the ability to explicitly set the speed of toolpath line either as a single vlaue or as a multiplier of the nozzle speed.

@@ -1,7 +1,6 @@
 from Core import Procedure
 import Parses
 import Procedures.Motion_RefRelLinearMotion
-import time
 
 class Toolpath_Print(Procedure):
     def Prepare(self):
@@ -58,9 +57,19 @@ class Toolpath_Print(Procedure):
                 refpoint = self.apparatus.getValue(
                     ['information', 'alignments', nozzlename + '@start']
                 )
-                speed = self.apparatus.getValue(
-                    ['devices', motionname, nozzlename, 'speed']
-                )
+                # Determine the speed
+                # Defaults to the nozzle speed from the apparatus
+                if 'speed' in line:
+                    speed = line['speed']
+                elif 'mfo' in line:
+                    _matspeed = self.apparatus.getValue(
+                        ['devices', motionname, nozzlename, 'speed']
+                    )
+                    speed = line['mfo'] * _matspeed
+                else:
+                    speed = self.apparatus.getValue(
+                        ['devices', motionname, nozzlename, 'speed']
+                    )
                 axismask = self.apparatus.getValue(
                     ['devices', motionname, nozzlename, 'axismask']
                 )
