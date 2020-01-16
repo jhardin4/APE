@@ -12,6 +12,7 @@ MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 
 materials = [{'test_material': 'ZZ1'}]
+materials.append({'test_material2': 'ZZ2'})
 # These are other tools that can be added in. Comment out the ones not used.
 tools = []
 # tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
@@ -32,7 +33,7 @@ MyApparatus['devices']['aeropump0']['pumpoff_time'] = 0  # time from end-arrival
 MyApparatus['devices']['aeropump0']['pumpres_time'] = 0.1
 MyApparatus['devices']['aeropump0']['pressure'] = 550
 MyApparatus['devices']['aeropump0']['vacuum'] = 0
-MyApparatus['devices']['pump0']['COM'] = 7
+MyApparatus['devices']['aeropump0']['COM'] = 7
 
 # Connect to all the devices in the setup
 MyApparatus.Connect_All(simulation=True)

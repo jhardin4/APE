@@ -10,7 +10,9 @@ def FlexPrinterMonolith(apparatus, materials, tools):
         'axes': ['X', 'Y', 'ZZ1', 'ZZ2', 'ZZ3', 'ZZ4'],
     }
     apparatus.add_device_entry('gantry', 'Aerotech_A3200_FlexPrinter', details)
-    # Create a nozzle, nozzle slide, pump and aeropump for each material
+    # Create a nozzle, nozzle slide, and pump for each material
+    # Assumes that the prime nozzle is going to be using the Aerotech for
+    # faster on/off
     n = 0  # Counter for keeping track of number of pumps
     for materialx in materials:
         material = list(materialx)[0]
@@ -22,21 +24,25 @@ def FlexPrinterMonolith(apparatus, materials, tools):
             f'n{material}slide',
             details={'descriptors': ['nozzle', f'{material}slide']}
         )
-        details = {
-            'pressure': 0,
-            'vacuum': 0,
-        }
-        apparatus.add_device_entry(f'pump{n}', 'Nordson_UltimusV', details)
-        details = {
-            'type': 'Nordson_UltimusV_A3200',
-            'pumpname': f'pump{n}',
-            'A3200name': 'gantry',
-            'IOaxis': 'ZZ1',
-            'IObit': 2,
-            'pressure': 0,
-            'vacuum': 0,
-        }
-        apparatus.add_device_entry(f'aeropump{n}', 'Nordson_UltimusV_A3200', details)
+
+        if n != 0:
+            details = {
+                'pressure': 0,
+                'vacuum': 0,
+                'COM': '',
+            }
+            apparatus.add_device_entry(f'pump{n}', 'Nordson_UltimusV', details)
+        else:
+            details = {
+                'type': 'Nordson_UltimusV_A3200',
+                'A3200name': 'gantry',
+                'IOaxis': 'ZZ1',
+                'IObit': 2,
+                'pressure': 0,
+                'vacuum': 0,
+                'COM': '',
+            }    
+            apparatus.add_device_entry(f'aeropump{n}', 'Nordson_UltimusV_A3200', details)
         n += 1
     # Create entries for tools
     for tool in tools:

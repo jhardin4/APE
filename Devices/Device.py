@@ -171,8 +171,10 @@ class Device:
 
     def checkDependencies(self, name, device):
         if type(device) == str:
+            # Checks to see if it need the executor to find Device
             return self.executor.devicelist[name]['Address']
         else:
+            # Otherwise it assume a Device was passed
             return device
 
 
