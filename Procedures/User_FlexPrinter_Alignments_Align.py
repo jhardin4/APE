@@ -60,7 +60,7 @@ class User_FlexPrinter_Alignments_Align(Procedure):
             self.userinput.Do({'message': message, 'default': default})
             afilename = self.userinput.response
             try:
-                with open(filename, 'r') as TPjson:
+                with open(afilename, 'r') as TPjson:
                     self.apparatus.setValue(
                         ['information', 'alignments'], json.load(TPjson)
                     )
