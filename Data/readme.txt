@@ -1,0 +1,1 @@
+This is a folder for logs and is not meant to be preserved in git
