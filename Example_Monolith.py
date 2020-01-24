@@ -12,7 +12,6 @@ MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 
 materials = [{'test_material': 'ZZ1'}]
-materials.append({'test_material2': 'ZZ2'})
 # These are other tools that can be added in. Comment out the ones not used.
 tools = []
 # tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
@@ -74,8 +73,8 @@ class Sample(Core.Procedure):
     
     def Plan(self):
         space = {}
-        space['tiph'] = [0.1]
-        space['Trace_height'] = [0.15]
+        space['tiph'] = [0.1 * n for n in range(5)]
+        space['Trace_height'] = [0.15 * m for m in range(5)]
         AppAdds = {}
         AppAdds['tiph'] = ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters', 'tiph']
         AppAdds['Trace_height'] = ['devices', 'n' + mat0, 'trace_height']

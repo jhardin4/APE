@@ -1,5 +1,5 @@
 from Core import Procedure
-
+import copy
 
 class SampleTray_Start(Procedure):
     def Prepare(self):
@@ -49,7 +49,7 @@ class SampleTray_Start(Procedure):
                         'original_alignments',
                         alignment,
                     ],
-                    value,
+                    copy.deepcopy(value),
                 )
 
         # Do experiments
@@ -82,16 +82,16 @@ class SampleTray_Start(Procedure):
             self.Report(string=position['sample'] + ' in progress.')
             procedure.Do({'samplename': position['sample']})
             position['used'] = True
-        # Return Alignments to original state
-        for alignment in self.apparatus.getValue(['information', 'alignments']):
-            if '@start' in alignment:
-                value = self.apparatus.getValue(
-                    [
-                        'information',
-                        'ProcedureData',
-                        self.name,
-                        'original_alignments',
-                        alignment,
-                    ]
-                )
-                self.apparatus.setValue(['information', 'alignments', alignment], value)
+            # Return Alignments to original state
+            for alignment in self.apparatus.getValue(['information', 'alignments']):
+                if '@start' in alignment:
+                    value = self.apparatus.getValue(
+                        [
+                            'information',
+                            'ProcedureData',
+                            self.name,
+                            'original_alignments',
+                            alignment,
+                        ]
+                    )
+                    self.apparatus.setValue(['information', 'alignments', alignment], copy.deepcopy(value))
