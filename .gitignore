@@ -4,6 +4,7 @@ nodelog_Appa.txt
 nodelog_ProcExec.txt
 nodelog_gui.txt
 nodelog_launcher.txt
+run.json
 
 ### IDEs
 .idea/
@@ -17,6 +18,7 @@ nodelog_launcher.txt
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so

@@ -2,7 +2,6 @@
 This file is an example of how to interact with APE as a single-process
 application.
 '''
-
 import Core
 import Procedures
 from AppTemplates.FlexPrinterMonolith import FlexPrinterMonolith as AppBuilder
@@ -41,7 +40,12 @@ information = MyApparatus['information']
 proclog = MyApparatus['proclog']
 
 # Setup information
-MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
+# material library is a bootstrap solution for adding in materials
+MyApparatus['information']['material library'] = {mat0: Core.material(file='Materials//SE1700.json')}
+# getting the density property from the material properties
+density = MyApparatus['information']['material library'][mat0]['properties']['density']['value']
+# loading it into the APE material properties
+MyApparatus['information']['materials'][mat0] = {'density': density, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
 MyApparatus['information']['materials'][mat0]['do_speedcal'] = True
 MyApparatus['information']['materials'][mat0]['do_pumpcal'] = False
 MyApparatus['information']['ink calibration']['time'] = 60
