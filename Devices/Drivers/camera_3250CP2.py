@@ -51,13 +51,13 @@ class UEye(object):
         self._bytes_per_pixel = 0
         self._video_capture = False
         self._default_n_master = 0
-        self._default_n_red = 0
-        self._default_n_green = 26
-        self._default_n_blue = 100
+        self._default_n_red =11
+        self._default_n_green = 0
+        self._default_n_blue = 14
         self._default_black_level = 90
         self._default_gamma = 140
         self._default_gain_boost = False
-        self._default_exposure = 50.0
+        self._default_exposure = 90.0
         self._flip_camera = True
 
         if pue is None:
