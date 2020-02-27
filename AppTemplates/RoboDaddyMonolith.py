@@ -60,7 +60,7 @@ def RoboDaddyMonolith(apparatus, materials, tools):
             details['AIaxis'] = 'B'
             details['AIchannel'] = 0
 
-        if tool['type'] == 'IDS_ueye':
+        if tool['type'] == 'IDS_ueye_3250CP2':
             details['settle_time'] = 5
 
         apparatus.add_device_entry(tool['name'], tool['type'], details)
@@ -149,7 +149,7 @@ def RoboDaddyMonolith(apparatus, materials, tools):
                 'B': -50,
             }
 
-        if tool['type'] == 'IDS_ueye':
+        if tool['type'] == 'IDS_ueye_3250CP2':
 
             # Alignment information
             gantry['camera'] = {'speed': 40, 'axismask': {'Z': tool['axis']}}
