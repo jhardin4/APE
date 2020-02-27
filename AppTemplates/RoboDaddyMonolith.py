@@ -9,7 +9,7 @@ def RoboDaddyMonolith(apparatus, materials, tools):
         'descriptors': ['motion'],
         'axes': ['X', 'Y', 'A', 'B', 'C', 'D'],
     }
-    apparatus.add_device_entry('gantry', 'Aerotech_A3200_FlexPrinter', details)
+    apparatus.add_device_entry('gantry', 'Aerotech_A3200_RoboDaddy', details)
     # Create a nozzle, nozzle slide, and pump for each material
     # Assumes that the prime nozzle is going to be using the Aerotech for
     # faster on/off
@@ -146,7 +146,7 @@ def RoboDaddyMonolith(apparatus, materials, tools):
             alignments[tool['name'] + '@TP_init'] = {
                 'X': -200,
                 'Y': -250,
-                'B': -50,,
+                'B': -50,
             }
 
         if tool['type'] == 'IDS_ueye':

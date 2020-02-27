@@ -3,6 +3,7 @@ from Devices.System import System  # noqa: F401
 from Devices.Motion import Motion  # noqa: F401
 from Devices.Sensor import Sensor  # noqa: F401
 from Devices.Aerotech_A3200_FlexPrinter import Aerotech_A3200_FlexPrinter  # noqa: F401
+from Devices.Aerotech_A3200_RoboDaddy import Aerotech_A3200_RoboDaddy  # noqa: F401
 from Devices.IDS_ueye import IDS_ueye  # noqa: F401
 from Devices.Pump import Pump  # noqa: F401
 from Devices.Nordson_UltimusV import Nordson_UltimusV  # noqa: F401
