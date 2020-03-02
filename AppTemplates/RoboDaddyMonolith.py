@@ -25,24 +25,13 @@ def RoboDaddyMonolith(apparatus, materials, tools):
             details={'descriptors': ['nozzle', f'{material}slide']}
         )
 
-        if n != 0:
-            details = {
-                'pressure': 0,
-                'vacuum': 0,
-                'COM': '',
-            }
-            apparatus.add_device_entry(f'pump{n}', 'Nordson_UltimusV', details)
-        else:
-            details = {
-                'type': 'Nordson_UltimusV_A3200',
-                'A3200name': 'gantry',
-                'IOaxis': 'A',
-                'IObit': 2,
-                'pressure': 0,
-                'vacuum': 0,
-                'COM': '',
-            }    
-            apparatus.add_device_entry(f'aeropump{n}', 'Nordson_UltimusV_A3200', details)
+        details = {
+            'pressure': 0,
+            'vacuum': 0,
+            'COM': '',
+        }
+        apparatus.add_device_entry(f'pump{n}', 'Nordson_UltimusV', details)
+
         n += 1
     # Create entries for tools
     for tool in tools:

@@ -10,7 +10,7 @@ from Devices import Motion
 import time
 
 
-class Aerotech_A3200_FlexPrinter(Motion, Sensor):
+class Aerotech_A3200_RoboDaddy(Motion, Sensor):
     def __init__(self, name):
         Motion.__init__(self, name)
 
