@@ -4,7 +4,7 @@ nodelog_Appa.txt
 nodelog_ProcExec.txt
 nodelog_gui.txt
 nodelog_launcher.txt
-run.json
+*.json
 
 ### IDEs
 .idea/
@@ -42,6 +42,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.DS_Store
 MANIFEST
 
 # PyInstaller

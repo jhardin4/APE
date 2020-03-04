@@ -55,11 +55,10 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
         toollist = [n.partition('@')[0] for n in measuredlist]
 
         # Doing stuff
-        alignments['safeZZ1'] = {'ZZ1': alignments['initial']['ZZ1']}
-        alignments['safeZZ2'] = {'ZZ2': alignments['initial']['ZZ2']}
-        alignments['safeZZ3'] = {'ZZ3': alignments['initial']['ZZ3']}
-        alignments['safeZZ4'] = {'ZZ4': alignments['initial']['ZZ4']}
-
+        # Set up safety positions for Z-axis (not XY) without restricting axis names
+        for axis in alignments['initial'].keys()^['X','Y']:
+            alignments['safe'+axis] = {axis: alignments['initial'][axis]}
+        
         toollist.remove('initial')
 
         paxismask = self.apparatus.getValue(
