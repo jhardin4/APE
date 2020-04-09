@@ -1,0 +1,1 @@
+Move this to the root folder.  This shows how to take pictures using existing pictures.  Generate a new alignment and calibration file for this demonstration.

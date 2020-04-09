@@ -7,7 +7,7 @@ class Toolpath_Print(Procedure):
         self.name = 'Toolpath_Print'
         self.requirements['toolpath'] = {
             'source': 'apparatus',
-            'address': '',
+            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'],
             'value': '',
             'desc': 'toolpath to be printed',
         }
