@@ -38,7 +38,7 @@ MyApparatus['devices']['pump0']['COM'] = 4
 MyApparatus.Connect_All(simulation=True)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
-proclog = MyApparatus['proclog']
+
 
 # Setup information
 MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048

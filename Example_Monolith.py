@@ -39,6 +39,7 @@ MyApparatus.Connect_All(simulation=True)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
 
+
 # Setup information
 MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
 MyApparatus['information']['materials'][mat0]['do_speedcal'] = True
