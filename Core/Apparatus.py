@@ -31,6 +31,7 @@ class Apparatus(dict):
         self.PLFirstWrite = True
         self.timetest = 0
         self.starttime = 0
+        self.app_units = ''
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
