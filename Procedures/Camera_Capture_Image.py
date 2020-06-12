@@ -1,4 +1,5 @@
 from Core import Procedure
+from Core import Apparatus
 
 
 class Camera_Capture_Image(Procedure):
@@ -14,7 +15,7 @@ class Camera_Capture_Image(Procedure):
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'time to weight before taking picture',
+            'desc': 'time to wait before taking picture',
         }
         self.requirements['camera_name'] = {
             'source': 'apparatus',
@@ -33,7 +34,13 @@ class Camera_Capture_Image(Procedure):
         systemname = self.apparatus.findDevice({'descriptors': 'system'})
 
         # Retrieving information from apparatus
-
+        # Support a default location for the settle_time
+        if stime == '':
+            stime_address = ['devices', cname, 'settle_time']
+            try:
+                stime = self.apparatus.getValue(stime_address)
+            except Apparatus.InvalidApparatusAddressException:
+                stime = 0
         # Assign apparatus addresses to procedures
 
         # Doing stuff

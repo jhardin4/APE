@@ -38,7 +38,7 @@ MyApparatus['devices']['aeropump0']['COM'] = 7
 MyApparatus.Connect_All(simulation=True)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
-
+proclog = MyApparatus['proclog']
 
 # Setup information
 MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
@@ -49,7 +49,7 @@ MyApparatus['information']['ink calibration']['time'] = 60
 # Setup toolpath generation and run a default
 GenTP = Procedures.Toolpath_Generate(MyApparatus, MyExecutor)
 GenTP.setMaterial(mat0)
-GenTP.setGenerator('TemplateTPGen')
+GenTP.setGenerator('Profiling_TPGen')
 GenTP.setParameters()  # Creates the parameter structure for TPGen
 TP_gen = MyApparatus['information']['ProcedureData']['Toolpath_Generate']
 TP_gen['parameters']['tiph'] = 4

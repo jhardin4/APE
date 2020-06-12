@@ -20,6 +20,12 @@ class Camera_Capture_ImageXY(Procedure):
             'value': '',
             'desc': 'path to store image',
         }
+        self.requirements['settle_time'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'time to wait before taking picture',
+        }        
         self.requirements['camera_name'] = {
             'source': 'apparatus',
             'address': '',
@@ -38,6 +44,7 @@ class Camera_Capture_ImageXY(Procedure):
         point = self.requirements['point']['value']
         file = self.requirements['file']['value']
         cname = self.requirements['camera_name']['value']
+        stime = self.requirements['settle_time']['value']
 
         # Retreiving necessary device names
         motionname = self.apparatus.findDevice({'descriptors': 'motion'})
@@ -62,12 +69,6 @@ class Camera_Capture_ImageXY(Procedure):
             'information',
             'alignments',
             'safe' + zaxis,
-        ]
-
-        self.measure.requirements['settle_time']['address'] = [
-            'devices',
-            cname,
-            'settle_time',
         ]
 
         self.pmove.requirements['speed']['address'] = [
@@ -98,4 +99,4 @@ class Camera_Capture_ImageXY(Procedure):
             }
         )
         self.DoEproc(motionname, 'Run', {})
-        self.measure.Do({'file': file, 'camera_name': cname})
+        self.measure.Do({'file': file, 'settle_time':stime, 'camera_name': cname})

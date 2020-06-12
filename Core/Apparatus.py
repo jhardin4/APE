@@ -21,10 +21,6 @@ class Apparatus(dict):
         self['APE version']['time'] = 1583331028
         self['APE version']['branch'] = 'master'
         self['APE version']['dev'] = 'James Hardin'
-        self.proclog = []
-        self[
-            'proclog'
-        ] = self.proclog  # this was put in because I am too lazy to fix it right
         self.proclog_threadindex = 0
         self.proclog_depthindex = 0
         self.executor = ''
@@ -35,6 +31,7 @@ class Apparatus(dict):
         self.PLFirstWrite = True
         self.timetest = 0
         self.starttime = 0
+        self.app_units = ''
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
@@ -374,7 +371,6 @@ class Apparatus(dict):
             procLogLine.append(
                 {'name': procName, 'information': info, 'time': time.time()}
             )
-            self.proclog.append(procLogLine)
             self.UpdateLog(procLogLine)
 
     def UpdateLog(self, entry):
@@ -467,9 +463,6 @@ class Apparatus(dict):
             fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
         with open(fname, 'r') as old_app:
             old_app_data = json.load(old_app)
-            # Clear the proclog
-            self.proclog = []
-            self['proclog'] = self.proclog
             # Replace the current device and information
             self['devices'] = old_app_data['devices']
             self['information'] = old_app_data['information']

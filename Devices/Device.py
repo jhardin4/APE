@@ -46,7 +46,7 @@ class Device:
         self.requirements['Connect'] = {}
         self.requirements['Disconnect'] = {}
         # Initialize the log string
-        self.log = ''
+        self.log = []
         # Information for handling connections
         self.apparatus_connection = 'pointer'
         self.executor = ''
@@ -138,8 +138,8 @@ class Device:
         # This is largely for communicating with the Executor
         # Eventually this will need to actually communicate with message
         # passing.
-        message = self.log
-        self.log = ''
+        message = ''.join(self.log)
+        self.log = []
 
         return message
 
@@ -147,7 +147,7 @@ class Device:
         # Add to the log string
         # This allows methods that are not elemental procedures to contribute
         # to the log.
-        self.log += logstr + '\n'
+        self.log.append(logstr + '\n')
 
     def ERegister(self, executer):
         # Register a particular device with the executor

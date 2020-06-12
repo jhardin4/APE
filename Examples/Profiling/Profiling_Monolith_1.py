@@ -38,7 +38,7 @@ MyApparatus['devices']['aeropump0']['COM'] = 7
 MyApparatus.Connect_All(simulation=True)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
-
+proclog = MyApparatus['proclog']
 
 # Setup information
 MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
@@ -49,7 +49,7 @@ MyApparatus['information']['ink calibration']['time'] = 60
 # Setup toolpath generation and run a default
 GenTP = Procedures.Toolpath_Generate(MyApparatus, MyExecutor)
 GenTP.setMaterial(mat0)
-GenTP.setGenerator('TemplateTPGen')
+GenTP.setGenerator('Profiling_TPGen')
 GenTP.setParameters()  # Creates the parameter structure for TPGen
 TP_gen = MyApparatus['information']['ProcedureData']['Toolpath_Generate']
 TP_gen['parameters']['tiph'] = 4
@@ -81,9 +81,9 @@ class Sample(Core.Procedure):
         priority = ['Trace_height', 'tiph']
         self.Planner.Do({'space': space, 'Apparatus_Addresses': AppAdds, 'file': 'run.json', 'priority': priority})
         if not self.Planner.Done:
-            if self.apparatus.simulation:
-                import time
-                time.sleep(1)
+            # if self.apparatus.simulation:
+            #     import time
+            #     time.sleep(1)
             print('Generating toolpath')
             self.GenTP.requirements['generator']['address'] = ['information', 'ProcedureData', 'Toolpath_Generate', 'generator']
             self.GenTP.Do()
@@ -93,8 +93,7 @@ class Sample(Core.Procedure):
 
 
 # Do the experiment
-AlignPrinter.Do({'primenoz': 'n' + mat0})
-CalInk.Do({'material': mat0})
+AlignPrinter.Do({'primenoz': 'n' + mat0, 'chatty':False})
 TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 14, 'xsamples': 1, 'yspacing': 15, 'ysamples': 1})
 TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})

@@ -46,7 +46,7 @@ def FlexPrinterMonolith(apparatus, materials, tools):
         n += 1
     # Create entries for tools
     for tool in tools:
-        details - {}
+        details = {}
         # Gather important information for each kind of tool
         if tool['type'] == 'Keyence_GT2_A3200':
             # Default Settings
