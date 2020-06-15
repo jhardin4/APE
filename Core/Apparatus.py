@@ -3,6 +3,7 @@ from io import SEEK_END, SEEK_SET
 import Devices
 import json
 import time
+import uuid
 import AppTemplates
 
 
@@ -35,8 +36,8 @@ class Apparatus(dict):
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
-        ProcLogFileName = self.logpath + self.AppID + 'proclog.json'
-        self.ProcLogFile = open(ProcLogFileName, mode='w')
+        self.ProcLogFileName = self.logpath + self.AppID + 'proclog.json'
+        self.ProcLogFile = open(self.ProcLogFileName, mode='w')
         self.PLFirstWrite = True
 
         for device in self['devices']:
@@ -356,22 +357,30 @@ class Apparatus(dict):
         if not found:
             print('Elemental procedure ' + method + ' of ' + device + ' not found.')
 
-    def LogProc(self, procName, information):
-        if information == 'start':
+    def LogProc(self, flag, procName, puuid, log='', reqs=''):
+        procLogLine = []
+        if flag == 'start':
             self.proclog_depthindex += 1
-        elif information == 'end':
-            self.proclog_depthindex -= 1
-        else:
-            info = self.safeCopy(information)
-            procLogLine = []
-
             for n in range(self.proclog_depthindex):
                 procLogLine.append('->')
+            s_reqs = self.safeCopy(reqs)
+            proc_entry = {'name': procName, 'uuid':puuid, 'requirements': s_reqs, 'start_time':time.time()}
+              
+        elif flag == 'end':
+            for n in range(self.proclog_depthindex):
+                procLogLine.append('->')
+            proc_entry = {'name': procName, 'uuid':puuid, 'end_time':time.time()}
+            if log != '':
+                proc_entry['e_log'] = log
+            self.proclog_depthindex -= 1
 
-            procLogLine.append(
-                {'name': procName, 'information': info, 'time': time.time()}
-            )
-            self.UpdateLog(procLogLine)
+        elif flag == 'report':
+            for n in range(self.proclog_depthindex):
+                procLogLine.append('->')
+            proc_entry = {'name': procName, 'uuid':puuid, 'report':log, 'r_time':time.time()}
+            
+        procLogLine.append(proc_entry)
+        self.UpdateLog(procLogLine)
 
     def UpdateLog(self, entry):
         if self.PLFirstWrite:
@@ -468,12 +477,18 @@ class Apparatus(dict):
             self['information'] = old_app_data['information']
 
     def DoEproc(self, device, method, details):
-        self.LogProc('eproc_' + device + '_' + method, 'start')
-        self.executor.execute(
-            [[{'devices': device, 'procedure': method, 'details': details}]]
-        )
-        self.LogProc('eproc_' + device + '_' + method, details)
-        self.LogProc('eproc_' + device + '_' + method, 'end')
+        procname = 'eproc_' + device + '_' + method
+        p_uuid = str(uuid.uuid4())
+        self.LogProc('start', procname, p_uuid, reqs=details)
+
+        try:
+            e_log = self.executor.execute(
+                [[{'devices': device, 'procedure': method, 'details': details}]]
+            )
+            
+        finally:  # makes sure depthindex is decreased on error
+            end_time = time.time()
+            self.LogProc('end', procname, p_uuid, log=e_log)
 
     def createAppEntry(self, app_address):
         target = self

@@ -79,7 +79,7 @@ class SampleTray_Start(Procedure):
                             self.apparatus.setValue(
                                 ['information', 'alignments', alignment, dim], new_pos
                             )
-            self.Report(string=position['sample'] + ' in progress.')
+            self.Report(position['sample'] + ' in progress.')
             procedure.Do({'samplename': position['sample']})
             position['used'] = True
             # Return Alignments to original state

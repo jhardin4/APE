@@ -1,5 +1,6 @@
 from Core.Apparatus import InvalidApparatusAddressException
-
+import time
+import uuid
 
 class Procedure:
     def __init__(self, apparatus, executor, **kwargs):
@@ -10,6 +11,7 @@ class Procedure:
         # dictionary of entries for the form
         # 'requirement':{'desc':'Describe the requirement', 'source':'apparatus' or 'direct', 'value':14 or '', 'address'= ApparatusAdress }
         self.Prepare(**kwargs)
+        self.id = str(uuid.uuid4())
 
     def Prepare(self, **kwargs):
         # Set up the requirements
@@ -26,18 +28,14 @@ class Procedure:
             values = {}
         self.GetRequirements(values)
         # self.CheckRequirements()
-        self.Report(string='start')
-        self.Report()
+        self.apparatus.LogProc('start', self.name, self.id, self.requirements)
         try:
             self.Plan()
         finally:  # makes sure depthindex is decreased on error
-            self.Report(string='end')
+            self.apparatus.LogProc('end', self.name, self.id)
 
-    def Report(self, string=''):
-        if string == '':
-            self.apparatus.LogProc(self.name, self.requirements)
-        else:
-            self.apparatus.LogProc(self.name, string)
+    def Report(self, message):
+        self.apparatus.LogProc('report', self.name, self.id, log=message)
 
     def GetRequirements(self, values):
         # Fills in the the requirements from the apparatus and given values
@@ -81,11 +79,15 @@ class Procedure:
         return details
 
     def DoEproc(self, device, method, details):
-        self.Report(string='start')
-        self.apparatus.LogProc('eproc_' + device + '_' + method, details)
+        procname = 'eproc_' + device + '_' + method
+        p_uuid = str(uuid.uuid4())
+        self.apparatus.LogProc('start', procname, p_uuid, reqs=details)
+
         try:
-            self.executor.execute(
+            e_log = self.executor.execute(
                 [[{'devices': device, 'procedure': method, 'details': details}]]
             )
+            
         finally:  # makes sure depthindex is decreased on error
-            self.Report(string='end')
+            end_time = time.time()
+            self.apparatus.LogProc('end', procname, p_uuid, log=e_log)

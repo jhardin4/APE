@@ -61,4 +61,4 @@ class User_Consol_Input(Procedure):
             self.response = target[0]
         elif console_type == 'zmqNode':
             self.response = self.apparatus.getValue(target)
-        self.Report(string=self.response)
+        self.Report(self.response)
