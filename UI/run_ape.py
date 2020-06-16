@@ -13,14 +13,14 @@ def findcachedmodtimefile ( file_path ):
     return os.path.getctime ( youngest [ -1 ] )
 
 class runape ( object ):
-    
+
     #initialize class
     def __init__ ( self, file_path ):
         #cach youngest file mod time within file_path
         self.cachedmodtime = findcachedmodtimefile ( file_path )
         self.filepath = file_path
         self.running = True
-    
+
     #returns youngest file within file_path or its mod time
     def findfile ( self, fileortime ):
         files = glob.glob ( self.filepath )
@@ -31,7 +31,7 @@ class runape ( object ):
         if fileortime == 'time':
             #return file mod time
             return os.path.getctime ( youngest [ -1 ] )
-    
+
     #runs APE in background
     def runinback ( self ):
         while self.running:
@@ -43,11 +43,9 @@ class runape ( object ):
                     return ( 'execute' )
             except FileNotFoundError:
                 print ( ' file not found ' )
-            except None:
-                None
             except:
                 print ( ' unknown error ' )
-    
+
     #watches file_path for a change in the youngest file
     #Uses time, so files can be overwritten and it will still work
     def watchfolder ( self ):

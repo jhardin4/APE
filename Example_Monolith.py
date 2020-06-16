@@ -32,7 +32,7 @@ MyApparatus['devices']['aeropump0']['pumpoff_time'] = 0  # time from end-arrival
 MyApparatus['devices']['aeropump0']['pumpres_time'] = 0.1
 MyApparatus['devices']['aeropump0']['pressure'] = 550
 MyApparatus['devices']['aeropump0']['vacuum'] = 0
-MyApparatus['devices']['pump0']['COM'] = 7
+MyApparatus['devices']['aeropump0']['COM'] = 7
 
 # Connect to all the devices in the setup
 MyApparatus.Connect_All(simulation=True)
@@ -73,8 +73,8 @@ class Sample(Core.Procedure):
     
     def Plan(self):
         space = {}
-        space['tiph'] = [0.1]
-        space['Trace_height'] = [0.15]
+        space['tiph'] = [0.1 * n for n in range(5)]
+        space['Trace_height'] = [0.15 * m for m in range(5)]
         AppAdds = {}
         AppAdds['tiph'] = ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters', 'tiph']
         AppAdds['Trace_height'] = ['devices', 'n' + mat0, 'trace_height']
