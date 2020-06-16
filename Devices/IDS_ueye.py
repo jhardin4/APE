@@ -86,7 +86,7 @@ class IDS_ueye(Sensor):
                 self.handle.stop_record()
         self.addlog(self.name + ' stopped a recording of video to file.')
 
-    def AutoConfigure(self, brightness_reference=70):
+    def AutoConfigure(self, brightness_reference=100):
         """ Auto sets the brightness, gain and white balance.
             Brightness reference argument can be used to adjust resulting image brightness.
         """
