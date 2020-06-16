@@ -28,7 +28,7 @@ import json
 # elements).
 
 
-def nPt2ToolPath(Point_array, material):
+def nPt2ToolPath(Point_array, material, feed=''):
     # point_array is an ordered collection of points.  The elements of the
     # collection can be dictionaries such as {'X': 1, 'Y': 2} or lists of these
     # dictionaries.
@@ -44,11 +44,14 @@ def nPt2ToolPath(Point_array, material):
         if type(Point_array[n]) == dict:
             # check that this is not the first element of the list
             if n != 0:
-                toolpath.append({
+                tpline = {
                     'startpoint': Point_array[n-1],
                     'endpoint': Point_array[n],
-                    'material': material
-                })
+                    'material': material,
+                }
+                if feed != '':
+                    tpline['mfo'] = feed
+                toolpath.append(tpline)
         # if element is list then call function again
         elif type(Point_array[n]) == list:
             sub_toolpath = nPt2ToolPath(Point_array[n], material)
