@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=APE
+GenericName=APE
+Comment=APE Framework for slicers
+Exec=/usr/share/APE-Master/UI_Monolith.py
+Icon=/usr/share/pixmaps/APE_logo.png
+Keywords=background;3d;3d-printing;printing;printer;3d-printer;print;3d-print
+Terminal=false
+Catagories=GTK;Gnome
