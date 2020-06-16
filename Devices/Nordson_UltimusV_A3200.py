@@ -23,20 +23,8 @@ class Nordson_UltimusV_A3200(Nordson_UltimusV):
         self.IObit = ''
         self.dependent_device = True
         self.defaulttask = 3
-        self.dependencies = ['pump', 'A3200']
+        self.dependencies = ['A3200']
 
-        self.requirements['Connect']['pumpname'] = {
-            'value': '',
-            'source': 'apparatus',
-            'address': '',
-            'desc': 'name of the pump being used',
-        }
-        self.requirements['Connect']['pumpaddress'] = {
-            'value': '',
-            'source': 'apparatus',
-            'address': '',
-            'desc': 'pointer to the pump device',
-        }
         self.requirements['Connect']['A3200name'] = {
             'value': '',
             'source': 'apparatus',
@@ -62,15 +50,16 @@ class Nordson_UltimusV_A3200(Nordson_UltimusV):
             'desc': 'bit on the IO axis being used',
         }
 
-        # This entry is removed because the pump should already be connected
-        self.requirements['Connect'].pop('COM', None)
-
     def On(self, task='', mode='cmd'):
         if task == '':
             task = self.defaulttask
-        self.log += self.A3200handle.Set_DO(
-            axis=self.IOaxis, bit=self.IObit, value=1, task=task, motionmode=mode
-        )
+        self.addlog(self.A3200handle.Set_DO(
+                axis=self.IOaxis, 
+                bit=self.IObit, 
+                value=1, 
+                task=task, 
+                motionmode=mode
+                ))
         self.on = True
         self.addlog(self.name + ' is on.')
         return self.returnlog()
@@ -78,48 +67,37 @@ class Nordson_UltimusV_A3200(Nordson_UltimusV):
     def Off(self, task='', mode='cmd'):
         if task == '':
             task = self.defaulttask
-        self.fOff(task, mode)
+        self._Off(task=task, mode=mode)
         return self.returnlog()
 
-    def Set(self, pressure='', vacuum=''):
-        self.addlog(self.pumphandle.Set(pressure=pressure, vacuum=vacuum))
-        return self.returnlog()
-
-    def fOff(self, task, mode):
-        self.log += self.A3200handle.Set_DO(
-            axis=self.IOaxis, bit=self.IObit, value=0, task=task, motionmode=mode
-        )
+    def _Off(self, task='', mode='cmd'):
+        # This method exists to allow initializing to off in Connect
+        self.addlog(self.A3200handle.Set_DO(
+                axis=self.IOaxis, 
+                bit=self.IObit, 
+                value=0, 
+                task=task, 
+                motionmode=mode
+                ))
         self.on = False
         self.addlog(self.name + ' is off.')
-
+        
     def Connect(
         self,
-        pumpname='',
         A3200name='',
-        pumpaddress='',
         A3200address='',
         IOaxis='',
         IObit='',
+        COM= ''
     ):
-        self.descriptors.append(pumpname)
+        Nordson_UltimusV.Connect(self, COM)
         self.descriptors.append(A3200name)
-        self.pumphandle = self.checkDependencies(pumpname, pumpaddress)
         self.A3200handle = self.checkDependencies(A3200name, A3200address)
         self.IOaxis = IOaxis
         self.IObit = IObit
 
-        self.addlog(
-            'Ultimus/A3200 '
-            + pumpname
-            + '/'
-            + A3200name
-            + ' '
-            + self.name
-            + ' is connected using '
-            + str(self.IOaxis)
-            + ' bit '
-            + str(self.IObit)
-        )
-        self.fOff(self.defaulttask, 'cmd')
+        self.addlog(f'{self.name} is connected using {self.IOaxis} bit {self.IObit} on {A3200name}')
+        # Resets the bit just in case it was already on.
+        self._Off(self.defaulttask, 'cmd')
 
         return self.returnlog()

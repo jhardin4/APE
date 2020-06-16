@@ -10,7 +10,7 @@ from Devices import Motion
 import time
 
 
-class Aerotech_A3200_FlexPrinter(Motion, Sensor):
+class Aerotech_A3200_RoboDaddy(Motion, Sensor):
     def __init__(self, name):
         Motion.__init__(self, name)
 
@@ -24,23 +24,11 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
         # Possible modes are cmd and loadrun
         self.axes = [
             'X',
-            'x',
             'Y',
-            'y',
-            'ZZ1',
-            'zz1',
-            'ZZ2',
-            'zz2',
-            'ZZ3',
-            'zz3',
-            'ZZ4',
-            'zz4',
-            'i',
-            'I',
-            'j',
-            'J',
-            'k',
-            'K',
+            'A',
+            'B',
+            'C',
+            'D',
         ]
         self.axismask = {}
         self.maxaxis = 4
@@ -268,9 +256,9 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
 
     def Connect(self):
         if not self.simulation:
-            from Devices.Drivers import A3200
+            from Devices.Drivers import A3200_RoboDaddy
 
-            self.handle = A3200.A3200()
+            self.handle = A3200_RoboDaddy.A3200()
         self.addlog(self.name + ' is connected')
 
         return self.returnlog()
@@ -352,9 +340,9 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
 
     def fSet_LookAhead(self, LookAhead, task, motionmode):
         if LookAhead:
-            self.tasklog['task' + str(task)].append('VELOCITY ON \n') #some temperature
+            self.tasklog['task' + str(task)].append('VELOCITY ON \n')
         else:
-            self.tasklog['task' + str(task)].append('VELOCITY OFF \n') #
+            self.tasklog['task' + str(task)].append('VELOCITY OFF \n')
         self.motionsetting['LookAhead'] = LookAhead
 
         self.fRun(motionmode, task)

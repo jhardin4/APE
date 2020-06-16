@@ -1,4 +1,4 @@
-def FlexPrinterMonolith(apparatus, materials, tools):
+def RoboDaddyMonolith(apparatus, materials, tools):
     # Creating all the initial device entries
     # Representative of local computer
     apparatus.add_device_entry('system', 'System')
@@ -7,9 +7,9 @@ def FlexPrinterMonolith(apparatus, materials, tools):
     # Create entry for gantry
     details = {
         'descriptors': ['motion'],
-        'axes': ['X', 'Y', 'ZZ1', 'ZZ2', 'ZZ3', 'ZZ4'],
+        'axes': ['X', 'Y', 'A', 'B', 'C', 'D'],
     }
-    apparatus.add_device_entry('gantry', 'Aerotech_A3200_FlexPrinter', details)
+    apparatus.add_device_entry('gantry', 'Aerotech_A3200_RoboDaddy', details)
     # Create a nozzle, nozzle slide, and pump for each material
     # Assumes that the prime nozzle is going to be using the Aerotech for
     # faster on/off
@@ -25,28 +25,17 @@ def FlexPrinterMonolith(apparatus, materials, tools):
             details={'descriptors': ['nozzle', f'{material}slide']}
         )
 
-        if n != 0:
-            details = {
-                'pressure': 0,
-                'vacuum': 0,
-                'COM': '',
-            }
-            apparatus.add_device_entry(f'pump{n}', 'Nordson_UltimusV', details)
-        else:
-            details = {
-                'type': 'Nordson_UltimusV_A3200',
-                'A3200name': 'gantry',
-                'IOaxis': 'ZZ1',
-                'IObit': 2,
-                'pressure': 0,
-                'vacuum': 0,
-                'COM': '',
-            }    
-            apparatus.add_device_entry(f'aeropump{n}', 'Nordson_UltimusV_A3200', details)
+        details = {
+            'pressure': 0,
+            'vacuum': 0,
+            'COM': '',
+        }
+        apparatus.add_device_entry(f'pump{n}', 'Nordson_UltimusV', details)
+
         n += 1
     # Create entries for tools
     for tool in tools:
-        details - {}
+        details = {}
         # Gather important information for each kind of tool
         if tool['type'] == 'Keyence_GT2_A3200':
             # Default Settings
@@ -55,12 +44,12 @@ def FlexPrinterMonolith(apparatus, materials, tools):
             details['retract'] = True
             details['zreturn'] = 5
             details['axis'] = tool['axis']
-            details['DOaxis'] = 'ZZ1'
+            details['DOaxis'] = 'A'
             details['DObit'] = 0
-            details['AIaxis'] = 'ZZ2'
+            details['AIaxis'] = 'B'
             details['AIchannel'] = 0
 
-        if tool['type'] == 'IDS_ueye':
+        if tool['type'] == 'IDS_ueye_3250CP2':
             details['settle_time'] = 5
 
         apparatus.add_device_entry(tool['name'], tool['type'], details)
@@ -68,7 +57,7 @@ def FlexPrinterMonolith(apparatus, materials, tools):
     # Setting up interactions between tools/nozzles and gantry
     apparatus['information']['alignments'] = {}
     apparatus['information']['alignmentnames'] = ['initial']
-    apparatus['information']['alignmentsfile'] = 'alignments.json'
+    apparatus['information']['alignmentsfile'] = 'robodaddy_alignments.json'
     gantry = apparatus['devices']['gantry']
     alignments = apparatus['information']['alignments']
     alignment_names = apparatus['information']['alignmentnames']
@@ -86,10 +75,10 @@ def FlexPrinterMonolith(apparatus, materials, tools):
     alignments['initial'] = {
         'X': '',
         'Y': '',
-        'ZZ1': '',
-        'ZZ2': '',
-        'ZZ3': '',
-        'ZZ4': '',
+        'A': '',
+        'B': '',
+        'C': '',
+        'D': '',
     }
     # Handle motion of each nozzle
     primenozzle = True
@@ -146,10 +135,10 @@ def FlexPrinterMonolith(apparatus, materials, tools):
             alignments[tool['name'] + '@TP_init'] = {
                 'X': -200,
                 'Y': -250,
-                'ZZ2': -50,
+                'B': -50,
             }
 
-        if tool['type'] == 'IDS_ueye':
+        if tool['type'] == 'IDS_ueye_3250CP2':
 
             # Alignment information
             gantry['camera'] = {'speed': 40, 'axismask': {'Z': tool['axis']}}

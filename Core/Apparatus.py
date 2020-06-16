@@ -18,7 +18,7 @@ class Apparatus(dict):
         self['eproclist'] = []
         self['public release'] = '88ABW-2019-6134'
         self['APE version'] = {}
-        self['APE version']['time'] = 1578598863
+        self['APE version']['time'] = 1583331028
         self['APE version']['branch'] = 'master'
         self['APE version']['dev'] = 'James Hardin'
         self.proclog = []
