@@ -1,0 +1,1 @@
+This is a folder for materials for this specific project and is not meant to be preserved in git
