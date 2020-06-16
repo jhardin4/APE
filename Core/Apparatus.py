@@ -29,16 +29,25 @@ class Apparatus(dict):
         self.dependent_Devices = []
         self.logpath = 'Logs//'
         self.AppID = str(int(round(time.time(), 0)))
-        self.PLFirstWrite = True
+        self.AppUUID = str(uuid.uuid4())
+
         self.timetest = 0
         self.starttime = 0
         self.app_units = ''
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
+        # Set up the logging files
         self.ProcLogFileName = self.logpath + self.AppID + 'proclog.json'
         self.ProcLogFile = open(self.ProcLogFileName, mode='w')
+        self.TicketFilename = self.logpath + self.AppID + 'RunTicket.json'
+        self.TicketFile = open(self.TicketFilename, mode='w')
         self.PLFirstWrite = True
+        self.RTFirstWrite = True
+        # Start the run ticket
+        self.AddTicketItem({'start_ticket':''})
+        self.AddTicketItem({'proclog':self.ProcLogFileName})
+        
 
         for device in self['devices']:
             self['devices'][device]['Connected'] = False
@@ -129,7 +138,7 @@ class Apparatus(dict):
 
         # Connect the dependent devices
         self.Dep_Connects()
-        self.logApparatus()
+        self.logApparatus(prefix='initial')
 
     def Connect(self, deviceName):
         arguments = self.executor.getRequirements(
@@ -184,23 +193,19 @@ class Apparatus(dict):
                 raise Exception('Dependencies not found')
 
     def Disconnect(self, deviceName):
-        # if self['devices'][deviceName]['addresstype'] == 'pointer':
-        # deviceDisconnect = self.GetEproc(deviceName, 'Disconnect')
-        # deviceDisconnect.Do()
         if self['devices'][deviceName]['addresstype'] != '':
             self.DoEproc(deviceName, 'Disconnect', {})
-            # Remove the eprocs registered with the apparatus
-            # methodlist = self.findDeviceMethods(deviceName)
-            # for method in methodlist:
-            # self.removeEproc(deviceName, method)
             self['devices'][deviceName]['Connected'] = False
 
     def Disconnect_All(self, simulation=False):
         for device in self['devices']:
             self.Disconnect(device)
-        self.logApparatus()
+        self.logApparatus(prefix='final')
+        self.AddTicketItem({'end_ticket':''})
         if not self.PLFirstWrite:
             self.ProcLogFile.close()
+        if not self.RTFirstWrite:
+            self.TicketFile.close()            
 
     def getValue(self, infoAddress=''):
         if infoAddress == '':
@@ -337,26 +342,6 @@ class Apparatus(dict):
                 methodlist.append(line['method'])
         return methodlist
 
-    def GetEproc(self, device, method):
-        for line in self['eproclist']:
-            if line['device'] == device and line['method'] == method:
-                return line['handle']
-
-        return 'No matching elemental procedure found.'
-
-    def removeEproc(self, device, method):
-        found = False
-        for n in range(len(self['eproclist'])):
-            if not found:
-                if (
-                    self['eproclist'][n]['device'] == device
-                    and self['eproclist'][n]['method'] == method
-                ):
-                    self['eproclist'].pop(n)
-                    found = True
-        if not found:
-            print('Elemental procedure ' + method + ' of ' + device + ' not found.')
-
     def LogProc(self, flag, procName, puuid, log='', reqs=''):
         procLogLine = []
         if flag == 'start':
@@ -373,6 +358,7 @@ class Apparatus(dict):
             if log != '':
                 proc_entry['e_log'] = log
             self.proclog_depthindex -= 1
+            # print(log)
 
         elif flag == 'report':
             for n in range(self.proclog_depthindex):
@@ -382,20 +368,40 @@ class Apparatus(dict):
         procLogLine.append(proc_entry)
         self.UpdateLog(procLogLine)
 
+    def AddTicketItem(self, item_dict):
+        if 'start_ticket' in item_dict:
+            item_dict['start_ticket'] = time.time()
+        elif 'end_ticket' in item_dict:
+            item_dict['end_ticket'] = time.time()             
+        else:
+            item_dict['ticket_time'] = time.time()
+        self.UpdateTicket(item_dict)
+
+    def UpdateTicket(self, entry):
+        if self.RTFirstWrite:
+            json.dump([], self.TicketFile)
+            self.RTFirstWrite = False
+            eof = self.TicketFile.seek(0, SEEK_END)
+            self.TicketFile.seek(eof - 1, SEEK_SET)
+        else:
+            eof = self.TicketFile.seek(0, SEEK_END)
+            self.TicketFile.seek(eof - 1, SEEK_SET)
+            self.TicketFile.write(', ')
+
+        json.dump(entry, self.TicketFile)
+        self.TicketFile.write(']')
+
     def UpdateLog(self, entry):
+        print(entry)
         if self.PLFirstWrite:
-            starttime = time.time()
             json.dump([], self.ProcLogFile)
             self.PLFirstWrite = False
             eof = self.ProcLogFile.seek(0, SEEK_END)
             self.ProcLogFile.seek(eof - 1, SEEK_SET)
-            self.timetest += time.time() - starttime
         else:
-            starttime = time.time()
             eof = self.ProcLogFile.seek(0, SEEK_END)
             self.ProcLogFile.seek(eof - 1, SEEK_SET)
             self.ProcLogFile.write(', ')
-            self.timetest += time.time() - starttime
 
         json.dump(entry, self.ProcLogFile)
         self.ProcLogFile.write(']')
@@ -460,12 +466,13 @@ class Apparatus(dict):
         else:
             return str(type(target))
 
-    def logApparatus(self, fname=None):
+    def logApparatus(self, fname=None, prefix=''):
         if not fname:
-            fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
+            fname = self.logpath + str(int(round(time.time(), 0))) + prefix + 'Apparatus.json'
         jsonfile = open(fname, mode='w')
         json.dump(self.serialClone(), jsonfile, indent=2, sort_keys=True)
         jsonfile.close()
+        self.AddTicketItem({'ApparatusImage':fname})
 
     def importApparatus(self, fname=None):
         if not fname:
@@ -487,7 +494,6 @@ class Apparatus(dict):
             )
             
         finally:  # makes sure depthindex is decreased on error
-            end_time = time.time()
             self.LogProc('end', procname, p_uuid, log=e_log)
 
     def createAppEntry(self, app_address):

@@ -143,7 +143,7 @@ class Executor(ApeInterface):
         if self.logging:
             self.loghandle.write(str(message))
             self.loghandle.flush()
-            self.log = ''
+        self.log = ''
 
     def getDependencies(self, device, address):
         if address == '':
