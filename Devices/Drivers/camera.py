@@ -49,7 +49,7 @@ class UEye(object):
         err = ueye.is_SetDisplayMode(self._cam, ueye.IS_SET_DM_DIB)
         if err != ueye.IS_SUCCESS:
             raise CameraException(self._cam, 'ueye>close>SetDisplayMode>', err)
-
+        
         # Core Camera Variables
         self._width = ueye.INT(self._sInfo.nMaxWidth.value)
         self._height = ueye.INT(self._sInfo.nMaxHeight.value)
@@ -112,21 +112,20 @@ class UEye(object):
     def stop_record(self):
         self.record_live = False
 
-    def _record_loop(self,path,framerate=15):
-        out = cv2.VideoWriter(path, 0, framerate, (int(self._width),int(self._height)))
+    def _record_loop(self,path):
         videoFrames = []
-        try:
-            while self.record_live:
-                startTime = time.time()
-                videoFrames.append(np.copy(self.frame[:,:,:3]))
-                time.sleep((1/framerate-(time.time()-startTime))*1)
+        frametime = []
+        while self.record_live:
+            startTime = time.time()
+            videoFrames.append(np.copy(self.frame[:,:,:3]))
+            frametime.append(time.time()-startTime)
 
-            for frame in videoFrames:
-                out.write(frame)
-            out.release()
-            self._done_saving = True
-        except:
-            raise ValueError('Framerate set too high.')
+        framerate = round(1/np.mean(frametime))
+        out = cv2.VideoWriter(path, 0, int(framerate), (int(self._width),int(self._height)))
+        for frame in videoFrames:
+            out.write(frame)
+        out.release()
+        self._done_saving = True
 
     def _feed_loop(self):
         #https://stackoverflow.com/questions/27006462/opencv-imshow-window-cannot-be-reused-when-called-within-a-thread
