@@ -37,6 +37,7 @@ class Apparatus(dict):
         self.timetest = 0
         self.starttime = 0
         self.app_units = ''
+        self.proclog_address = ''
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
@@ -45,6 +46,7 @@ class Apparatus(dict):
         self.PLFirstWrite = True
         self.dataPack_prep()
         self.ProcLogFile = open(self.ProcLogFileName, mode='w')
+        self.proclog_address = self.ProcLogFileName
         # Start the run ticket
 
         
@@ -621,3 +623,4 @@ class Apparatus(dict):
         old_file = os.getcwd() + '\\' + ticket_file
         new_file = os.getcwd() + '\\' + foldername + '\\' + ticket_file
         os.rename(old_file, new_file)
+        self.proclog_address = pfolder + '\\' + self.proclog_address

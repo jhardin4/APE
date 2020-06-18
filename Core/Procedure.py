@@ -12,6 +12,7 @@ class Procedure:
         # 'requirement':{'desc':'Describe the requirement', 'source':'apparatus' or 'direct', 'value':14 or '', 'address'= ApparatusAdress }
         self.Prepare(**kwargs)
         self.id = str(uuid.uuid4())
+        self.first_var_run = True
 
     def Prepare(self, **kwargs):
         # Set up the requirements
@@ -59,6 +60,15 @@ class Procedure:
         for value in values:
             if value in self.requirements:
                 self.requirements[value]['value'] = values[value]
+        self._setVariables()
+
+    def _setVariables(self):
+        for req in self.requirements:
+            if hasattr(self, req) and self.first_var_run:
+                raise Exception(self.name + ' already has attribute ' + str(req))
+            else:
+                setattr(self, req, self.requirements[req]['value'])
+        self.first_var_run = False
 
     def CheckRequirements(self):
         Reqs_Met = True

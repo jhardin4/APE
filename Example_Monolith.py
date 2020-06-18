@@ -103,6 +103,6 @@ TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'Samp
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
 MyApparatus.Disconnect_All()
 toolpath = TP_gen['toolpath'][0]
-# with open(MyApparatus.ProcLogFileName) as p_file:
-#     proclog = json.load(p_file)
+with open(MyApparatus.proclog_address) as p_file:
+    proclog = json.load(p_file)
 #toolpath_parsed = tpt.parse_endofmotion(toolpath, 1E-12)
