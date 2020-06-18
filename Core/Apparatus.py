@@ -5,6 +5,8 @@ import json
 import time
 import uuid
 import AppTemplates
+import os
+import tarfile
 
 
 class InvalidApparatusAddressException(Exception):
@@ -30,6 +32,7 @@ class Apparatus(dict):
         self.logpath = 'Logs//'
         self.AppID = str(int(round(time.time(), 0)))
         self.AppUUID = str(uuid.uuid4())
+        self.run_name = ''
 
         self.timetest = 0
         self.starttime = 0
@@ -39,14 +42,11 @@ class Apparatus(dict):
         self.simulation = simulation
         # Set up the logging files
         self.ProcLogFileName = self.logpath + self.AppID + 'proclog.json'
-        self.ProcLogFile = open(self.ProcLogFileName, mode='w')
-        self.TicketFilename = self.logpath + self.AppID + 'RunTicket.json'
-        self.TicketFile = open(self.TicketFilename, mode='w')
         self.PLFirstWrite = True
-        self.RTFirstWrite = True
+        self.dataPack_prep()
+        self.ProcLogFile = open(self.ProcLogFileName, mode='w')
         # Start the run ticket
-        self.AddTicketItem({'start_ticket':''})
-        self.AddTicketItem({'proclog':self.ProcLogFileName})
+
         
 
         for device in self['devices']:
@@ -201,11 +201,9 @@ class Apparatus(dict):
         for device in self['devices']:
             self.Disconnect(device)
         self.logApparatus(prefix='final')
-        self.AddTicketItem({'end_ticket':''})
         if not self.PLFirstWrite:
-            self.ProcLogFile.close()
-        if not self.RTFirstWrite:
-            self.TicketFile.close()            
+            self.ProcLogFile.close()    
+        self.dataPack_make()
 
     def getValue(self, infoAddress=''):
         if infoAddress == '':
@@ -392,7 +390,7 @@ class Apparatus(dict):
         self.TicketFile.write(']')
 
     def UpdateLog(self, entry):
-        print(entry)
+        # print(entry)
         if self.PLFirstWrite:
             json.dump([], self.ProcLogFile)
             self.PLFirstWrite = False
@@ -534,3 +532,92 @@ class Apparatus(dict):
         else:
             templateFunc = getattr(AppTemplates, template)
             templateFunc(self, *args, **kwargs)
+    def dataPack_prep(self):
+        #check if ticket already exists
+        main_file_list = os.listdir()
+        old_data = False
+        old_ticket = ''
+        for filename in main_file_list:
+            if filename.endswith('RunTicket.json'):
+                old_data = True
+                old_ticket = filename
+        # if old data exists, pack it up.
+        # THIS ONLY WORKS FOR ONE OLD TICKET!
+        self.RTFirstWrite = True
+        if old_data:
+            self.dataPack_make(ticket=old_ticket)
+        # Create new ticket
+        self.TicketFilename = self.AppID + 'RunTicket.json'
+        self.TicketFile = open(self.TicketFilename, mode='w')
+        self.RTFirstWrite = True
+        self.AddTicketItem({'start_ticket':''})
+        self.AddTicketItem({'proclog':self.ProcLogFileName})
+        self.AddTicketItem({'run_name':self.AppID + self.run_name})
+
+    def dataPack_make(self, ticket=''):
+        fname = str(int(round(time.time(), 0)))
+        
+        # Check to see if the ticket file is still open
+        if not self.RTFirstWrite:
+            self.AddTicketItem({'DataPack':fname})
+            self.AddTicketItem({'end_ticket':''})
+            self.TicketFile.close()
+        else:
+            self.TicketFile = open(ticket, mode='w+')
+            self.AddTicketItem({'DataPack':fname})
+            self.AddTicketItem({'end_ticket':''})
+            self.TicketFile.close()
+        
+        # Check for DataPacks Folder and create one if not there
+        if not os.path.exists('DataPacks'):
+            os.mkdir('DataPacks')
+        
+        # Create a folder for this specific pack
+        foldername = 'DataPacks' + '\\' + fname
+        os.mkdir(foldername)
+        
+        # Make a Payload folder
+        pfolder = foldername+'\\Payload' + fname
+        os.mkdir(pfolder)
+        
+        # Move Data and Logs into payload folder
+        copied_folders = ['Data', 'Logs']
+        excluded_files = ['readme.txt','.gitignore']
+        for folder in copied_folders:
+            fpath = os.getcwd() + '\\' + folder
+            new_fpath = os.getcwd() + '\\' + pfolder + '\\' + folder
+            os.mkdir(new_fpath)
+            for root, dirs, files in os.walk(fpath):
+                for file in files:
+                    old_file = os.path.join(root, file)
+                    new_file = new_fpath + '\\' + file
+                    if file not in excluded_files:
+                        try:
+                            os.rename(old_file, new_file)
+                        except PermissionError:
+                            print(f'{old_file} or {new_file} is probably in use. Trying to close the log...')
+                            self.executor.loghandle.close()
+                            os.rename(old_file, new_file)
+                            print('Got it. No worries!')
+        
+        # Copy the scripts into an archive in the payload folder
+        APE_version = tarfile.open(pfolder + '\\APE_version.tar', mode='w')
+        copied_extensions = ('.py', '.ui', '.qml')
+        cwd = os.getcwd()
+        for root, dirs, files in os.walk(cwd):
+            # print(root, dirs, files)
+            for file in files:
+                rel_file_path = root.replace(cwd, '') + '\\' + file
+                if file.endswith(copied_extensions):
+                    APE_version.add(os.path.join(root, file), arcname = rel_file_path)
+            
+        APE_version.close()        
+        
+        # Move ticket into folder
+        main_file_list = os.listdir()
+        for filename in main_file_list:
+            if filename.endswith('RunTicket.json'):
+                ticket_file = filename
+        old_file = os.getcwd() + '\\' + ticket_file
+        new_file = os.getcwd() + '\\' + foldername + '\\' + ticket_file
+        os.rename(old_file, new_file)

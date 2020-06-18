@@ -12,6 +12,7 @@ import json
 MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
+MyApparatus.run_name = 'Example'
 
 materials = [{'test_material': 'ZZ1'}]
 # These are other tools that can be added in. Comment out the ones not used.
@@ -102,6 +103,6 @@ TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'Samp
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
 MyApparatus.Disconnect_All()
 toolpath = TP_gen['toolpath'][0]
-with open(MyApparatus.ProcLogFileName) as p_file:
-    proclog = json.load(p_file)
+# with open(MyApparatus.ProcLogFileName) as p_file:
+#     proclog = json.load(p_file)
 #toolpath_parsed = tpt.parse_endofmotion(toolpath, 1E-12)

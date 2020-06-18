@@ -28,7 +28,7 @@ class Procedure:
             values = {}
         self.GetRequirements(values)
         # self.CheckRequirements()
-        self.apparatus.LogProc('start', self.name, self.id, self.requirements)
+        self.apparatus.LogProc('start', self.name, self.id, reqs=self.requirements)
         try:
             self.Plan()
         finally:  # makes sure depthindex is decreased on error

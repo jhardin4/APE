@@ -16,7 +16,8 @@ class Executor(ApeInterface):
         self.node = node
         self.prevDevice = ''
         self.curDevice = ''
-        self.loghandle = open('Logs/' + self.logaddress, mode='w')
+        if self.logging:
+            self.loghandle = open('Logs/' + self.logaddress, mode='w')
 
     def execute(self, eproclist):
         # This could take a list of multiple lists of eprocs but typically it
