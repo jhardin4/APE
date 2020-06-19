@@ -206,6 +206,37 @@ class UEye(object):
             ueye.is_SetAutoParameter(self._cam, ueye.IS_GET_ENABLE_AUTO_GAIN,gain_status,ueye.DOUBLE(0))
             ueye.is_SetAutoParameter(self._cam, ueye.IS_GET_ENABLE_AUTO_SHUTTER,shutter_status,ueye.DOUBLE(0))
 
+    def configure(self, parameters):
+        # Exposure varies by camera: 0.020ms to 69.847 for UI-3250 model (check uEye cockpit for specifics)
+        # Gain (master) can be set between 0-100
+        # Black level can be set between 0-255
+        # Gamma can be set between 0.01 and 10
+
+        #Set dict keys to all lower case
+        parameters = dict((k.lower(),v) for k,v in parameters.items())
+
+        if 'exposure' in parameters:
+            #Doesn't do anything
+            err = ueye.is_Exposure(self._cam, ueye.IS_EXPOSURE_CMD_SET_EXPOSURE, ueye.DOUBLE(parameters['exposure']), ueye.sizeof(ueye.DOUBLE(parameters['exposure'])))
+            if err != ueye.IS_SUCCESS:
+                raise CameraException(self._cam, 'ueye>configure>exposure>', err)
+        
+        if 'gain' in parameters:
+            err = ueye.is_SetHardwareGain(self._cam, ueye.INT(parameters['gain']), ueye.IS_IGNORE_PARAMETER,ueye.IS_IGNORE_PARAMETER,ueye.IS_IGNORE_PARAMETER)
+            if err != ueye.IS_SUCCESS:
+                raise CameraException(self._cam, 'ueye>configure>gain>', err)
+
+        if 'black_level' in parameters:
+            err = ueye.is_Blacklevel(self._cam, ueye.IS_BLACKLEVEL_CMD_SET_OFFSET, ueye.INT(parameters['black_level']),ueye.sizeof(ueye.INT(parameters['black_level'])))
+            if err != ueye.IS_SUCCESS:
+                raise CameraException(self._cam, 'ueye>configure>black_level>', err)
+
+        if 'gamma' in parameters:
+            # Digital gamma correction
+            err = ueye.is_Gamma(self._cam, ueye.IS_GAMMA_CMD_SET, ueye.INT(int(parameters['gamma']*100)),ueye.sizeof(ueye.INT(int(parameters['gamma']*100))))
+            if err != ueye.IS_SUCCESS:
+                raise CameraException(self._cam, 'ueye>configure>gamma>', err) 
+
     def load_parameters(self, path):
         # Load parameters from file
         # Taken from: https://stackoverflow.com/questions/56461431/error-loading-ueye-camera-configuration-file-with-pyueye
@@ -283,10 +314,16 @@ if __name__ == '__main__':
         
         cam.start_feed()
         print("Started live feed")
+
         cam.auto_configure()
         print("Auto configured camera")
+
         cam.save_parameters('auto_config.ini')
         print("Saved configuration to file")
+
+        cam.configure({'exposure':40.0,'gain': 50, 'black_level':200, 'gamma':1.0})
+        print("Manually configured the camera")
+
         cam.load_parameters('auto_config.ini')
         print("Loaded configuration to file")
         

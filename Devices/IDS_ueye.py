@@ -91,8 +91,22 @@ class IDS_ueye(Sensor):
             Brightness reference argument can be used to adjust resulting image brightness.
         """
         if not self.simulation:
-            self.handle.auto_configure(auto_reference=brightness_reference)
+            self.handle.auto_configure(brightness_reference)
         self.addlog(self.name + ' auto configured camera')
+        return self.returnlog()
+    
+    def Configure(self, parameters):
+        """ Manual control over the exposure, gain, black_level and gamma.
+            To use provide a dictionary with keys being the name of the parameter to set.
+            ex: parameter = {'exposure':40.0,'gain': 50, 'black_level':200, 'gamma':1.0}
+            Exposure varies by camera: 0.020ms to 69.847 for UI-3250 model (check uEye cockpit for specifics)
+            Gain (master) can be set between 0-100
+            Black level can be set between 0-255
+            Gamma can be set between 0.01 and 10
+        """
+        if not self.simulation:
+            self.handle.configure(parameters)
+        self.addlog(self.name + ' manually configured camera to ' + str(parameters))
         return self.returnlog()
 
     def Measure(self, file):
