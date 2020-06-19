@@ -13,6 +13,30 @@ class IDS_ueye(Sensor):
         self.descriptors.append('ueye')
         self.descriptors.append('camera')
         self.handle = ''
+        self.requirements['StartFeed'] ={}
+        self.requirements['StopFeed'] ={}
+        self.requirements['StartRecord'] ={}
+        self.requirements['StartRecord']['file'] ={
+            'value': '',
+            'source': 'direct',
+            'address': '',
+            'desc': 'file to store video in',
+        }
+        self.requirements['StopRecord'] ={}
+        self.requirements['AutoConfigure'] ={}
+        self.requirements['AutoConfigure']['brightness_reference'] ={
+            'value': '',
+            'source': 'direct',
+            'address': '',
+            'desc': 'Brightness reference for guiding autto contrast',
+        }
+        self.requirements['Configure'] = {}
+        self.requirements['Configure']['parameters'] = {
+            'value': '',
+            'source': 'direct',
+            'address': '',
+            'desc': 'manual configuration for camera settings',
+        }
         self.requirements['Measure'] = {}
         self.requirements['Measure']['file'] = {
             'value': '',
@@ -20,13 +44,21 @@ class IDS_ueye(Sensor):
             'address': '',
             'desc': 'filename to store image at',
         }
-        self.requirements['Configure'] = {}
-        self.requirements['Configure']['gain'] = {
+        self.requirements['LoadConfiguration'] ={}
+        self.requirements['LoadConfiguration']['file'] = {
             'value': '',
             'source': 'direct',
             'address': '',
-            'desc': 'values for master and RGB gains (0-100)',
+            'desc': 'filename to store image at',
         }
+        self.requirements['SaveConfiguration'] ={}
+        self.requirements['SaveConfiguration']['file'] = {
+            'value': '',
+            'source': 'direct',
+            'address': '',
+            'desc': 'filename to store image at',
+        }
+        
         self.name = name
 
     def Connect(self,cam_id=0):
