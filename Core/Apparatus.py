@@ -301,7 +301,7 @@ class Apparatus(dict):
 
         return foundDevices
 
-    def findDevice(self, reqs):
+    def findDevice(self, **reqs):
         devicesOld = ''
         devicesNew = []
         devicesTemp = []
@@ -334,13 +334,6 @@ class Apparatus(dict):
             return 'More than 1 device met requirments.' + str(devicesOld)
         elif len(devicesOld) == 0:
             return 'No devices met requirments'
-
-    def findDeviceMethods(self, device):
-        methodlist = []
-        for line in self['eproclist']:
-            if line['device'] == device:
-                methodlist.append(line['method'])
-        return methodlist
 
     def LogProc(self, flag, procName, puuid, log='', reqs=''):
         procLogLine = []

@@ -37,7 +37,7 @@ class User_Consol_Input(Procedure):
         default = self.requirements['default']['value']
         target = self.requirements['target']['value']
 
-        console_name = self.apparatus.findDevice({'descriptors': 'consol'})
+        console_name = self.apparatus.findDevice(descriptors='consol')
         console_type = self.apparatus.getValue(['devices', console_name, 'addresstype'])
 
         # Retrieving necessary device names

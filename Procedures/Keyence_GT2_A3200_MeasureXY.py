@@ -28,7 +28,7 @@ class Keyence_GT2_A3200_MeasureXY(Procedure):
         point = self.requirements['point']['value']
 
         # Retreiving necessary device names
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Retrieving information from apparatus
         zaxis = self.apparatus.getValue(['devices', motionname, 'TProbe', 'axismask'])[

@@ -24,7 +24,7 @@ class Pump_PumpOff(Procedure):
         }
 
     def Plan(self):
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        systemname = self.apparatus.findDevice(descriptors='system')
 
         self.DoEproc(systemname, 'Dwell', {'dtime': self.pumpoff_time})
         self.DoEproc(self.pump_name, 'Off', {})

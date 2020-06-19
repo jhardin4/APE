@@ -21,10 +21,10 @@ class EndofMotion(Procedure):
         materialname = self.requirements['motion']['value']['material']
 
         # Retreiving necessary device names
-        pumpname = self.apparatus.findDevice({'descriptors': ['pump', materialname]})
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        pumpname = self.apparatus.findDevice(descriptors=['pump', materialname])
+        motionname = self.apparatus.findDevice(descriptors='motion')
         nozzlename = self.apparatus.findDevice(
-            {'descriptors': ['nozzle', materialname]}
+            descriptors=['nozzle', materialname]
         )
 
         # Assign apparatus addresses to procedures

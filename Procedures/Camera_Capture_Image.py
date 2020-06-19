@@ -25,24 +25,20 @@ class Camera_Capture_Image(Procedure):
         }
 
     def Plan(self):
-        # Renaming useful pieces of informaiton
-        file = self.requirements['file']['value']
-        stime = self.requirements['settle_time']['value']
-        cname = self.requirements['camera_name']['value']
-
         # Retreiving necessary device names
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        systemname = self.apparatus.findDevice(descriptors='system')
 
         # Retrieving information from apparatus
         # Support a default location for the settle_time
-        if stime == '':
-            stime_address = ['devices', cname, 'settle_time']
+        if self.settle_time == '':
+            stime_address = ['devices', self.camera_name, 'settle_time']
             try:
-                stime = self.apparatus.getValue(stime_address)
+                self.settle_time = self.apparatus.getValue(stime_address)
             except Apparatus.InvalidApparatusAddressException:
-                stime = 0
+                self.settle_time = 0
         # Assign apparatus addresses to procedures
 
         # Doing stuff
-        self.DoEproc(systemname, 'Dwell', {'dtime': stime})
-        self.DoEproc(cname, 'Measure', {'file': file})
+        self.DoEproc(systemname, 'Dwell', {'dtime': self.settle_time})
+        self.DoEproc(self.camera_name, 'Measure', {'file': self.file})
+        self.apparatus.AddTicketItem({'image':self.file})

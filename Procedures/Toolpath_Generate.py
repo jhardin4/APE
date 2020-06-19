@@ -75,7 +75,7 @@ class Toolpath_Generate(Procedure):
         # Set up the parameters for the toolpath generator
         self.setParameters(parameters=parameters, generator=generator, dataArgs=dataArgs)
         # Run the toolpath generator
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        systemname = self.apparatus.findDevice(descriptors='system')
         temptarget = [0]
         self.DoEproc(
             systemname,

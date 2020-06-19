@@ -24,7 +24,7 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
         primenoz = self.requirements['primenoz']['value']
         alignments = self.apparatus.getValue(['information', 'alignments'])
 
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Check that the alignments are valid and return results of analysis
         cur_alignments = alignments
