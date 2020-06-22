@@ -7,7 +7,7 @@ import uuid
 import AppTemplates
 import os
 import tarfile
-
+from Core import material
 
 class InvalidApparatusAddressException(Exception):
     pass
@@ -141,6 +141,11 @@ class Apparatus(dict):
         # Connect the dependent devices
         self.Dep_Connects()
         self.logApparatus(prefix='initial')
+        # Note associated materials in run ticket
+        for mat in self['information']['material_library']:
+            names = self['information']['material_library'][mat]['names']
+            m_uuid = self['information']['material_library'][mat]['uuid']
+            self.AddTicketItem({'material_names':names, 'uuid':m_uuid})
 
     def Connect(self, deviceName):
         arguments = self.executor.getRequirements(
@@ -591,9 +596,10 @@ class Apparatus(dict):
                             os.rename(old_file, new_file)
                         except PermissionError:
                             print(f'{old_file} or {new_file} is probably in use. Trying to close the log...')
-                            self.executor.loghandle.close()
-                            os.rename(old_file, new_file)
-                            print('Got it. No worries!')
+                            if hasattr(self.executor, 'close'):
+                                self.executor.loghandle.close()
+                                os.rename(old_file, new_file)
+                                print('Got it. No worries!')
         
         # Copy the scripts into an archive in the payload folder
         APE_version = tarfile.open(pfolder + '\\APE_version.tar', mode='w')
@@ -616,4 +622,32 @@ class Apparatus(dict):
         old_file = os.getcwd() + '\\' + ticket_file
         new_file = os.getcwd() + '\\' + foldername + '\\' + ticket_file
         os.rename(old_file, new_file)
+        self._makeUpLoadPack(foldername)
         self.proclog_address = pfolder + '\\' + self.proclog_address
+
+    def _makeUpLoadPack(self, folder):
+        # Assumes that folder does not end in \\.
+        UpLoadPack = tarfile.open(folder + 'UPLOAD_ME.tar', mode='w')
+        for root, dirs, files in os.walk(folder):
+            # print(root, dirs, files)
+            for file in files:
+                rel_file_path = root.replace(folder, '') + '\\' + file
+                UpLoadPack.add(os.path.join(root, file), arcname = rel_file_path)
+            
+        UpLoadPack.close()
+    
+    def addMaterial(self, m_name, mat_fname):
+        # Import the material from file
+        if 'material_library' in self['information']:
+            self['information']['material_library'][m_name] = material(file=mat_fname)
+        else:
+            self['information']['material_library'] = {m_name: material(file=mat_fname)}
+        # Confirm that m_name is in names list and add it if not, add it
+        new_material = self['information']['material_library'][m_name]
+        if m_name not in new_material['names']:
+            new_material['names'].append(m_name)
+        # Add the material properties in Apparatus
+        for prop in new_material['properties']:
+            self.createAppEntry(['information', 'materials', m_name, prop])
+            self.setValue(['information', 'materials', m_name, prop], new_material['properties'][prop]['value'])
+        

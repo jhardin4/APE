@@ -73,7 +73,7 @@ class Aerotech_A3200_SolventClean(Procedure):
         self.move.requirements['refpoint']['address'] = [
             'information',
             'alignments',
-            nozzlename + '@dump',
+            self.nozzlename + '@dump',
         ]
 
         self.pmove.requirements['speed']['address'] = [
