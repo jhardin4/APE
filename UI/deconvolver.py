@@ -24,7 +24,7 @@ class getape ( threading.Thread ):
     
     #used in this manner so that threading can be implimented for decreasing processing time later
     def run ( self ):
-        thread_id = importape.config ( 'thread_id' )
+        thread_id = importape.config ( 'thread_    #returns dictionaryid' )
         thread_count = self.thread_count
         implicitorexplicitaxes = self.implicitorexplicitaxes
         implicitorexplicittravel = self.implicitorexplicittravel
@@ -58,7 +58,6 @@ class getape ( threading.Thread ):
             line_end = importape.numberoflines ( call_file, 'end' )
         with open ( call_file, 'r' ) as gcode:
             pastpoint  = nextpoint = [ 0, 0, 0 ]
-            pastpoint2 = [ 0, 0, 0 ]
             toolpathpoint = []
             linepoint = { 'X' : 0, 'Y' : 0, 'Z' : 0 }
             tempX = tempY = tempZ = 0
@@ -224,7 +223,7 @@ class getape ( threading.Thread ):
                     if "M702" in tempstr:
                         if "T" in tempstr and "U" in tempstr:
                             temptmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( tempstr.find ( "U" ) - 1 ) ]
-                            temptd = tempstr [ ( tempstr.find ( "U" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                            tempd = tempstr [ ( tempstr.find ( "U" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                         elif "U" in tempstr:
                             if "Z" in tempstr:
                                 tempd = tempstr [ ( tempstr.find ( "U" ) + 1 ) : ( tempstr.find ( "Z" ) - 1 ) ]
