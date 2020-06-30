@@ -44,7 +44,8 @@ class getape ( threading.Thread ):
         multipointlist = getape.point ( call_file, implicitorexplicitaxes, implicitorexplicittravel, lineorlayer, importape.multithreaded( thread_count, line_start, line_end, call_thread, 'start' ), importape.multithreaded( thread_count, line_start, line_end, call_thread, 'end' ), 'raw' )
         return ( multipointlist )
 
-    #gets the points needed from gcode
+    #deconvolves spatial points
+    #returns dictionary
     def point ( call_file, implicitorexplicitaxes, implicitorexplicittravel,  lineorlayer, line_start, line_end, fileorraw ):
         if lineorlayer == 'layer':
             templine_start = importape.layertoline ( call_file, 'start', line_start, line_end )
@@ -149,7 +150,188 @@ class getape ( threading.Thread ):
                 return ( toolpathpoint )
             else:
                 return ( toolpathpoint )
-
+    
+    #deconvolves hotend heat, system fan, bridging fan, tool change, tool #, multiplexer #, and tool change distance information
+    #returns dictionary
+    def hotend ( call_file, lineorlayer, line_start, line_end, initialize, fileorraw ):
+        if lineorlayer == 'layer':
+            templine_start = importape.layertoline ( call_file, 'start', line_start, line_end )
+            templine_end = importape.layertoline ( call_file, 'end', line_start, line_end )
+            line_start = templine_start
+            line_end = templine_end
+        if line_start == 'start':
+            line_start = importape.numberoflines ( call_file, 'start' )
+        if line_end == 'end':
+            line_end = importape.numberoflines ( call_file, 'end' )
+        with open ( call_file, 'r' ) as gcode:
+            i = 0
+            p = 0
+            pastline = [ 0, 0, 0, '', 1, 1, '', 0 ]
+            nextline = [ 0, 0, 0, '', 1, 1, '', 0 ]
+            hotendline = { 'H' : 0, 'SF' : 0, 'BF' : 0, 'TC' : '', 'T' : 1, 'MX' : 1, 'MXA' : '', 'D' : 0 }
+            hotendfinal = { }
+            temph = tempfan = tempsf = tempbf = temptmx = tempt = tempmx = tempd = 0
+            temptc = tempmxa = ''
+            if initialize == 'yes':
+                line_end = 100
+            for i in range ( 0, line_start ):
+                gcode.readline ()
+                i = i + 1
+            i = 0
+            for i in range ( 0, line_end + 1 ):
+                tempstr = gcode.readline ()
+                if i in range ( line_start, line_end + 1 ):
+                    if "M104" in tempstr or "M109" in tempstr:
+                        if "S" in tempstr:
+                            temph = tempstr [ ( tempstr.find ( "S" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        else:
+                            temph = 0
+                    if "M106" in tempstr:
+                        if "P" in tempstr and "S" in tempstr:
+                            tempfan = tempstr [ ( tempstr.find ( "P" ) + 1 ) : ( tempstr.find ( "S" ) - 1 ) ]
+                            if tempfan == 1:
+                                tempsf = tempstr [ ( tempstr.find ( "S" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                            elif tempfan == 2:
+                                tempbf = tempstr [ ( tempstr.find ( "S" ) + 1) : ( len ( tempstr ) + 2 ) ]
+                        elif "S" in tempstr:
+                            tempbf = tempstr [ ( tempstr.find ( "S" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                    if "M107" in tempstr:
+                        tempbf = 0
+                    if "M600" in tempstr:
+                        if "AUTO" in tempstr:
+                            tempmxa = 'AUTO'
+                        else:
+                            temptc = 'USR Load'
+                    if "M701" in tempstr:
+                        if "T" in tempstr and "L" in tempstr:
+                            temptmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( tempstr.find ( "L" ) - 1 ) ]
+                            temptd = tempstr [ ( tempstr.find ( "L" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        elif "L" in tempstr:
+                            if "Z" in tempstr:
+                                tempd = tempstr [ ( tempstr.find ( "L" ) + 1 ) : ( tempstr.find ( "Z" ) - 1 ) ]
+                            else:
+                                tempd = tempstr [ ( tempstr.find ( "L" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        elif "T" in tempstr:
+                            if "Z" in tempstr:
+                                temptmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( tempstr.find ( "Z" ) - 1 ) ]
+                            else:
+                                temptmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        if tempmxa == 'AUTO':
+                            tempmx = temptmx
+                        else:
+                            tempt = temptmx
+                        temptc = 'load'
+                    if "M702" in tempstr:
+                        if "T" in tempstr and "U" in tempstr:
+                            temptmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( tempstr.find ( "U" ) - 1 ) ]
+                            temptd = tempstr [ ( tempstr.find ( "U" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        elif "U" in tempstr:
+                            if "Z" in tempstr:
+                                tempd = tempstr [ ( tempstr.find ( "U" ) + 1 ) : ( tempstr.find ( "Z" ) - 1 ) ]
+                            else:
+                                tempd = tempstr [ ( tempstr.find ( "U" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        elif "T" in tempstr:
+                            if "Z" in tempstr:
+                                temptmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( tempstr.find ( "Z" ) - 1 ) ]
+                            else:
+                                temptmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        if tempmxa == 'AUTO':
+                            tempmx = temptmx
+                        else:
+                            tempt = temptmx
+                        temptc = 'unload'
+                    
+                    if pastline ( 0 ) != temph:
+                        nextline ( 0 ) == temph
+                    if pastline ( 1 ) != tempsf:
+                        nextline ( 1 ) == tempsf
+                    if pastline ( 2 ) != tempbf:
+                        nextline ( 2 ) == tempbf
+                    if pastline ( 3 ) != temptc:
+                        nextline ( 3 ) == temptc
+                    if pastline ( 4 ) != tempt:
+                        nextline ( 4 ) == tempt
+                    if pastline ( 5 ) != tempmx:
+                        nextline ( 5 ) == tempmx
+                    if pastline ( 6 ) != tempmxa:
+                        nextline ( 6 ) == tempmxa
+                    if pastline ( 7 ) != tempd:
+                        nextline ( 7 ) == tempd
+                    temptc = ''
+                    tempmxa = ''
+                    p = 0
+                    for p in 7:
+                        pastline ( p ) == nextline ( p )
+                    hotendline = { 'H' : nextline ( 0 ), 'SF' : nextline ( 1 ), 'BF' : nextline ( 2 ), 'TC' : nextline ( 3 ), 'T' : nextline ( 4 ), 'MX' : nextline ( 5 ), 'MXA' : nextline ( 6 ), 'D' : nextline ( 7 ) }
+                    hotendfinal.append ( hotendline )
+            i = 0
+            if fileorraw == 'raw':
+                return ( hotendfinal )
+            else:
+                return ( hotendfinal )
+                    
+    #deconvolves hot bed and heated chamber information
+    #returns dictionary
+    def hotbed ( call_file, lineorlayer, line_start, line_end, initialize, fileorraw ):
+        if lineorlayer == 'layer':
+            templine_start = importape.layertoline ( call_file, 'start', line_start, line_end )
+            templine_end = importape.layertoline ( call_file, 'end', line_start, line_end )
+            line_start = templine_start
+            line_end = templine_end
+        if line_start == 'start':
+            line_start = importape.numberoflines ( call_file, 'start' )
+        if line_end == 'end':
+            line_end = importape.numberoflines ( call_file, 'end' )
+        with open ( call_file, 'r' ) as gcode:
+            i = 0
+            p = 0
+            pastbed = [ 0, 0 ]
+            nextbed = [ 0, 0 ]
+            hotbedline = { 'HB' : 0, 'HC' : 0 }
+            hotbedfinal = { }
+            temphb = temphc = 0
+            if initialize == 'yes':
+                line_end = 100
+            for i in range ( 0, line_start ):
+                gcode.readline ()
+                i = i + 1
+            i = 0
+            for i in range ( 0, line_end + 1 ):
+                tempstr = gcode.readline ()
+                if i in range ( line_start, line_end + 1 ):
+                    if "M140" in tempstr:
+                        if "S" in tempstr:
+                            temphb = tempstr [ ( tempstr.find ( "S" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        else:
+                            temphb = 0
+                    if "M141" in tempstr:
+                        if "S" in tempstr:
+                            temphc = tempstr [ ( tempstr.find ( "S" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                        else:
+                            temphc = 0
+                    if pastbed ( 0 ) != temphb:
+                        nextbed ( 0 ) == temphb
+                    if pastbed ( 1 ) != temphc:
+                        nextbed ( 1 ) == temphc
+                    p = 0
+                    for p in 1:
+                        pastbed ( p ) == nextbed ( p )
+                    hotbedline = { 'HB' : nextbed ( 0 ), 'HC' : nextbed ( 1 ) }
+                    hotbedfinal.append ( hotbedline )
+            i = 0
+            if fileorraw == 'raw':
+                return ( hotbedfinal )
+            else:
+                return ( hotbedfinal )
+        
+    #calles hotend and loads initialized perameters
+    def hotendUI ( self, initialize ):
+        getape.hotend ( self.call_file, self.lineorlayer, self.line_start, self.line_end, initialize, self.fileorraw )
+        
+    #calles hotbed and loads initialized perameters
+    def hotbedUI ( self, initialize ):
+        getape.hotbed ( self.call_file, self.lineorlayer, self.line_start, self.line_end, initialize, self.fileorraw )
+        
     #gets extrusion information
     #Broken in current state and not in use
     def extrude ( call_file, lineorlayer, line_start, line_end, distancevolumeorpressure, fileorraw ):
@@ -166,7 +348,8 @@ class getape ( threading.Thread ):
             i = 0
             pi = 3.1415926
             toolpathextrude = []
-            pastline = nextline = [ 0, 0 ]
+            pastline = [ 0, 0 ]
+            nextline = [ 0, 0 ]
             tempE = tempF = 0
             for i in range ( 0, line_end + 1 ):
                 tempstr = gcode.readline ()
