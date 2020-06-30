@@ -1,6 +1,6 @@
 import threading, os
-from .import_ape import importape
-from .run_ape import runape
+from import_ape import importape
+from run_ape import runape
 
 #primary deconvolving solution
 class getape ( threading.Thread ):
@@ -168,7 +168,7 @@ class getape ( threading.Thread ):
             pastline = [ 0, 0, 0, '', 1, 1, '', 0 ]
             nextline = [ 0, 0, 0, '', 1, 1, '', 0 ]
             hotendline = { 'H' : 0, 'SF' : 0, 'BF' : 0, 'TC' : '', 'T' : 1, 'MX' : 1, 'MXA' : '', 'D' : 0 }
-            hotendfinal = { }
+            hotendfinal = [ ]
             temph = tempfan = tempsf = tempbf = temptmx = tempt = tempmx = tempd = 0
             temptc = tempmxa = ''
             if initialize == 'yes':
@@ -240,28 +240,28 @@ class getape ( threading.Thread ):
                             tempt = temptmx
                         temptc = 'unload'
                     
-                    if pastline ( 0 ) != temph:
-                        nextline ( 0 ) == temph
-                    if pastline ( 1 ) != tempsf:
-                        nextline ( 1 ) == tempsf
-                    if pastline ( 2 ) != tempbf:
-                        nextline ( 2 ) == tempbf
-                    if pastline ( 3 ) != temptc:
-                        nextline ( 3 ) == temptc
-                    if pastline ( 4 ) != tempt:
-                        nextline ( 4 ) == tempt
-                    if pastline ( 5 ) != tempmx:
-                        nextline ( 5 ) == tempmx
-                    if pastline ( 6 ) != tempmxa:
-                        nextline ( 6 ) == tempmxa
-                    if pastline ( 7 ) != tempd:
-                        nextline ( 7 ) == tempd
+                    if pastline [ 0 ] != temph:
+                        nextline [ 0 ] == temph
+                    if pastline [ 1 ] != tempsf:
+                        nextline [ 1 ] == tempsf
+                    if pastline [ 2 ] != tempbf:
+                        nextline [ 2 ] == tempbf
+                    if pastline [ 3 ] != temptc:
+                        nextline [ 3 ] == temptc
+                    if pastline [ 4 ] != tempt:
+                        nextline [ 4 ] == tempt
+                    if pastline [ 5 ] != tempmx:
+                        nextline [ 5 ] == tempmx
+                    if pastline [ 6 ] != tempmxa:
+                        nextline [ 6 ] == tempmxa
+                    if pastline [ 7 ] != tempd:
+                        nextline [ 7 ] == tempd
                     temptc = ''
                     tempmxa = ''
                     p = 0
-                    for p in 7:
-                        pastline ( p ) == nextline ( p )
-                    hotendline = { 'H' : nextline ( 0 ), 'SF' : nextline ( 1 ), 'BF' : nextline ( 2 ), 'TC' : nextline ( 3 ), 'T' : nextline ( 4 ), 'MX' : nextline ( 5 ), 'MXA' : nextline ( 6 ), 'D' : nextline ( 7 ) }
+                    for p in range ( 0, 7 ):
+                        pastline [ p ] == nextline [ p ]
+                    hotendline = { 'H' : nextline [ 0 ], 'SF' : nextline [ 1 ], 'BF' : nextline [ 2 ], 'TC' : nextline [ 3 ], 'T' : nextline [ 4 ], 'MX' : nextline [ 5 ], 'MXA' : nextline [ 6 ], 'D' : nextline [ 7 ] }
                     hotendfinal.append ( hotendline )
             i = 0
             if fileorraw == 'raw':
@@ -287,7 +287,7 @@ class getape ( threading.Thread ):
             pastbed = [ 0, 0 ]
             nextbed = [ 0, 0 ]
             hotbedline = { 'HB' : 0, 'HC' : 0 }
-            hotbedfinal = { }
+            hotbedfinal = [ ]
             temphb = temphc = 0
             if initialize == 'yes':
                 line_end = 100
@@ -308,14 +308,14 @@ class getape ( threading.Thread ):
                             temphc = tempstr [ ( tempstr.find ( "S" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                         else:
                             temphc = 0
-                    if pastbed ( 0 ) != temphb:
-                        nextbed ( 0 ) == temphb
-                    if pastbed ( 1 ) != temphc:
-                        nextbed ( 1 ) == temphc
+                    if pastbed [ 0 ] != temphb:
+                        nextbed [ 0 ] == temphb
+                    if pastbed [ 1 ] != temphc:
+                        nextbed [ 1 ] == temphc
                     p = 0
-                    for p in 1:
-                        pastbed ( p ) == nextbed ( p )
-                    hotbedline = { 'HB' : nextbed ( 0 ), 'HC' : nextbed ( 1 ) }
+                    for p in range ( 0, 1):
+                        pastbed [ p ] == nextbed [ p ]
+                    hotbedline = { 'HB' : nextbed [ 0 ], 'HC' : nextbed [ 1 ] }
                     hotbedfinal.append ( hotbedline )
             i = 0
             if fileorraw == 'raw':
@@ -409,3 +409,5 @@ class getape ( threading.Thread ):
             toolpath3D.append ( temppoint )
         #toolpath3D.append ( { 'parse': 'end' } )
         return ( toolpath3D )
+    
+print ( getape ( 'auto' ).hotendUI ( 'no' ) )
