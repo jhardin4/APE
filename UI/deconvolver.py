@@ -1,3 +1,6 @@
+#screws up on retraction and z-hop  this NEEDS fixed
+#must get velocity data from getape.extrude  once done, highly complex infill (fabrics included) will work
+
 import threading, os
 from import_ape import importape
 from run_ape import runape
