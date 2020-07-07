@@ -27,16 +27,8 @@ def Auto_Run_Monolith ( ):
     MyApparatus['devices']['n' + mat0]['descriptors'].append(mat0)
     MyApparatus['devices']['n' + mat0]['trace_height'] = 0.1
     MyApparatus['devices']['n' + mat0]['trace_width'] = 0.3
-    MyApparatus['devices']['aeropump0']['descriptors'].append(mat0)
     MyApparatus['devices']['gantry']['default']['speed'] = 20  # change the slide default from 40 to 20
     MyApparatus['devices']['gantry']['n' + mat0]['speed'] = 20  # Calibration is on so this is overwritten
-    MyApparatus['devices']['aeropump0']['pumpon_time'] = 0.0  # Time from pump on to motion, if calibration is on so this is overwritten
-    MyApparatus['devices']['aeropump0']['mid_time'] = .05  # time from signal sent to motion initiation
-    MyApparatus['devices']['aeropump0']['pumpoff_time'] = 0  # time from end-arrival to turn off pump
-    MyApparatus['devices']['aeropump0']['pumpres_time'] = 0.1
-    MyApparatus['devices']['aeropump0']['pressure'] = 550
-    MyApparatus['devices']['aeropump0']['vacuum'] = 0
-    MyApparatus['devices']['aeropump0']['COM'] = 7
 
     # Connect to all the devices in the setup
     MyApparatus.Connect_All(simulation=True)
