@@ -339,7 +339,7 @@ class getape ( threading.Thread ):
                     pastline [ 0 ] = nextline [ 0 ]
                     pastline [ 1 ] = nextline [ 1 ]
                     tempE = tempF = 0
-                    lineextrude = { 'E' : nextline [ 0 ] * importape.filamentdiameter () * pi, 'F' : nextline [ 1 ] * importape.filamentdiameter () * pi }
+                    lineextrude = { 'E' : nextline [ 0 ], 'F' : nextline [ 1 ] }
                 if 'X' in tempstr or 'Y' in tempstr or 'Z' in tempstr or 'E' in tempstr:
                     toolpathextrude.append ( lineextrude )
                 else:
