@@ -80,8 +80,10 @@ class getape ( threading.Thread ):
                         elif "F" in tempstr:
                             tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
                         else:
-                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
-                        #print ( "1Z:", tempZ )
+                            if ";" in tempstr:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                     elif "X" in tempstr and "Y" in tempstr:
                         tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "Y" ) - tempstr.find ( "X" ) - 1 + tempstr.find ( "X" ) ) ]
                         if "E" in tempstr:
@@ -89,7 +91,10 @@ class getape ( threading.Thread ):
                         elif "F" in tempstr:
                             tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
                         else:
-                            tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                            if ";" in tempstr:
+                                tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                     elif "X" in tempstr and "Z" in tempstr:
                         tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "Y" ) - tempstr.find ( "X" ) - 1 + tempstr.find ( "X" ) ) ]
                         if "E" in tempstr:
@@ -97,7 +102,10 @@ class getape ( threading.Thread ):
                         elif "F" in tempstr:
                             tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
                         else:
-                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                            if ";" in tempstr:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                     elif "Y" in tempstr and "Z" in tempstr:
                         tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "Z" ) - tempstr.find ( "Y" ) - 1 + tempstr.find ( "Y" ) ) ]
                         if "E" in tempstr:
@@ -105,28 +113,40 @@ class getape ( threading.Thread ):
                         elif "F" in tempstr:
                             tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
                         else:
-                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                            if ";" in tempstr:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                     elif "X" in tempstr:
                         if "E" in tempstr:
                             tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
                         elif "F" in tempstr:
                             tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
                         else:
-                            tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                            if ";" in tempstr:
+                                tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                     elif "Y" in tempstr:
                         if "E" in tempstr:
                             tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
                         elif "F" in tempstr:
                             tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
                         else:
-                            tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                            if ";" in tempstr:
+                                tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                     elif "Z" in tempstr:
                         if "E" in tempstr:
                             tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
                         elif "F" in tempstr:
                             tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
                         else:
-                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                            if ";" in tempstr:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                     if implicitorexplicitaxes == 'implicit':
                         nextpoint [ 0 ] = pastpoint [ 0 ] + float ( tempX )
                         nextpoint [ 1 ] = pastpoint [ 1 ] + float ( tempY )
@@ -145,12 +165,22 @@ class getape ( threading.Thread ):
                         else:
                             pass
             i = 0
-            if fileorraw == 'raw':
+            if fileorraw == 'file':###############################################
                 return ( toolpathpoint )
             else:
                 return ( toolpathpoint )
     
-    #deconvolves hotend heat, system fan, bridging fan, tool change, tool #, multiplexer #, and tool change distance information
+    #deconvolves hotend heat, system fan, bridging fan, tool change, tool #, multiplexer #, multiplexer change, and tool change distance information
+    #when a tool change occours:
+        #it will determine if a multiplexer is used or not via 'auto' stored in tempmxa
+        #if there is no multiplexer, it will look for a user change and store 'usr change' in tempmxa
+        #lastly it will not change tempmxa and returns ''.  here there are assumed to be multiple tool heads
+        #for M701 it returns a chnage in MX if a multiplexer is present, eleswise it returns a change in T
+        #M701 returns load in TC
+        #M702 is the same as M701 but returns unload in TC
+        #T0-T4 return 0-4 in MX 
+            #if mxa is not auto, but mx changes from 0 to another number, a multiplexer will be assumed and mxa will be set to auto
+    #doesnot wait for temperature changes to occour
     #returns dictionary
     def hotend ( call_file, lineorlayer, line_start, line_end, initialize, fileorraw ):
         if lineorlayer == 'layer':
@@ -241,7 +271,7 @@ class getape ( threading.Thread ):
                         else:
                             tempt = temptmx
                         temptc = 'load'
-                    if "M702" in tempstr:
+                    elif "M702" in tempstr:
                         if "T" in tempstr and "U" in tempstr:
                             tempmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( tempstr.find ( "U" ) - 1 ) ]
                             if ";" in tempstr:
@@ -269,6 +299,21 @@ class getape ( threading.Thread ):
                         else:
                             tempt = temptmx
                         temptc = 'unload'
+                    elif "T0" in tempstr:
+                        tempmx = 0
+                        tempmxa == 'AUTO'
+                    elif "T1" in tempstr:
+                        tempmx = 1
+                        tempmxa == 'AUTO'
+                    elif "T2" in tempstr:
+                        tempmx = 2
+                        tempmxa == 'AUTO'
+                    elif "T3" in tempstr:
+                        tempmx = 3
+                        tempmxa == 'AUTO'
+                    elif "T4" in tempstr:
+                        tempmx = 4
+                        tempmxa == 'AUTO'
                     if pastline [ 0 ] != temph:
                         nextline [ 0 ] = temph
                     if pastline [ 1 ] != tempsf:
@@ -296,6 +341,16 @@ class getape ( threading.Thread ):
                             pass
                         else:
                             hotendfinal.append ( hotendline )    #gets extrusion information
+            if fileorraw == 'file':#####################################
+                if initialize == 'yes':    
+                    return ( hotendfinal [ -1 ] )
+                else:
+                    return ( hotendfinal )
+            else:
+                if initialize == 'yes':    
+                    return ( hotendfinal [ -1 ] )
+                else:
+                    return ( hotendfinal )
     #Broken in current state and not in use
     def extrude ( call_file, lineorlayer, line_start, line_end, fileorraw ):
         if lineorlayer == 'layer':
@@ -348,7 +403,7 @@ class getape ( threading.Thread ):
                 else:
                     pass
             i = 0
-            if fileorraw == 'raw':
+            if fileorraw == 'file':############################################
                 return ( toolpathextrude )
             else:
                 return ( toolpathextrude )
@@ -416,10 +471,16 @@ class getape ( threading.Thread ):
                     else:
                         pass
             i = 0
-            if fileorraw == 'raw':
-                return ( hotbedfinal )
+            if fileorraw == 'file':########################################################
+                if initialize == 'yes':
+                    return ( hotbedfinal [ -1 ] )
+                else:
+                    return ( hotbedfinal )
             else:
-                return ( hotbedfinal )
+                if initialize == 'yes':
+                    return ( hotbedfinal [ -1 ] )
+                else:
+                    return ( hotbedfinal )
             
     #calles hotend and loads initialized perameters
     def hotendUI ( self, initialize ):
@@ -434,7 +495,9 @@ class getape ( threading.Thread ):
 
     def extrudeUI ( self ):
         return ( getape.extrude ( self.call_file, self.lineorlayer, self.line_start, self.line_end, self.fileorraw ) )
-    
+    def interlace ( self ):
+        pass
+        
 print ( getape ( 'auto' ).hotendUI ( 'yes' ) )
 print ( getape ( 'auto' ).hotbedUI ( 'yes' ) )
 print ( getape ( 'auto' ).pointUI ( ) )
