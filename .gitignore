@@ -5,6 +5,7 @@ nodelog_ProcExec.txt
 nodelog_gui.txt
 nodelog_launcher.txt
 *.json
+*.tar
 
 ### IDEs
 .idea/
