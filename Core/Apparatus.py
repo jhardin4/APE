@@ -573,24 +573,24 @@ class Apparatus(dict):
             os.mkdir('DataPacks')
         
         # Create a folder for this specific pack
-        foldername = 'DataPacks' + '\\' + fname
+        foldername = os.path.join('DataPacks', fname)
         os.mkdir(foldername)
         
         # Make a Payload folder
-        pfolder = foldername+'\\Payload' + fname
+        pfolder = os.path.join(foldername,'Payload' + fname)
         os.mkdir(pfolder)
         
         # Move Data and Logs into payload folder
         copied_folders = ['Data', 'Logs']
         excluded_files = ['readme.txt','.gitignore']
         for folder in copied_folders:
-            fpath = os.getcwd() + '\\' + folder
-            new_fpath = os.getcwd() + '\\' + pfolder + '\\' + folder
+            fpath = os.path.join(os.getcwd(), folder)
+            new_fpath = os.path.join(os.getcwd(), pfolder, folder)
             os.mkdir(new_fpath)
             for root, dirs, files in os.walk(fpath):
                 for file in files:
                     old_file = os.path.join(root, file)
-                    new_file = new_fpath + '\\' + file
+                    new_file = os.path.join(new_fpath, file)
                     if file not in excluded_files:
                         try:
                             os.rename(old_file, new_file)
@@ -608,7 +608,7 @@ class Apparatus(dict):
         for root, dirs, files in os.walk(cwd):
             # print(root, dirs, files)
             for file in files:
-                rel_file_path = root.replace(cwd, '') + '\\' + file
+                rel_file_path = os.path.join(root.replace(cwd, ''), file)
                 if file.endswith(copied_extensions):
                     APE_version.add(os.path.join(root, file), arcname = rel_file_path)
             
