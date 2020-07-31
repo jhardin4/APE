@@ -11,15 +11,37 @@ MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 
-materials = [{'test_material': 'A'}]
+materials = [{'SESY_123': 'A'}]
 # These are other tools that can be added in. Comment out the ones not used.
 tools = []
 # tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
 tools.append({'name': 'camera', 'axis': 'B', 'type': 'IDS_ueye_3250CP2'})
 AppBuilder(MyApparatus, materials, tools)
 
+# Defining the materials. This can come from an existing file but here we are
+# creating a new one.
+
+# Briefly setting up components
+SE1700_base = Core.material()
+Sylgard_base = Core.material()
+
+SE1700_base.add_property('density', 1.1, 'g/cc')
+SE1700_base['names'] = ['SE1700 base', 'PDMS', 'silicone', 'base']
+
+Sylgard_base.add_property('density', 1.1, 'g/cc')
+Sylgard_base['names'] = ['Sylgard 184 base', 'PDMS', 'silicone', 'base']
+
+# Setting up in for this run
+SESY_123 = Core.material()
+SESY_123.add_comp(SE1700_base, mass_perc=1.23, use_name='SE1700')
+SESY_123.add_comp(Sylgard_base, mass_perc=100-1.23, use_name='Sylgard')
+SESY_123.save('Materials//SESY_123.json')
+
+
+
 # Define the rest of the apparatus
 mat0 = list(materials[0])[0]
+MyApparatus.addMaterial(mat0, 'Materials//SESY_123.json')
 MyApparatus['devices']['n' + mat0]['descriptors'].append(mat0)
 MyApparatus['devices']['n' + mat0]['trace_height'] = 0.6
 MyApparatus['devices']['n' + mat0]['trace_width'] = 0.61

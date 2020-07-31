@@ -67,4 +67,4 @@ class Aerotech_A3200_getPosition(Procedure):
                 self.response = temp_target[0]
             elif motionType == 'zmqNode':
                 self.response = self.apparatus.getValue(self.target)
-        self.Report(string=self.response)
+        self.Report(self.response)

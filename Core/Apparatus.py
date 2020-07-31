@@ -619,11 +619,11 @@ class Apparatus(dict):
         for filename in main_file_list:
             if filename.endswith('RunTicket.json'):
                 ticket_file = filename
-        old_file = os.getcwd() + '\\' + ticket_file
-        new_file = os.getcwd() + '\\' + foldername + '\\' + ticket_file
+        old_file = os.path.join(os.getcwd(), ticket_file)
+        new_file = os.path.join(os.getcwd(), foldername, ticket_file)
         os.rename(old_file, new_file)
         self._makeUpLoadPack(foldername)
-        self.proclog_address = pfolder + '\\' + self.proclog_address
+        self.proclog_address = os.path.join(pfolder, self.proclog_address)
 
     def _makeUpLoadPack(self, folder):
         # Assumes that folder does not end in \\.
