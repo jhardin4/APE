@@ -28,7 +28,8 @@ class ROSEDA_TestMaterial(Procedure):
         # Setting up a toolpath generator indepenent of the 
         # "main" one.
         self.GenTP.setMaterial(self.material)
-        self.GenTP.setGenerator('Ros3daTPGen')
+        self.GenTP.requirements['generator']['source'] = 'direct'
+        self.GenTP.requirements['generator']['value'] = 'Ros3daTPGen'
         # parameters and dataArgs have to be explicitly set
         # to avoid using main TPGen data
         self.GenTP.setParameters(parameters=self.parameters, dataArgs=[self.material])  # Creates the parameter structure for TPGen
@@ -36,6 +37,7 @@ class ROSEDA_TestMaterial(Procedure):
         # procedures Apparatus data
         rosedaTP_address = ['information', 'ProcedureData', 'ROSEDA_TestMaterial', 'toolpath']
         self.GenTP.requirements['target']['address'] = rosedaTP_address
+        self.apparatus.createAppEntry(rosedaTP_address)
         # Generate the toolpath for everything but the dots
         self.GenTP.Do()
         

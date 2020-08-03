@@ -117,9 +117,9 @@ class Toolpath_Generate(Procedure):
         values = {}
         if parameters != '':
             values['parameters'] = parameters
-        if parameters != '':
+        if generator != '':
             values['generator'] = generator
-        if parameters != '':
+        if dataArgs != '':
             values['dataArgs'] = dataArgs
         self.GetRequirements(values)
         parameters = self.requirements['parameters']['value']
