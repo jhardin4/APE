@@ -6,6 +6,7 @@ application.
 import Core
 import Procedures
 from AppTemplates import RoboDaddyMonolith as AppBuilder
+import json
 
 MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
@@ -90,4 +91,6 @@ rparameters = Make_TPGen_Data(mat0)
 testMaterial.Do({'material':mat0, 'parameters':rparameters})
 Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':'Samples\mono_test.png','camera_name':'camera'})
 MyApparatus.Disconnect_All()
-toolpath = TP_gen['toolpath'][0]
+# toolpath = TP_gen['toolpath'][0]
+with open(MyApparatus.proclog_address) as p_file:
+    proclog = json.load(p_file)

@@ -87,6 +87,7 @@ class Toolpath_Generate(Procedure):
             },
         )
         self.apparatus.setValue(target, temptarget)
+        self.printTP.requirements['target']['address'] = target
         self.printTP.Do({'newfigure': True})
 
     def setMaterial(self, material):

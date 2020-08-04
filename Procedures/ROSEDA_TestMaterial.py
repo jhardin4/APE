@@ -45,13 +45,9 @@ class ROSEDA_TestMaterial(Procedure):
         self.PrintTP.requirements['toolpath']['address'] = rosedaTP_address
         
         # Find all the relevant devices
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
-        nozzlename = self.apparatus.findDevice(
-            {'descriptors': ['nozzle', self.material]}
-        )
-        pumpname = self.apparatus.findDevice(
-            {'descriptors': ['pump', self.material]}
-        )
+        motionname = self.apparatus.findDevice(descriptors='motion')
+        nozzlename = self.apparatus.findDevice(descriptors=['nozzle', self.material])
+        pumpname = self.apparatus.findDevice(descriptors=['pump', self.material])
         
         # Set up move and pmove
         self.move.requirements['axismask']['address'] = ['devices', motionname, nozzlename, 'axismask']
@@ -66,136 +62,137 @@ class ROSEDA_TestMaterial(Procedure):
         )
 
         self.DoEproc(pumpname, 'Set', {'pressure':pressure})
-        self.printDotted(periods=[2.0,1.75,1.5,1.25,1.0,0.75,0.5])
-        self.printCrossing(cross_feeds=[1,5,25,100])        
-        def printDotted(periods, axismask, speed):
-            # Likely this is not the best way to command motion.
-            for ind,period in enumerate(periods):
-                self.pmove.Do(
-                    {
-                        'relpoint': {'X':4, 'Y':5+4*(ind), 'Z':0.6},
-                        'speed': 20,
-                        'priority': [['X', 'Y'], ['Z']],
-                    }
-                )
-                self.DoEproc(motionname, 'Run', {})
-            
-                time_to_complete = 20/speed
-
-                for i in [x*period for x in range(0,int(time_to_complete/period),2)]:
-                    self.DoEproc(pumpname, 'DelayedOn', {'delay':i})
-                    self.DoEproc(pumpname, 'DelayedOff', {'delay':i+period})
-
-                self.move.Do(
-                    {
-                        'relpoint': {'X':24, 'Y':5+4*(ind), 'Z':0.6},
-                    }
-                )
-                self.DoEproc(motionname, 'Run', {})
-                self.move.Do(
-                    {
-                        'relpoint': {'X':24, 'Y':5+4*(ind), 'Z':0},
-                    }
-                )
-                self.DoEproc(motionname, 'Run', {})
-                self.move.Do(
-                    {
-                        'relpoint': {'X':24, 'Y':5+4*(ind), 'Z':10},
-                    }
-                )
-                self.DoEproc(motionname, 'Run', {})
-            
-        def printCrossing(cross_feeds):
-            # Go to first crossing
+        self.printDotted([2.0,1.75,1.5,1.25,1.0,0.75,0.5], motionname, pumpname)
+        self.printCrossing([1,5,25,100], motionname)        
+    def printDotted(self, periods, motionname, pumpname):
+        # Likely this is not the best way to command motion.
+        for ind,period in enumerate(periods):
             self.pmove.Do(
                 {
-                    'relpoint': {'X':34-6, 'Y':39.4+8, 'Z':0.0},
+                    'relpoint': {'X':4, 'Y':5+4*(ind), 'Z':0.6},
                     'speed': 20,
                     'priority': [['X', 'Y'], ['Z']],
-                }
-            )
-            self.DoEproc(motionname, 'Run', {})
-            self.move.Do(
-                {
-                    'relpoint': {'X':34-6, 'Y':39.4-8, 'Z':0.0},
-                    'speed': cross_feeds[0],
-                }
-            )
-            self.DoEproc(motionname, 'Run', {})
-            self.move.Do(
-                {
-                    'relpoint': {'X':34-6, 'Y':39.4-8, 'Z':5},
-                }
-            )
-            self.DoEproc(motionname, 'Run', {})
-
-            # Got to 2nd crossing
-            self.pmove.Do(
-                {
-                    'relpoint': {'X':34-2*6, 'Y':39.4+8, 'Z':0.0},
-                    'speed': 20,
-                    'priority': [['X', 'Y'], ['Z']],
-                }
-            )
-            self.DoEproc(motionname, 'Run', {})
-            self.move.Do(
-                {
-                    'relpoint': {'X':34-2*6, 'Y':39.4-8, 'Z':0.0},
-                    'speed': cross_feeds[1],
-                }
-            )
-            self.DoEproc(motionname, 'Run', {})
-            self.move.Do(
-                {
-                    'relpoint': {'X':34-2*6, 'Y':39.4-8, 'Z':5},
                 }
             )
             self.DoEproc(motionname, 'Run', {})
             
-            # Go to third crossing
-            self.pmove.Do(
-                {
-                    'relpoint': {'X':34-3*6, 'Y':39.4+8, 'Z':0.0},
-                    'speed': 20,
-                    'priority': [['X', 'Y'], ['Z']],
-                }
-            )
-            self.DoEproc(motionname, 'Run', {})
-            self.move.Do(
-                {
-                    'relpoint': {'X':34-3*6, 'Y':39.4-8, 'Z':0.0},
-                    'speed': cross_feeds[2],
-                }
-            )
-            self.DoEproc(motionname, 'Run', {})
-            self.move.Do(
-                {
-                    'relpoint': {'X':34-3*6, 'Y':39.4-8, 'Z':5},
-                }
-            )
-            self.DoEproc(motionname, 'Run', {})
+            speed = self.apparatus.getValue(self.move.requirements['speed']['address'])
+            time_to_complete = 20/speed
 
-            # Go to fourth crossing
-            self.pmove.Do(
+            for i in [x*period for x in range(0,int(time_to_complete/period),2)]:
+                self.DoEproc(pumpname, 'DelayedOn', {'delay':i})
+                self.DoEproc(pumpname, 'DelayedOff', {'delay':i+period})
+
+            self.move.Do(
                 {
-                    'relpoint': {'X':34-4*6, 'Y':39.4+8, 'Z':0.0},
-                    'speed': 20,
-                    'priority': [['X', 'Y'], ['Z']],
+                    'relpoint': {'X':24, 'Y':5+4*(ind), 'Z':0.6},
                 }
             )
             self.DoEproc(motionname, 'Run', {})
             self.move.Do(
                 {
-                    'relpoint': {'X':34-4*6, 'Y':39.4-8, 'Z':0.0},
-                    'speed': cross_feeds[3],
+                    'relpoint': {'X':24, 'Y':5+4*(ind), 'Z':0},
                 }
             )
             self.DoEproc(motionname, 'Run', {})
             self.move.Do(
                 {
-                    'relpoint': {'X':34-4*6, 'Y':39.4-8, 'Z':5},
+                    'relpoint': {'X':24, 'Y':5+4*(ind), 'Z':10},
                 }
             )
             self.DoEproc(motionname, 'Run', {})
+        
+    def printCrossing(self, cross_feeds, motionname):
+        # Go to first crossing
+        self.pmove.Do(
+            {
+                'relpoint': {'X':34-6, 'Y':39.4+8, 'Z':0.0},
+                'speed': 20,
+                'priority': [['X', 'Y'], ['Z']],
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        self.move.Do(
+            {
+                'relpoint': {'X':34-6, 'Y':39.4-8, 'Z':0.0},
+                'speed': cross_feeds[0],
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        self.move.Do(
+            {
+                'relpoint': {'X':34-6, 'Y':39.4-8, 'Z':5},
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+
+        # Got to 2nd crossing
+        self.pmove.Do(
+            {
+                'relpoint': {'X':34-2*6, 'Y':39.4+8, 'Z':0.0},
+                'speed': 20,
+                'priority': [['X', 'Y'], ['Z']],
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        self.move.Do(
+            {
+                'relpoint': {'X':34-2*6, 'Y':39.4-8, 'Z':0.0},
+                'speed': cross_feeds[1],
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        self.move.Do(
+            {
+                'relpoint': {'X':34-2*6, 'Y':39.4-8, 'Z':5},
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        
+        # Go to third crossing
+        self.pmove.Do(
+            {
+                'relpoint': {'X':34-3*6, 'Y':39.4+8, 'Z':0.0},
+                'speed': 20,
+                'priority': [['X', 'Y'], ['Z']],
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        self.move.Do(
+            {
+                'relpoint': {'X':34-3*6, 'Y':39.4-8, 'Z':0.0},
+                'speed': cross_feeds[2],
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        self.move.Do(
+            {
+                'relpoint': {'X':34-3*6, 'Y':39.4-8, 'Z':5},
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+
+        # Go to fourth crossing
+        self.pmove.Do(
+            {
+                'relpoint': {'X':34-4*6, 'Y':39.4+8, 'Z':0.0},
+                'speed': 20,
+                'priority': [['X', 'Y'], ['Z']],
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        self.move.Do(
+            {
+                'relpoint': {'X':34-4*6, 'Y':39.4-8, 'Z':0.0},
+                'speed': cross_feeds[3],
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
+        self.move.Do(
+            {
+                'relpoint': {'X':34-4*6, 'Y':39.4-8, 'Z':5},
+            }
+        )
+        self.DoEproc(motionname, 'Run', {})
 
 
