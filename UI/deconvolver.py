@@ -295,9 +295,9 @@ class getape ( threading.Thread ):
                                 else:
                                     tempmx = tempstr [ ( tempstr.find ( "T" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
                         if tempmxa == 'AUTO':
-                            tempmx = temptmx
+                            tempmx = -1 * ( temptmx + 10 )
                         else:
-                            tempt = temptmx
+                            tempt = -1 * ( temptmx + 10 )
                         temptc = 'unload'
                     elif "T0" in tempstr:
                         tempmx = 0
@@ -364,11 +364,10 @@ class getape ( threading.Thread ):
             line_end = importape.numberoflines ( call_file, 'end' )
         with open ( call_file, 'r' ) as gcode:
             i = 0
-            pi = 3.1415926
             toolpathextrude = []
-            pastline = [ 0, 0 ]
-            nextline = [ 0, 0 ]
-            tempE = tempF = 0
+            pastline = [ 0, 0, 0 ]
+            nextline = [ 0, 0, 0 ]
+            tempE = tempF = tempsetE = 0
             for i in range ( 0, line_end + 1 ):
                 tempstr = gcode.readline ()
                 if i in range ( line_start, line_end + 1 ):
@@ -389,15 +388,23 @@ class getape ( threading.Thread ):
                                 tempF = tempstr [ ( tempstr.find ( "F" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
                             else:
                                 tempF = tempstr [ ( tempstr.find ( "F" ) +1 ) : ( len ( tempstr ) + 2 ) ]
+                    if "G92" in tempstr:
+                        if "E" in tempstr:
+                            if ";" in tempstr:
+                                tempsetE = tempstr [ ( tempstr.find ( "E" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempsetE = tempstr [ ( tempstr.find ( "E" ) +1 ) : ( len ( tempstr ) + 2 ) ]
                     nextline [ 0 ] = float ( tempE )
                     if tempF != 0:
                         nextline [ 1 ] = float ( tempF )
                     else:
                         nextline [ 1 ] = pastline [ 1 ]
+                    nextline [ 2 ] = float ( tempsetE )
                     pastline [ 0 ] = nextline [ 0 ]
                     pastline [ 1 ] = nextline [ 1 ]
+                    pastline [ 2 ] = nextline [ 2 ]
                     tempE = tempF = 0
-                    lineextrude = { 'E' : nextline [ 0 ], 'F' : nextline [ 1 ] }
+                    lineextrude = { 'E' : nextline [ 0 ], 'F' : nextline [ 1 ], 'SetE' : nextline [ 2 ] }
                 if 'X' in tempstr or 'Y' in tempstr or 'Z' in tempstr or 'E' in tempstr:
                     toolpathextrude.append ( lineextrude )
                 else:
@@ -427,7 +434,8 @@ class getape ( threading.Thread ):
             nextbed = [ 0, 0 ]
             hotbedline = { 'HB' : 0, 'HC' : 0 }
             hotbedfinal = [ ]
-            temphb = temphc = 0
+            temphb = 0
+            temphc = -1
             if initialize == 'yes':
                 line_end = 100
             for i in range ( 0, line_start ):
@@ -482,6 +490,156 @@ class getape ( threading.Thread ):
                 else:
                     return ( hotbedfinal )
             
+    def interpoint ( call_file, implicitorexplicitaxes, implicitorexplicittravel,  lineorlayer, line_start, line_end, fileorraw ):
+        if lineorlayer == 'layer':
+            templine_start = importape.layertoline ( call_file, 'start', line_start, line_end )
+            templine_end = importape.layertoline ( call_file, 'end', line_start, line_end )
+            line_start = templine_start
+            line_end = templine_end
+        if line_start == 'start':
+            line_start = importape.numberoflines ( call_file, 'start' )
+        if line_end == 'end':
+            line_end = importape.numberoflines ( call_file, 'end' )
+        with open ( call_file, 'r' ) as gcode:
+            pastpoint  = nextpoint = [ 0, 0, 0, 0, 0, 0 ]
+            toolpathpoint = []
+            linepoint = { 'X' : 0, 'Y' : 0, 'Z' : 0, 'E' : 0, 'F' : 0, 'SetE' : 0 }
+            tempX = tempY = tempZ = tempE = tempF = tempsetE = 0
+            i = 0
+            for i in range ( 0, line_start ):
+                gcode.readline ()
+                i = i + 1
+            i = 0
+            for i in range ( line_start, line_end + 1 ):
+                tempstr = gcode.readline ()
+                if "G1" in tempstr:
+                    if "X" in tempstr and "Y" in tempstr and "Z" in tempstr:
+                        tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "Y" ) - tempstr.find ( "X" ) - 1 + tempstr.find ( "X" ) ) ]
+                        tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "Z" ) - tempstr.find ( "Y" ) - 1 + tempstr.find ( "Y" ) ) ]
+                        if "E" in tempstr:
+                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
+                        elif "F" in tempstr:
+                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
+                        else:
+                            if ";" in tempstr:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                    elif "X" in tempstr and "Y" in tempstr:
+                        tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "Y" ) - tempstr.find ( "X" ) - 1 + tempstr.find ( "X" ) ) ]
+                        if "E" in tempstr:
+                            tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
+                        elif "F" in tempstr:
+                            tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
+                        else:
+                            if ";" in tempstr:
+                                tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                    elif "X" in tempstr and "Z" in tempstr:
+                        tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "Y" ) - tempstr.find ( "X" ) - 1 + tempstr.find ( "X" ) ) ]
+                        if "E" in tempstr:
+                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
+                        elif "F" in tempstr:
+                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
+                        else:
+                            if ";" in tempstr:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                    elif "Y" in tempstr and "Z" in tempstr:
+                        tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "Z" ) - tempstr.find ( "Y" ) - 1 + tempstr.find ( "Y" ) ) ]
+                        if "E" in tempstr:
+                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
+                        elif "F" in tempstr:
+                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
+                        else:
+                            if ";" in tempstr:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                    elif "X" in tempstr:
+                        if "E" in tempstr:
+                            tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
+                        elif "F" in tempstr:
+                            tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
+                        else:
+                            if ";" in tempstr:
+                                tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempX = tempstr [ ( tempstr.find ( "X" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                    elif "Y" in tempstr:
+                        if "E" in tempstr:
+                            tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
+                        elif "F" in tempstr:
+                            tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
+                        else:
+                            if ";" in tempstr:
+                                tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempY = tempstr [ ( tempstr.find ( "Y" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                    elif "Z" in tempstr:
+                        if "E" in tempstr:
+                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "E" ) - 1 ) ]
+                        elif "F" in tempstr:
+                            tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
+                        else:
+                            if ";" in tempstr:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempZ = tempstr [ ( tempstr.find ( "Z" ) + 1 ) : ( len ( tempstr ) + 2 ) ]
+                    if "E" in tempstr and "F" in tempstr:
+                        tempE = tempstr [ ( tempstr.find ( "E" ) + 1 ) : ( tempstr.find ( "F" ) - 1 ) ]
+                        if ";" in tempstr:
+                            tempF = tempstr [ ( tempstr.find ( "F" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                        else:
+                            tempF = tempstr [ ( tempstr.find ( "F" ) +1 ) : ( len ( tempstr ) + 2 ) ]
+                    elif "E" in tempstr:
+                        if ";" in tempstr:
+                            tempE = tempstr [ ( tempstr.find ( "E" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                        else:
+                            tempE = tempstr [ ( tempstr.find ( "E" ) +1 ) : ( len ( tempstr ) + 2 ) ]
+                    elif "F" in tempstr:
+                        if ";" in tempstr:
+                            tempF = tempstr [ ( tempstr.find ( "F" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                        else:
+                            tempF = tempstr [ ( tempstr.find ( "F" ) +1 ) : ( len ( tempstr ) + 2 ) ]
+                    if "G92" in tempstr:
+                        if "E" in tempstr:
+                            if ";" in tempstr:
+                                tempsetE = tempstr [ ( tempstr.find ( "E" ) + 1 ) : ( tempstr.find ( ";" ) - 1 ) ]
+                            else:
+                                tempsetE = tempstr [ ( tempstr.find ( "E" ) +1 ) : ( len ( tempstr ) + 2 ) ]    
+                    
+                    if implicitorexplicitaxes == 'implicit':
+                        nextpoint [ 0 ] = pastpoint [ 0 ] + float ( tempX )
+                        nextpoint [ 1 ] = pastpoint [ 1 ] + float ( tempY )
+                        nextpoint [ 2 ] = pastpoint [ 2 ] + float ( tempZ )
+                        nextpoint [ 3 ] = float ( tempE )
+                        nextpoint [ 4 ] = float ( tempF )
+                        nextpoint [ 5 ] = float ( tempsetE )
+                        pastpoint[ 0 ] = nextpoint[ 0 ]
+                        pastpoint[ 1 ] = nextpoint[ 1 ]
+                        pastpoint[ 2 ] = nextpoint[ 2 ]
+                    if implicitorexplicitaxes == 'explicit':
+                        nextpoint [ 0 ] = float ( tempX )
+                        nextpoint [ 1 ] = float ( tempY )
+                        nextpoint [ 2 ] = float ( tempZ )
+                        nextpoint [ 3 ] = float ( tempE )
+                        nextpoint [ 4 ] = float ( tempF )
+                        nextpoint [ 5 ] = float ( tempsetE )
+                    linepoint = { 'X' : nextpoint [ 0 ], 'Y' : nextpoint [ 1 ], 'Z' : nextpoint [ 2 ], 'E' : nextpoint [ 3 ], 'F' : nextpoint [ 4 ], 'SetE' : nextpoint [ 5 ] }
+                    if i in range ( line_start, line_end + 1 ):
+                        if 'X' in tempstr or 'Y' in tempstr or 'Z' in tempstr:
+                            toolpathpoint.append ( linepoint )
+                        else:
+                            pass
+            i = 0
+            if fileorraw == 'file':###############################################
+                return ( toolpathpoint )
+            else:
+                return ( toolpathpoint )            
+            
     #calles hotend and loads initialized perameters
     def hotendUI ( self, initialize ):
         return ( getape.hotend ( self.call_file, self.lineorlayer, self.line_start, self.line_end, initialize, self.fileorraw ) )
@@ -493,12 +651,17 @@ class getape ( threading.Thread ):
     def pointUI ( self ):
         return ( getape.point ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, self.line_start, self.line_end, self.fileorraw ) )
 
+    def interpointUI ( self ):
+        return ( getape.interpoint ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, self.line_start, self.line_end, self.fileorraw ) )
+
     def extrudeUI ( self ):
         return ( getape.extrude ( self.call_file, self.lineorlayer, self.line_start, self.line_end, self.fileorraw ) )
+    
     def interlace ( self ):
         pass
         
 print ( getape ( 'auto' ).hotendUI ( 'yes' ) )
 print ( getape ( 'auto' ).hotbedUI ( 'yes' ) )
-print ( getape ( 'auto' ).pointUI ( ) )
-print ( getape ( 'auto' ).extrudeUI ( ) )
+#print ( getape ( 'auto' ).pointUI ( ) )
+#print ( getape ( 'auto' ).interpointUI ( ) )
+#print ( getape ( 'auto' ).extrudeUI ( ) )
