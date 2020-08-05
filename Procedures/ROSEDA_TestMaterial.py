@@ -21,7 +21,7 @@ class ROSEDA_TestMaterial(Procedure):
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'material to be used',
+            'desc': 'Parameters for toolpath generation',
         }
         
     def Plan(self):
