@@ -113,6 +113,7 @@ class Toolpath_Plot(Procedure):
         plt.savefig(logimagefilename, dpi=600)
         plt.close()
         plt.clf()
+        self.apparatus.AddTicketItem({'toolpath_image':logimagefilename})
 
         # store address for further use
         self.apparatus.setValue(

@@ -82,8 +82,10 @@ AlignPrinter = Procedures.User_FlexPrinter_Alignments_Align(MyApparatus, MyExecu
 CalInk = Procedures.User_InkCal_Calibrate(MyApparatus, MyExecutor)
 Camera = Procedures.Camera_Capture_ImageXY(MyApparatus,MyExecutor)
 testMaterial = Procedures.ROSEDA_TestMaterial(MyApparatus, MyExecutor)
+startUp = Procedures.User_StartUp(MyApparatus, MyExecutor)
 
 # Do the experiment
+startUp.Do({'filename': 'start_up.json'})
 AlignPrinter.Do({'primenoz': 'n' + mat0})
 CalInk.Do({'material': mat0})
 from Ros3daTPGen import Make_TPGen_Data
