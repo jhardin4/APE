@@ -9,7 +9,7 @@ class importape:
         if configpoint == 'thread_count':
             return ( 1 )
         if configpoint == 'line_start':
-            return ( 0 )
+            return ( 50 )
         if configpoint == 'line_end':
             return ( 110 )
         if configpoint == 'call_file':
@@ -26,6 +26,8 @@ class importape:
             return ( 'implicit' )
         if configpoint == 'fileorraw':
             return ( 'raw' )
+        if configpoint == 'UI_line':
+            return ( 'no' )
         
     #for later use in parsing threads properly if threading is implimented
     #WIP!!!!!!!!!!!!!!!!!
