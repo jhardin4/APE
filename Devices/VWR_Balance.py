@@ -76,6 +76,6 @@ class VWR_Balance(Sensor):
             else:
                 result = self.handle.measure()
         else:
-            result = float(input('What is the expected weight'))
+            result = float(input('What is the expected weight?'))
         self.StoreMeasurement(address, addresstype, result)
-        self.addlog('Balance ' + self.name + ' measured a weight of ' + result)
+        self.addlog('Balance ' + self.name + ' measured a weight of ' + str(result))
