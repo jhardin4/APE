@@ -10,6 +10,7 @@ class Panasonic_HGS_A3200(Sensor):
         self.DIaxis = '' # X
         self.DIbit = '' # 1
         self.axis = 'D'
+        self.name = name
         self.extended = False
         self.dependent_device = True
         self.dependencies = ['A3200', 'system']
@@ -291,9 +292,12 @@ class Panasonic_HGS_A3200(Sensor):
 
         self.latest_reading = result
         self.StoreMeasurement(address, addresstype, result)
-        return self.returnlog()
+        self.addlog('Displacement Sensor ' + self.name + ' measured a position of ' + str(result))
 
     def retract(self):
+        '''
+        Retract pneumatic probe.
+        '''
         self.addlog(
             self.A3200handle.Set_DO(
                 axis=self.DOaxis, bit=self.DObit, value=1, motionmode='cmd'
@@ -302,6 +306,9 @@ class Panasonic_HGS_A3200(Sensor):
         self.extended = False
 
     def extend(self):
+        '''
+        Extend pneumatic probe.
+        '''
         self.addlog(
             self.A3200handle.Set_DO(
                 axis=self.DOaxis, bit=self.DObit, value=0, motionmode='cmd'
@@ -310,7 +317,7 @@ class Panasonic_HGS_A3200(Sensor):
         self.extended = True
 
     def grid(self, start_point, x_length, y_length, x_count, y_count, address='', addresstype='', travel_dist=5):
-         '''
+        '''
         Take grid of measurements.
         '''
         self.start_point = start_point
