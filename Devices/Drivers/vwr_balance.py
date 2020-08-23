@@ -2,11 +2,10 @@
 Class to control VWR P2 series balances via serial.
 """
 
-import time
 import serial
 
 class VWRBalance(object):
-    """t
+    """
     List of Commands:
     *   Z : Zero balance
     *   T : Tare balance
