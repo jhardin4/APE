@@ -4,9 +4,14 @@ import Procedures.Motion_RefRelLinearMotion
 import Procedures.Motion_RefRelPriorityLineMotion
 
 
-class Keyence_GT2_A3200_Initialize(Procedure):
+class Touch_Probe_A3200_Initialize(Procedure):
+    '''
+    The idea behind this general touch probe procedure is to enable functionality
+    with both the Keyence_GT2 and Panasonic_HGS displacmenet sensors in addition
+    to future possible sensors.
+    '''
     def Prepare(self):
-        self.name = 'Keyence_GT2_A3200_Initialize'
+        self.name = 'Touch_Probe_A3200_Initialize'
         self.move = Procedures.Motion_RefRelLinearMotion(self.apparatus, self.executor)
         self.pmove = Procedures.Motion_RefRelPriorityLineMotion(
             self.apparatus, self.executor

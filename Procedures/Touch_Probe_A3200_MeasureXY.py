@@ -2,12 +2,17 @@ from Core import Procedure
 import Procedures.Aerotech_A3200_Set
 import Procedures.Motion_RefRelLinearMotion
 import Procedures.Motion_RefRelPriorityLineMotion
-import Procedures.Keyence_GT2_A3200_Measure
+import Procedures.Touch_Probe_A3200_Measure
 
 
-class Keyence_GT2_A3200_MeasureXY(Procedure):
+class Touch_Probe_A3200_MeasureXY(Procedure):
+    '''
+    The idea behind this general touch probe procedure is to enable functionality
+    with both the Keyence_GT2 and Panasonic_HGS displacmenet sensors in addition
+    to future possible sensors.
+    '''
     def Prepare(self):
-        self.name = 'Keyence_GT2_A3200_MeasureXY'
+        self.name = 'Touch_Probe_A3200_MeasureXY'
         self.requirements['point'] = {
             'source': 'apparatus',
             'address': '',
@@ -19,7 +24,7 @@ class Keyence_GT2_A3200_MeasureXY(Procedure):
         self.pmove = Procedures.Motion_RefRelPriorityLineMotion(
             self.apparatus, self.executor
         )
-        self.measure = Procedures.Keyence_GT2_A3200_Measure(
+        self.measure = Procedures.Touch_Probe_A3200_Measure(
             self.apparatus, self.executor
         )
 

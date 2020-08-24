@@ -1,9 +1,14 @@
 from Core import Procedure
 
 
-class Keyence_GT2_A3200_Measure(Procedure):
+class Touch_Probe_A3200_Measure(Procedure):
+    '''
+    The idea behind this general touch probe procedure is to enable functionality
+    with both the Keyence_GT2 and Panasonic_HGS displacmenet sensors in addition
+    to future possible sensors.
+    '''
     def Prepare(self):
-        self.name = 'Keyence_GT2_A3200_Measure'
+        self.name = 'Touch_Probe_A3200_Measure'
         self.requirements['address'] = {
             'source': 'apparatus',
             'address': '',
@@ -45,7 +50,7 @@ class Keyence_GT2_A3200_Measure(Procedure):
 
         # Assign apparatus addresses to procedures
 
-        # Doing stuff
+        # Move away from surface after measuring
         measure.Do({'address': address, 'addresstype': 'pointer', 'retract': retract})
         setmove.Do({'RelAbs': 'Rel', 'motionmode': 'cmd'})
         move.Do(
