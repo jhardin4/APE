@@ -218,7 +218,7 @@ class Panasonic_HGS_A3200(Sensor):
             # Probe input setup
             # Need to figure out how to get axis mask here
             self.A3200handle.cmd_exe("PROBE INPUT PROBE_INPUT_DRIVE_DIGITAL X " + str(self.DIbit))
-            self.addlog('Probe input set to axis ' + str(self.DIaxis) ' and bit ' + str(self.DIbit))
+            self.addlog('Probe input set to axis ' + str(self.DIaxis) + ' and bit ' + str(self.DIbit))
             # Probe mode setting
             self.A3200handle.cmd_exe("PROBE MODE PROBE_SW_MODE 1 $global[{}]".format(self.reading_gvariable))
             self.addlog('Probe mode set to 1 with output saved to $global[{}]'.format(self.reading_gvariable))
@@ -330,30 +330,30 @@ class Panasonic_HGS_A3200(Sensor):
         if not self.simulation:
             for y_pos in np.linspace(start_point['y'],start_point['u']+y_length,endpoint=True):
                 for x_pos in np.linspace(start_point['x'],start_point['x']+x_length,endpoint=True):
-                # Move to grid point
-                point = {'X': x_pos, 'Y': y_pos}
-                self.addlog(
-                    self.A3200handle.Move(
-                        point=point,
-                        motiontype='absolute',
-                        speed=self.measure_speed,
-                        motionmode='cmd',
+                    # Move to grid point
+                    point = {'X': x_pos, 'Y': y_pos}
+                    self.addlog(
+                        self.A3200handle.Move(
+                            point=point,
+                            motiontype='absolute',
+                            speed=self.measure_speed,
+                            motionmode='cmd',
+                        )
                     )
-                )
-                # Measure using probe
-                self.Measure(address,addresstype,retract = False)
-                grid_results.append(self.measure_reading)
+                    # Measure using probe
+                    self.Measure(address,addresstype,retract = False)
+                    grid_results.append(self.measure_reading)
 
-                # Move up to translate to next position
-                point = {self.axis: travel_dist}
-                self.addlog(
-                    self.A3200handle.Move(
-                        point=point,
-                        motiontype='incremental',
-                        speed=self.fast_speed,
-                        motionmode='cmd',
+                    # Move up to translate to next position
+                    point = {self.axis: travel_dist}
+                    self.addlog(
+                        self.A3200handle.Move(
+                            point=point,
+                            motiontype='incremental',
+                            speed=self.fast_speed,
+                            motionmode='cmd',
+                        )
                     )
-                )
 
             self.grid_reading = np.reshape(grid_results,(self.y_count,self.x_count))
         
