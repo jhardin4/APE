@@ -37,19 +37,18 @@ def RoboDaddyMonolith(apparatus, materials, tools):
     for tool in tools:
         details = {}
         # Gather important information for each kind of tool
-        if tool['type'] == 'Keyence_GT2_A3200':
+        if tool['type'] == 'Panasonic_HGS_A3200':
             # Default Settings
             details['A3200name'] = 'gantry'
             details['systemname'] = 'system'
             details['retract'] = True
-            details['zreturn'] = 5
             details['axis'] = tool['axis']
-            details['DOaxis'] = 'A'
+            details['DOaxis'] = 'X'
             details['DObit'] = 0
-            details['AIaxis'] = 'B'
-            details['AIchannel'] = 0
+            details['DIaxis'] = 'X'
+            details['DIbit'] = 1
 
-        if tool['type'] == 'IDS_ueye_3250CP2':
+        if tool['type'] == 'IDS_ueye':
             details['settle_time'] = 5
 
         apparatus.add_device_entry(tool['name'], tool['type'], details)
@@ -120,7 +119,7 @@ def RoboDaddyMonolith(apparatus, materials, tools):
 
     # Handle motion for each of the tools
     for tool in tools:
-        if tool['type'] == 'Keyence_GT2_A3200':
+        if tool['type'] == 'Panasonic_HGS_A3200':
             # Alignment information
             gantry[tool['name']] = {
                 'speed': 40,
@@ -138,7 +137,7 @@ def RoboDaddyMonolith(apparatus, materials, tools):
                 'B': -50,
             }
 
-        if tool['type'] == 'IDS_ueye_3250CP2':
+        if tool['type'] == 'IDS_ueye':
 
             # Alignment information
             gantry['camera'] = {'speed': 40, 'axismask': {'Z': tool['axis']}}
