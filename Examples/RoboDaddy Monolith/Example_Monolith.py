@@ -12,17 +12,17 @@ MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 
 materials = [{'test_material': 'A'}]
-
+# These are other tools that can be added in. Comment out the ones not used.
 tools = []
-tools.append({'name': 'TProbe', 'axis': 'D', 'type': 'Panasonic_HGS_A3200'})
-tools.append({'name': 'camera', 'axis': 'D', 'type': 'IDS_ueye'})
+# tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
+tools.append({'name': 'camera', 'axis': 'B', 'type': 'IDS_ueye_3250CP2'})
 AppBuilder(MyApparatus, materials, tools)
 
 # Define the rest of the apparatus
 mat0 = list(materials[0])[0]
 MyApparatus['devices']['n' + mat0]['descriptors'].append(mat0)
 MyApparatus['devices']['n' + mat0]['trace_height'] = 0.6
-MyApparatus['devices']['n' + mat0]['trace_width'] = 0.6
+MyApparatus['devices']['n' + mat0]['trace_width'] = 0.61
 MyApparatus['devices']['pump0']['descriptors'].append(mat0)
 MyApparatus['devices']['gantry']['default']['speed'] = 20 # change the slide default from 40 to 20
 MyApparatus['devices']['gantry']['n' + mat0]['speed'] = 2 # Calibration is on so this is overwritten
@@ -39,8 +39,9 @@ MyApparatus.Connect_All(simulation=True)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
 
+
 # Setup information
-MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}
+MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
 MyApparatus['information']['materials'][mat0]['do_speedcal'] = True
 MyApparatus['information']['materials'][mat0]['do_pumpcal'] = False
 MyApparatus['information']['ink calibration']['time'] = 60
@@ -61,9 +62,6 @@ TraySetup = Procedures.SampleTray_XY_Setup(MyApparatus, MyExecutor)
 TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)
 Planner = Procedures.Planner_Combinatorial(MyApparatus, MyExecutor)
 Camera = Procedures.Camera_Capture_ImageXY(MyApparatus,MyExecutor)
-#ProbeInitial = Procedures.Touch_Probe_A3200_Initialize(MyApparatus,MyExecutor)
-#ProbeInitial.Do()
-#ProbeCorrect = Procedures.Touch_Probe_A3200_MultiPtHeightCorrect(MyApparatus,MyExecutor)
 
 class Sample(Core.Procedure):
     def Prepare(self):
@@ -286,10 +284,6 @@ class Sample(Core.Procedure):
             )
             self.DoEproc(motionname, 'Run', {})
 
-       
-        # Probe surface of the glass slide for correction
-        #ProbeCorrect.Do()
-
         self.DoEproc(pumpname, 'Set', {'pressure':MyApparatus['devices']['pump0']['pressure']})
         printDotted(periods=[2.0,1.75,1.5,1.25,1.0,0.75,0.5])
         MyApparatus['devices']['pump0']['pumpon_time'] = 0.5  # Time from pump on to motion, if calibration is on so this is overwritten
@@ -297,13 +291,12 @@ class Sample(Core.Procedure):
         self.PrintTP.Do()
         printCrossing(cross_feeds=[1,5,25,100])
 
-        # Take picture following the print
-        Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':'Samples/mono_test.png','camera_name':'camera'})
-
 # Do the experiment
 AlignPrinter.Do({'primenoz': 'n' + mat0})
 CalInk.Do({'material': mat0})
-TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 10, 'yspacing': 0, 'ysamples': 0})
+TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 14, 'xsamples': 1, 'yspacing': 15, 'ysamples': 1})
 TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
+Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':'Samples\mono_test.png','camera_name':'camera'})
 MyApparatus.Disconnect_All()
+toolpath = TP_gen['toolpath'][0]
