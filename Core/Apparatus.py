@@ -3,8 +3,11 @@ from io import SEEK_END, SEEK_SET
 import Devices
 import json
 import time
+import uuid
 import AppTemplates
-
+import os
+import tarfile
+from Core import material
 
 class InvalidApparatusAddressException(Exception):
     pass
@@ -28,16 +31,25 @@ class Apparatus(dict):
         self.dependent_Devices = []
         self.logpath = 'Logs//'
         self.AppID = str(int(round(time.time(), 0)))
-        self.PLFirstWrite = True
+        self.AppUUID = str(uuid.uuid4())
+        self.run_name = ''
+
         self.timetest = 0
         self.starttime = 0
         self.app_units = ''
+        self.proclog_address = ''
 
     def Connect_All(self, simulation=False):
         self.simulation = simulation
-        ProcLogFileName = self.logpath + self.AppID + 'proclog.json'
-        self.ProcLogFile = open(ProcLogFileName, mode='w')
+        # Set up the logging files
+        self.ProcLogFileName = self.logpath + self.AppID + 'proclog.json'
         self.PLFirstWrite = True
+        self.dataPack_prep()
+        self.ProcLogFile = open(self.ProcLogFileName, mode='w')
+        self.proclog_address = self.ProcLogFileName
+        # Start the run ticket
+
+        
 
         for device in self['devices']:
             self['devices'][device]['Connected'] = False
@@ -128,7 +140,12 @@ class Apparatus(dict):
 
         # Connect the dependent devices
         self.Dep_Connects()
-        self.logApparatus()
+        self.logApparatus(prefix='initial')
+        # Note associated materials in run ticket
+        for mat in self['information']['material_library']:
+            names = self['information']['material_library'][mat]['names']
+            m_uuid = self['information']['material_library'][mat]['uuid']
+            self.AddTicketItem({'material_names':names, 'uuid':m_uuid})
 
     def Connect(self, deviceName):
         arguments = self.executor.getRequirements(
@@ -183,23 +200,17 @@ class Apparatus(dict):
                 raise Exception('Dependencies not found')
 
     def Disconnect(self, deviceName):
-        # if self['devices'][deviceName]['addresstype'] == 'pointer':
-        # deviceDisconnect = self.GetEproc(deviceName, 'Disconnect')
-        # deviceDisconnect.Do()
         if self['devices'][deviceName]['addresstype'] != '':
             self.DoEproc(deviceName, 'Disconnect', {})
-            # Remove the eprocs registered with the apparatus
-            # methodlist = self.findDeviceMethods(deviceName)
-            # for method in methodlist:
-            # self.removeEproc(deviceName, method)
             self['devices'][deviceName]['Connected'] = False
 
     def Disconnect_All(self, simulation=False):
         for device in self['devices']:
             self.Disconnect(device)
-        self.logApparatus()
+        self.logApparatus(prefix='final')
         if not self.PLFirstWrite:
-            self.ProcLogFile.close()
+            self.ProcLogFile.close()    
+        self.dataPack_make()
 
     def getValue(self, infoAddress=''):
         if infoAddress == '':
@@ -295,7 +306,7 @@ class Apparatus(dict):
 
         return foundDevices
 
-    def findDevice(self, reqs):
+    def findDevice(self, **reqs):
         devicesOld = ''
         devicesNew = []
         devicesTemp = []
@@ -329,64 +340,66 @@ class Apparatus(dict):
         elif len(devicesOld) == 0:
             return 'No devices met requirments'
 
-    def findDeviceMethods(self, device):
-        methodlist = []
-        for line in self['eproclist']:
-            if line['device'] == device:
-                methodlist.append(line['method'])
-        return methodlist
-
-    def GetEproc(self, device, method):
-        for line in self['eproclist']:
-            if line['device'] == device and line['method'] == method:
-                return line['handle']
-
-        return 'No matching elemental procedure found.'
-
-    def removeEproc(self, device, method):
-        found = False
-        for n in range(len(self['eproclist'])):
-            if not found:
-                if (
-                    self['eproclist'][n]['device'] == device
-                    and self['eproclist'][n]['method'] == method
-                ):
-                    self['eproclist'].pop(n)
-                    found = True
-        if not found:
-            print('Elemental procedure ' + method + ' of ' + device + ' not found.')
-
-    def LogProc(self, procName, information):
-        if information == 'start':
+    def LogProc(self, flag, procName, puuid, log='', reqs=''):
+        procLogLine = []
+        if flag == 'start':
             self.proclog_depthindex += 1
-        elif information == 'end':
-            self.proclog_depthindex -= 1
-        else:
-            info = self.safeCopy(information)
-            procLogLine = []
-
             for n in range(self.proclog_depthindex):
                 procLogLine.append('->')
+            s_reqs = self.safeCopy(reqs)
+            proc_entry = {'name': procName, 'uuid':puuid, 'requirements': s_reqs, 'start_time':time.time()}
+              
+        elif flag == 'end':
+            for n in range(self.proclog_depthindex):
+                procLogLine.append('->')
+            proc_entry = {'name': procName, 'uuid':puuid, 'end_time':time.time()}
+            if log != '':
+                proc_entry['e_log'] = log
+            self.proclog_depthindex -= 1
+            # print(log)
 
-            procLogLine.append(
-                {'name': procName, 'information': info, 'time': time.time()}
-            )
-            self.UpdateLog(procLogLine)
+        elif flag == 'report':
+            for n in range(self.proclog_depthindex):
+                procLogLine.append('->')
+            proc_entry = {'name': procName, 'uuid':puuid, 'report':log, 'r_time':time.time()}
+            
+        procLogLine.append(proc_entry)
+        self.UpdateLog(procLogLine)
+
+    def AddTicketItem(self, item_dict):
+        if 'start_ticket' in item_dict:
+            item_dict['start_ticket'] = time.time()
+        elif 'end_ticket' in item_dict:
+            item_dict['end_ticket'] = time.time()             
+        else:
+            item_dict['ticket_time'] = time.time()
+        self.UpdateTicket(item_dict)
+
+    def UpdateTicket(self, entry):
+        if self.RTFirstWrite:
+            json.dump([], self.TicketFile)
+            self.RTFirstWrite = False
+            eof = self.TicketFile.seek(0, SEEK_END)
+            self.TicketFile.seek(eof - 1, SEEK_SET)
+        else:
+            eof = self.TicketFile.seek(0, SEEK_END)
+            self.TicketFile.seek(eof - 1, SEEK_SET)
+            self.TicketFile.write(', ')
+
+        json.dump(entry, self.TicketFile)
+        self.TicketFile.write(']')
 
     def UpdateLog(self, entry):
+        # print(entry)
         if self.PLFirstWrite:
-            starttime = time.time()
             json.dump([], self.ProcLogFile)
             self.PLFirstWrite = False
             eof = self.ProcLogFile.seek(0, SEEK_END)
             self.ProcLogFile.seek(eof - 1, SEEK_SET)
-            self.timetest += time.time() - starttime
         else:
-            starttime = time.time()
             eof = self.ProcLogFile.seek(0, SEEK_END)
             self.ProcLogFile.seek(eof - 1, SEEK_SET)
             self.ProcLogFile.write(', ')
-            self.timetest += time.time() - starttime
 
         json.dump(entry, self.ProcLogFile)
         self.ProcLogFile.write(']')
@@ -451,12 +464,13 @@ class Apparatus(dict):
         else:
             return str(type(target))
 
-    def logApparatus(self, fname=None):
+    def logApparatus(self, fname=None, prefix=''):
         if not fname:
-            fname = self.logpath + str(int(round(time.time(), 0))) + 'Apparatus.json'
+            fname = self.logpath + str(int(round(time.time(), 0))) + prefix + 'Apparatus.json'
         jsonfile = open(fname, mode='w')
         json.dump(self.serialClone(), jsonfile, indent=2, sort_keys=True)
         jsonfile.close()
+        self.AddTicketItem({'ApparatusImage':fname})
 
     def importApparatus(self, fname=None):
         if not fname:
@@ -468,12 +482,17 @@ class Apparatus(dict):
             self['information'] = old_app_data['information']
 
     def DoEproc(self, device, method, details):
-        self.LogProc('eproc_' + device + '_' + method, 'start')
-        self.executor.execute(
-            [[{'devices': device, 'procedure': method, 'details': details}]]
-        )
-        self.LogProc('eproc_' + device + '_' + method, details)
-        self.LogProc('eproc_' + device + '_' + method, 'end')
+        procname = 'eproc_' + device + '_' + method
+        p_uuid = str(uuid.uuid4())
+        self.LogProc('start', procname, p_uuid, reqs=details)
+
+        try:
+            e_log = self.executor.execute(
+                [[{'devices': device, 'procedure': method, 'details': details}]]
+            )
+            
+        finally:  # makes sure depthindex is decreased on error
+            self.LogProc('end', procname, p_uuid, log=e_log)
 
     def createAppEntry(self, app_address):
         target = self
@@ -513,3 +532,122 @@ class Apparatus(dict):
         else:
             templateFunc = getattr(AppTemplates, template)
             templateFunc(self, *args, **kwargs)
+    def dataPack_prep(self):
+        #check if ticket already exists
+        main_file_list = os.listdir()
+        old_data = False
+        old_ticket = ''
+        for filename in main_file_list:
+            if filename.endswith('RunTicket.json'):
+                old_data = True
+                old_ticket = filename
+        # if old data exists, pack it up.
+        # THIS ONLY WORKS FOR ONE OLD TICKET!
+        self.RTFirstWrite = True
+        if old_data:
+            self.dataPack_make(ticket=old_ticket)
+        # Create new ticket
+        self.TicketFilename = self.AppID + 'RunTicket.json'
+        self.TicketFile = open(self.TicketFilename, mode='w')
+        self.RTFirstWrite = True
+        self.AddTicketItem({'start_ticket':''})
+        self.AddTicketItem({'proclog':self.ProcLogFileName})
+        self.AddTicketItem({'run_name':self.AppID + self.run_name})
+
+    def dataPack_make(self, ticket=''):
+        fname = str(int(round(time.time(), 0)))
+        
+        # Check to see if the ticket file is still open
+        if not self.RTFirstWrite:
+            self.AddTicketItem({'DataPack':fname})
+            self.AddTicketItem({'end_ticket':''})
+            self.TicketFile.close()
+        else:
+            self.TicketFile = open(ticket, mode='w+')
+            self.AddTicketItem({'DataPack':fname})
+            self.AddTicketItem({'end_ticket':''})
+            self.TicketFile.close()
+        
+        # Check for DataPacks Folder and create one if not there
+        if not os.path.exists('DataPacks'):
+            os.mkdir('DataPacks')
+        
+        # Create a folder for this specific pack
+        foldername = os.path.join('DataPacks', fname)
+        os.mkdir(foldername)
+        
+        # Make a Payload folder
+        pfolder = os.path.join(foldername,'Payload' + fname)
+        os.mkdir(pfolder)
+        
+        # Move Data and Logs into payload folder
+        copied_folders = ['Data', 'Logs']
+        excluded_files = ['readme.txt','.gitignore']
+        for folder in copied_folders:
+            fpath = os.path.join(os.getcwd(), folder)
+            new_fpath = os.path.join(os.getcwd(), pfolder, folder)
+            os.mkdir(new_fpath)
+            for root, dirs, files in os.walk(fpath):
+                for file in files:
+                    old_file = os.path.join(root, file)
+                    new_file = os.path.join(new_fpath, file)
+                    if file not in excluded_files:
+                        try:
+                            os.rename(old_file, new_file)
+                        except PermissionError:
+                            print(f'{old_file} or {new_file} is probably in use. Trying to close the log...')
+                            if hasattr(self.executor, 'close'):
+                                self.executor.loghandle.close()
+                                os.rename(old_file, new_file)
+                                print('Got it. No worries!')
+        
+        # Copy the scripts into an archive in the payload folder
+        APE_version = tarfile.open(pfolder + '\\APE_version.tar', mode='w')
+        copied_extensions = ('.py', '.ui', '.qml')
+        cwd = os.getcwd()
+        for root, dirs, files in os.walk(cwd):
+            # print(root, dirs, files)
+            for file in files:
+                rel_file_path = os.path.join(root.replace(cwd, ''), file)
+                if file.endswith(copied_extensions):
+                    APE_version.add(os.path.join(root, file), arcname = rel_file_path)
+            
+        APE_version.close()        
+        
+        # Move ticket into folder
+        main_file_list = os.listdir()
+        for filename in main_file_list:
+            if filename.endswith('RunTicket.json'):
+                ticket_file = filename
+        old_file = os.path.join(os.getcwd(), ticket_file)
+        new_file = os.path.join(os.getcwd(), foldername, ticket_file)
+        os.rename(old_file, new_file)
+        self._makeUpLoadPack(foldername)
+        self.proclog_address = os.path.join(pfolder, self.proclog_address)
+
+    def _makeUpLoadPack(self, folder):
+        # Assumes that folder does not end in \\.
+        UpLoadPack = tarfile.open(folder + 'UPLOAD_ME.tar', mode='w')
+        for root, dirs, files in os.walk(folder):
+            # print(root, dirs, files)
+            for file in files:
+                rel_file_path = root.replace(folder, '') + '\\' + file
+                UpLoadPack.add(os.path.join(root, file), arcname = rel_file_path)
+            
+        UpLoadPack.close()
+    
+    def addMaterial(self, m_name, mat_fname):
+        # Import the material from file
+        if 'material_library' in self['information']:
+            self['information']['material_library'][m_name] = material(file=mat_fname)
+        else:
+            self['information']['material_library'] = {m_name: material(file=mat_fname)}
+        # Confirm that m_name is in names list and add it if not, add it
+        new_material = self['information']['material_library'][m_name]
+        if m_name not in new_material['names']:
+            new_material['names'].append(m_name)
+        # Add the material properties in Apparatus
+        for prop in new_material['properties']:
+            self.createAppEntry(['information', 'materials', m_name, prop])
+            self.setValue(['information', 'materials', m_name, prop], new_material['properties'][prop]['value'])
+        

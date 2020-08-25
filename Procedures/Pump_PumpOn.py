@@ -16,7 +16,7 @@ class Pump_PumpOn(Procedure):
             'value': '',
             'desc': 'Point relative to reference position',
         }
-        self.requirements['name'] = {
+        self.requirements['pump_name'] = {
             'source': 'apparatus',
             'address': '',
             'value': '',
@@ -24,12 +24,8 @@ class Pump_PumpOn(Procedure):
         }
 
     def Plan(self):
-        pumpname = self.requirements['name']['value']
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        systemname = self.apparatus.findDevice(descriptors='system')
 
-        mid_time = self.requirements['mid_time']['value']
-        pumpon_time = self.requirements['pumpon_time']['value']
-
-        self.DoEproc(systemname, 'Dwell', {'dtime': mid_time})
-        self.DoEproc(pumpname, 'On', {})
-        self.DoEproc(systemname, 'Dwell', {'dtime': pumpon_time})
+        self.DoEproc(systemname, 'Dwell', {'dtime': self.mid_time})
+        self.DoEproc(self.pump_name, 'On', {})
+        self.DoEproc(systemname, 'Dwell', {'dtime': self.pumpon_time})

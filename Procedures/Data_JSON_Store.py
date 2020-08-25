@@ -32,12 +32,6 @@ class Data_JSON_Store(Procedure):
         }
 
     def Plan(self):
-        # Renaming useful pieces of informaiton
-        filename = self.requirements['filename']['value']
-        newentry = self.requirements['newentry']['value']
-        label = self.requirements['label']['value']
-        value = self.requirements['value']['value']
-
         # Retreiving necessary device names
 
         # Getting necessary eprocs
@@ -46,22 +40,23 @@ class Data_JSON_Store(Procedure):
 
         # Doing stuff
         try:
-            with open(filename, 'r') as TPjson:
+            with open(self.filename, 'r') as TPjson:
                 fdata = json.load(TPjson)
         except FileNotFoundError:
             fdata = []
-            with open(filename, 'w') as TPjson:
+            with open(self.filename, 'w') as TPjson:
                 json.dump(fdata, TPjson)
         values = []
-        if newentry:
-            values.append(value)
+        if self.newentry:
+            values.append(self.value)
             stime = time.time()
-            newdataline = {'time': stime, label: values}
+            newdataline = {'time': stime, self.label: values}
         else:
             newdataline = fdata.pop()
-            newdataline[label].append(value)
+            newdataline[self.label].append(self.value)
 
         fdata.append(newdataline)
 
-        with open(filename, 'w') as TPjson:
+        with open(self.filename, 'w') as TPjson:
             json.dump(fdata, TPjson)
+        self.apparatus.AddTicketItem({'data_file':self.filename})

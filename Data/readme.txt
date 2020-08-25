@@ -1,1 +1,1 @@
-This is a folder for logs and is not meant to be preserved in git
+This is a folder for data and is not meant to be preserved in git

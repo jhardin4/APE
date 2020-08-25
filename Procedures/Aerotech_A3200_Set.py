@@ -12,20 +12,19 @@ class Aerotech_A3200_Set(Procedure):
         }
 
     def Plan(self):
-        motionType = self.requirements['Type']['value']
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
         settinglist = {}
         settingTypes = self.apparatus.getValue(['devices', motionname])
-        if motionType not in settingTypes:
-            raise Exception(str(motionType) + ' not found under ' + motionname)
+        if self.Type not in settingTypes:
+            raise Exception(str(self.Type) + ' not found under ' + motionname)
         setReqs = self.executor.devicelist[motionname]['Address'].getRequirements(
             'Set_Motion'
         )
-        typeSettings = self.apparatus.getValue(['devices', motionname, motionType])
+        typeSettings = self.apparatus.getValue(['devices', motionname, self.Type])
         for req in setReqs:
             if req in typeSettings:
                 settinglist[req] = self.apparatus.getValue(
-                    ['devices', motionname, motionType, req]
+                    ['devices', motionname, self.Type, req]
                 )
 
         self.DoEproc(motionname, 'Set_Motion', settinglist)

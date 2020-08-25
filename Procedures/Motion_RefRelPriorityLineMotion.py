@@ -42,7 +42,7 @@ class Motion_RefRelPriorityLineMotion(Procedure):
         axismask = self.requirements['axismask']['value']
         priority = self.requirements['priority']['value']
 
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Assumes that reference points are in machine coordinates
         # Assumes that relative points are in tooltpath coordinates

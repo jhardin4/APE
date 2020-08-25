@@ -75,7 +75,7 @@ class Toolpath_Generate(Procedure):
         # Set up the parameters for the toolpath generator
         self.setParameters(parameters=parameters, generator=generator, dataArgs=dataArgs)
         # Run the toolpath generator
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        systemname = self.apparatus.findDevice(descriptors='system')
         temptarget = [0]
         self.DoEproc(
             systemname,
@@ -87,6 +87,7 @@ class Toolpath_Generate(Procedure):
             },
         )
         self.apparatus.setValue(target, temptarget)
+        self.printTP.requirements['target']['address'] = target
         self.printTP.Do({'newfigure': True})
 
     def setMaterial(self, material):
@@ -117,9 +118,9 @@ class Toolpath_Generate(Procedure):
         values = {}
         if parameters != '':
             values['parameters'] = parameters
-        if parameters != '':
+        if generator != '':
             values['generator'] = generator
-        if parameters != '':
+        if dataArgs != '':
             values['dataArgs'] = dataArgs
         self.GetRequirements(values)
         parameters = self.requirements['parameters']['value']

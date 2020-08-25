@@ -5,6 +5,7 @@ nodelog_ProcExec.txt
 nodelog_gui.txt
 nodelog_launcher.txt
 *.json
+*.tar
 
 ### IDEs
 .idea/
@@ -37,6 +38,7 @@ parts/
 sdist/
 var/
 wheels/
+DataPacks/
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/

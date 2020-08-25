@@ -29,11 +29,8 @@ class Aerotech_A3200_getPosition(Procedure):
         self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
 
     def Plan(self):
-        # Renaming useful pieces of informaiton
-        axisList = self.requirements['axisList']['value']
-        target = self.requirements['target']['value']
 
-        motionName = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionName = self.apparatus.findDevice(descriptors='motion')
         motionType = self.apparatus.getValue(['devices', motionName, 'addresstype'])
 
         # Retreiving necessary device names
@@ -41,22 +38,22 @@ class Aerotech_A3200_getPosition(Procedure):
         # Assign apparatus addresses to procedures
 
         # Doing stuff
-        details = {'axislist': axisList}
+        details = {'axislist': self.axisList}
         if motionType == 'pointer':
-            target = [0]
-            details['address'] = target
+            temp_target = [0]
+            details['address'] = temp_target
             details['addresstype'] = 'pointer'
         elif motionType == 'zmqNode':
-            details['address'] = {'global': 'appa', 'AppAddress': target}
+            details['address'] = {'global': 'appa', 'AppAddress': self.target}
             details['addresstype'] = 'zmqNode_AppAddress'
         # Handle the simulation response
         if self.apparatus.getSimulation():
-            message = 'What are simulation values for ' + str(axisList) + '?'
+            message = 'What are simulation values for ' + str(self.axisList) + '?'
             default = ''
             self.userinput.Do({'message': message, 'default': default})
             tempposition = self.userinput.response
             if tempposition == '':
-                tempposition = [0 for dim in axisList]
+                tempposition = [0 for dim in self.axisList]
             else:
                 tempposition = tempposition.replace('[', '')
                 tempposition = tempposition.replace(']', '')
@@ -67,7 +64,7 @@ class Aerotech_A3200_getPosition(Procedure):
 
             self.DoEproc(motionName, 'getPosition', details)
             if motionType == 'pointer':
-                self.response = target[0]
+                self.response = temp_target[0]
             elif motionType == 'zmqNode':
-                self.response = self.apparatus.getValue(target)
-        self.Report(string=self.response)
+                self.response = self.apparatus.getValue(self.target)
+        self.Report(self.response)

@@ -52,10 +52,10 @@ class User_InkCal_Measure(Procedure):
         ptime = self.requirements['time']['value']
 
         # FIND devices needed for procedure
-        motion = self.apparatus.findDevice({'descriptors': ['motion']})
-        system = self.apparatus.findDevice({'descriptors': ['system']})
-        _ = self.apparatus.findDevice({'descriptors': ['nozzle', material]})
-        pump = self.apparatus.findDevice({'descriptors': ['pump', material]})
+        motion = self.apparatus.findDevice(descriptors=['motion'])
+        system = self.apparatus.findDevice(descriptors=['system'])
+        _ = self.apparatus.findDevice(descriptors=['nozzle', material])
+        pump = self.apparatus.findDevice(descriptors=['pump', material])
 
         self.pmotion.requirements['axismask']['address'] = [
             'devices',
@@ -108,9 +108,9 @@ class User_InkCal_Measure(Procedure):
         # turn pumps on and off
         pressure = self.apparatus.getValue(['devices', pump, 'pressure'])
         self.DoEproc(pump, 'Set', {'pressure': pressure})
-        self.pumpon.Do({'name': pump})
+        self.pumpon.Do({'pump_name': pump})
         self.DoEproc(system, 'Dwell', {'dtime': ptime})
-        self.pumpoff.Do({'name': pump})
+        self.pumpoff.Do({'pump_name': pump})
 
         finalweightok = False
         while not finalweightok:
