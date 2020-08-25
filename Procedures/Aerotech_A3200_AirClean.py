@@ -42,10 +42,6 @@ class Aerotech_A3200_AirClean(Procedure):
         motionname = self.apparatus.findDevice({'descriptors': 'motion'})
         systemname = self.apparatus.findDevice({'descriptors': 'system'})
 
-        # Getting necessary eprocs
-        runmove = self.apparatus.GetEproc(motionname, 'Run')
-        dwell = self.apparatus.GetEproc(systemname, 'Dwell')
-
         # Assign apparatus addresses to procedures
         self.move.requirements['speed']['address'] = [
             'devices',
@@ -85,13 +81,18 @@ class Aerotech_A3200_AirClean(Procedure):
 
         # Actual motion in and out of nozzle cleaner
         self.motionset.Do({'Type': 'default'})
+        # Move up in Z to clear cleaner, then move into position
         self.pmove.Do(
             {
-                'relpoint': {'X': 0, 'Y': 0, 'Z': -depth},
-                'priority': [['X', 'Y'], ['Z']],
+                'relpoint': {'X': 0, 'Y': 0, 'Z': 0},
+                'priority': [['Z'],['X', 'Y']],
             }
         )
-        runmove.Do()
-        dwell.Do({'dtime': delay})
+        # Move down into cleaner using depth argument
+        self.move.Do({'relpoint': {'Z': -depth}})
+        self.DoEproc(motionname, 'Run', {})
+        # Pause in cleaner defined by delay argument
+        self.DoEproc(systemname, 'Dwell', {'dtime': delay})
+        # Move up and out of cleaner
         self.move.Do({'relpoint': {'Z': 0}})
-        runmove.Do()
+        self.DoEproc(motionname, 'Run', {})
