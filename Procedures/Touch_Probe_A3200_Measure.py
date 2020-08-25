@@ -27,6 +27,8 @@ class Touch_Probe_A3200_Measure(Procedure):
             'value': '',
             'desc': 'retract probe after measurement',
         }
+        # Initialize the Touch Probe here when procedure is instantiated.
+        self.DoEproc('TProbe', 'Initialize',{})
 
     def Plan(self):
         # Renaming useful pieces of informaiton
