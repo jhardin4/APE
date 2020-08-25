@@ -72,3 +72,5 @@ from Procedures.SampleTray_XY_Setup import SampleTray_XY_Setup  # noqa: F401
 from Procedures.User_Consol_Input import User_Consol_Input  # noqa: F401
 from Procedures.User_Consol_InputOptions import User_Consol_InputOptions  # noqa: F401
 from Procedures.User_StartUp import User_StartUp  # noqa: F401
+
+from Procedures.ROSEDA_TestMaterial import ROSEDA_TestMaterial  # noqa: F401

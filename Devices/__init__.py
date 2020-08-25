@@ -15,3 +15,4 @@ from Devices.VWR_Balance import VWR_Balance
 from Devices.Keyence_LS7010_A3200 import Keyence_LS7010_A3200
 from Devices.User_Consol import User_Consol  # noqa: F401
 from Devices.User_GUI import User_GUI  # noqa: F401
+from Devices.Roseda import Roseda

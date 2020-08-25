@@ -40,17 +40,11 @@ class Camera_Capture_ImageXY(Procedure):
         self.measure = Procedures.Camera_Capture_Image(self.apparatus, self.executor)
 
     def Plan(self):
-        # Renaming useful pieces of informaiton
-        point = self.requirements['point']['value']
-        file = self.requirements['file']['value']
-        cname = self.requirements['camera_name']['value']
-        stime = self.requirements['settle_time']['value']
-
         # Retreiving necessary device names
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors= 'motion')
 
         # Retrieving information from apparatus
-        zaxis = self.apparatus.getValue(['devices', motionname, cname, 'axismask'])['Z']
+        zaxis = self.apparatus.getValue(['devices', motionname, self.camera_name, 'axismask'])['Z']
 
         # Assign apparatus addresses to procedures
         self.move.requirements['speed']['address'] = [
@@ -62,7 +56,7 @@ class Camera_Capture_ImageXY(Procedure):
         self.move.requirements['axismask']['address'] = [
             'devices',
             motionname,
-            cname,
+            self.camera_name,
             'axismask',
         ]
         self.move.requirements['refpoint']['address'] = [
@@ -80,13 +74,13 @@ class Camera_Capture_ImageXY(Procedure):
         self.pmove.requirements['axismask']['address'] = [
             'devices',
             motionname,
-            cname,
+            self.camera_name,
             'axismask',
         ]
         self.pmove.requirements['refpoint']['address'] = [
             'information',
             'alignments',
-            cname + '@start',
+            self.camera_name + '@start',
         ]
 
         # Doing stuff
@@ -94,9 +88,10 @@ class Camera_Capture_ImageXY(Procedure):
         self.move.Do()
         self.pmove.Do(
             {
-                'relpoint': {'X': point['X'], 'Y': point['Y']},
+                'relpoint': {'X': self.point['X'], 'Y': self.point['Y']},
                 'priority': [['X', 'Y'], ['Z']],
             }
         )
         self.DoEproc(motionname, 'Run', {})
-        self.measure.Do({'file': file, 'settle_time':stime, 'camera_name': cname})
+        self.measure.Do({'file': self.file, 'settle_time':self.settle_time, 'camera_name': self.camera_name})
+        self.apparatus.AddTicketItem({'image':self.file})

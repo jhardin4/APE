@@ -22,10 +22,10 @@ class EndofMotion(Procedure):
         materialname = self.requirements['motion']['value']['material']
 
         # Retreiving necessary device names
-        pumpname = self.apparatus.findDevice({'descriptors': ['pump', materialname]})
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        pumpname = self.apparatus.findDevice(descriptors=['pump', materialname])
+        motionname = self.apparatus.findDevice(descriptors='motion')
         nozzlename = self.apparatus.findDevice(
-            {'descriptors': ['nozzle', materialname]}
+            descriptors=['nozzle', materialname]
         )
 
         # Assign apparatus addresses to procedures
@@ -75,7 +75,7 @@ class EndofMotion(Procedure):
         self.DoEproc(motionname, 'LogData_Stop', {})
         self.DoEproc(motionname, 'Run', {})  # Run the motion up to this point
         if pumpname != 'No devices met requirments':
-            self.pumpoff.Do({'name': pumpname})
+            self.pumpoff.Do({'pump_name': pumpname})
         self.motionset.Do({'Type': 'default'})
         self.DoEproc(motionname, 'Move', {'point': point, 'speed': speed})
         self.DoEproc(motionname, 'Run', {})

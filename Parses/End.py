@@ -15,7 +15,7 @@ class End(Procedure):
         # Renaming useful pieces of informaiton
 
         # Retreiving necessary device names
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Assign apparatus addresses to procedures
         self.pmove.requirements['speed']['address'] = [

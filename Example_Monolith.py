@@ -7,9 +7,12 @@ import Core
 import Procedures
 from AppTemplates.FlexPrinterMonolith import FlexPrinterMonolith as AppBuilder
 
+import json
+
 MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
+MyApparatus.run_name = 'Example'
 
 materials = [{'test_material': 'ZZ1'}]
 # These are other tools that can be added in. Comment out the ones not used.
@@ -17,9 +20,9 @@ tools = []
 # tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
 # tools.append({'name': 'camera', 'axis': 'ZZ4', 'type': 'IDS_ueye'})
 AppBuilder(MyApparatus, materials, tools)
-
 # Define the rest of the apparatus
 mat0 = list(materials[0])[0]
+MyApparatus.addMaterial(mat0, 'Materials//SE1700.json')
 MyApparatus['devices']['n' + mat0]['descriptors'].append(mat0)
 MyApparatus['devices']['n' + mat0]['trace_height'] = 0.1
 MyApparatus['devices']['n' + mat0]['trace_width'] = 0.3
@@ -41,10 +44,8 @@ information = MyApparatus['information']
 
 
 # Setup information
-MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
 MyApparatus['information']['materials'][mat0]['do_speedcal'] = True
 MyApparatus['information']['materials'][mat0]['do_pumpcal'] = False
-MyApparatus['information']['ink calibration']['time'] = 60
 
 # Setup toolpath generation and run a default
 GenTP = Procedures.Toolpath_Generate(MyApparatus, MyExecutor)
@@ -100,4 +101,6 @@ TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'Samp
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
 MyApparatus.Disconnect_All()
 toolpath = TP_gen['toolpath'][0]
+with open(MyApparatus.proclog_address) as p_file:
+    proclog = json.load(p_file)
 #toolpath_parsed = tpt.parse_endofmotion(toolpath, 1E-12)

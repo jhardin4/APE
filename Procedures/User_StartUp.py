@@ -113,7 +113,9 @@ class User_StartUp(Procedure):
 
         with open('Logs/' + str(int(round(time.time(), 0))) + filename, 'w') as TPjson:
             json.dump(questions, TPjson)
-
+        
+        # Note the artifact creation in the run ticket
+        self.apparatus.AddTicketItem({'start_data':'Logs/' + str(int(round(time.time(), 0))) + filename})
     def PrintInfo(self, information):
         printstr = ''
         for info in information:

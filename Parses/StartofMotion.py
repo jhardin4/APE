@@ -38,10 +38,10 @@ class StartofMotion(Procedure):
 
         # Retreiving necessary device names
         nozzlename = self.apparatus.findDevice(
-            {'descriptors': ['nozzle', materialname]}
+            descriptors=['nozzle', materialname]
         )
-        pumpname = self.apparatus.findDevice({'descriptors': ['pump', materialname]})
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        pumpname = self.apparatus.findDevice(descriptors= ['pump', materialname])
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Assign apparatus addresses to procedures
         self.pumpon.requirements['pumpon_time']['address'] = [

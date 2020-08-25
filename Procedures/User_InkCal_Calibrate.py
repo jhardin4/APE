@@ -37,6 +37,9 @@ class User_InkCal_Calibrate(Procedure):
         # Do stuff
         # Handle the first call of a calibration on a particular material
         # This involves choosing to calibrate or not and whether to make a new file
+        self.apparatus.createAppEntry(['information', 'materials', material, 'calibrated'])
+        if self.apparatus.getValue(['information', 'materials', material, 'calibrated']) == {}:
+            self.apparatus.setValue(['information', 'materials', material, 'calibrated'], False)
         if not self.apparatus.getValue(
             ['information', 'materials', material, 'calibrated']
         ):

@@ -10,13 +10,14 @@ class Executor(ApeInterface):
         self.devicelist = {}
         self.log = ''
         self.logaddress = str(int(round(time.time(), 0))) + 'log.txt'
-        self.logging = True
+        self.logging = False
         self.debug = False
         self.ready4next = True
         self.node = node
         self.prevDevice = ''
         self.curDevice = ''
-        self.loghandle = open('Logs/' + self.logaddress, mode='w')
+        if self.logging:
+            self.loghandle = open('Logs/' + self.logaddress, mode='w')
 
     def execute(self, eproclist):
         # This could take a list of multiple lists of eprocs but typically it
@@ -29,7 +30,7 @@ class Executor(ApeInterface):
                 #     pass
                 # it is important for the listen to be in the loop to
                 # ensure that there is a way out
-                self.Send(eproc)
+                return self.Send(eproc)
 
     def loadDevice(self, devName, devAddress, devAddressType):
         self.devicelist[devName] = {}
@@ -93,8 +94,9 @@ class Executor(ApeInterface):
                         )(**eproc['details'])
 
                     self.log += '\n'
-
+                    oldLog = self.log
                     self.logResponse(self.log)
+                    return oldLog
 
                 except Exception:
                     print('The following line failed to send:\n' + str(eproc))
@@ -114,7 +116,9 @@ class Executor(ApeInterface):
 
                 self.log += '\n'
 
+                oldLog = self.log
                 self.logResponse(self.log)
+                return oldLog
 
         elif self.devicelist[eproc['devices']]['AddressType'] == 'zmqNode':
             self.ready4next = False
@@ -140,7 +144,7 @@ class Executor(ApeInterface):
         if self.logging:
             self.loghandle.write(str(message))
             self.loghandle.flush()
-            self.log = ''
+        self.log = ''
 
     def getDependencies(self, device, address):
         if address == '':

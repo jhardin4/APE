@@ -21,7 +21,7 @@ class Keyence_GT2_SPHeightCorrect_Initialize(Procedure):
         o_starts = self.apparatus['information']['SPHeightCorrect']['original @starts']
 
         # Retreiving necessary device names
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Getting necessary eprocs
 

@@ -33,15 +33,15 @@ class ChangeMat(Procedure):
         endmotion = self.requirements['endmotion']['value']
 
         # Retreiving necessary device names
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
         endnozzle = self.apparatus.findDevice(
-            {'descriptors': ['nozzle', endmotion['material']]}
+            descriptors = ['nozzle', endmotion['material']]
         )
         startpump = self.apparatus.findDevice(
-            {'descriptors': ['pump', startmotion['material']]}
+            descriptors=['pump', startmotion['material']]
         )
         endpump = self.apparatus.findDevice(
-            {'descriptors': ['pump', endmotion['material']]}
+            descriptors=['pump', endmotion['material']]
         )
 
         # Assign apparatus addresses to procedures

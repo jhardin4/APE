@@ -37,7 +37,7 @@ class User_Consol_Input(Procedure):
         default = self.requirements['default']['value']
         target = self.requirements['target']['value']
 
-        console_name = self.apparatus.findDevice({'descriptors': 'consol'})
+        console_name = self.apparatus.findDevice(descriptors='consol')
         console_type = self.apparatus.getValue(['devices', console_name, 'addresstype'])
 
         # Retrieving necessary device names
@@ -61,4 +61,4 @@ class User_Consol_Input(Procedure):
             self.response = target[0]
         elif console_type == 'zmqNode':
             self.response = self.apparatus.getValue(target)
-        self.Report(string=self.response)
+        self.Report(self.response)

@@ -35,7 +35,7 @@ class Motion_RefRelLinearMotion(Procedure):
         speed = self.requirements['speed']['value']
         axismask = self.requirements['axismask']['value']
 
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Assumes that reference points are in machine coordinates
         # Assumes that relative points are in tooltpath coordinates
