@@ -70,7 +70,7 @@ class EndofMotion(Procedure):
             else:
                 pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
             self.DoEproc(pumpname, 'Set', {'pressure': pressure})
-            self.pumpon.Do({'name': pumpname})
+            self.pumpon.Do({'pump_name': pumpname})
         # End data collection
         self.DoEproc(motionname, 'LogData_Stop', {})
         self.DoEproc(motionname, 'Run', {})  # Run the motion up to this point
