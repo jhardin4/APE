@@ -113,12 +113,6 @@ class Panasonic_HGS_A3200(Sensor):
             'address': '',
             'desc': 'starting position of scan (lower left)',
         }
-        self.requirements['grid']['start_point'] = {
-            'value': '',
-            'source': 'apparatus',
-            'address': '',
-            'desc': 'starting position of scan (lower left pos)',
-        }
         self.requirements['grid']['x_length'] = {
             'value': '',
             'source': 'apparatus',
@@ -185,7 +179,8 @@ class Panasonic_HGS_A3200(Sensor):
         systemaddress='',
     ):
         self.descriptors.append(A3200name)
-        self.A3200handle = A3200address
+        #self.A3200handle = A3200address
+        self.A3200handle = self.checkDependencies(A3200name, A3200address)
         self.axis = axis
         self.DOaxis = DOaxis
         self.DObit = DObit
@@ -195,7 +190,7 @@ class Panasonic_HGS_A3200(Sensor):
         self.systemhandle = systemaddress
 
         self.addlog(
-            'Keyence Touchprobe using '
+            'Panasonic Touchprobe using '
             + A3200name
             + ' using '
             + str(self.DOaxis)
@@ -293,6 +288,7 @@ class Panasonic_HGS_A3200(Sensor):
         self.latest_reading = result
         self.StoreMeasurement(address, addresstype, result)
         self.addlog('Displacement Sensor ' + self.name + ' measured a position of ' + str(result))
+        return self.returnlog()
 
     def retract(self):
         '''
@@ -316,7 +312,7 @@ class Panasonic_HGS_A3200(Sensor):
         )
         self.extended = True
 
-    def grid(self, start_point, x_length, y_length, x_count, y_count, address='', addresstype='', travel_dist=5):
+    def Grid(self, start_point, x_length, y_length, x_count, y_count, address='', addresstype='', travel_dist=5):
         '''
         Take grid of measurements.
         '''
