@@ -17,13 +17,12 @@ class Panasonic_HGS_A3200(Sensor):
         
         # Parameters defining probe behaviour
         self.fast_speed = 10
-        self.slow_speed = 1
+        self.slow_speed = 2
         self.backstep_speed = 0.1
-        self.backstep_dist = 0.5
+        self.backstep_dist = 0.15
         self.measure_speed = 0.01
         self.extend_delay = 2
         self.reading_gvariable = 4
-        self.move_to_floor = -200
         self.latest_reading = None
 
         # Variables to store results
@@ -186,8 +185,9 @@ class Panasonic_HGS_A3200(Sensor):
         self.DObit = DObit
         self.DIaxis = DIaxis
         self.DIbit = DIbit
-        self.systemname = systemname
-        self.systemhandle = systemaddress
+        #self.systemname = systemname
+        #self.systemhandle = systemaddress
+        self.systemhandle = self.checkDependencies(systemname, systemaddress)
 
         self.addlog(
             'Panasonic Touchprobe using '
@@ -212,10 +212,10 @@ class Panasonic_HGS_A3200(Sensor):
         if not self.simulation:
             # Probe input setup
             # Need to figure out how to get axis mask here
-            self.A3200handle.cmd_exe("PROBE INPUT PROBE_INPUT_DRIVE_DIGITAL X " + str(self.DIbit))
+            self.A3200handle.sendCommands("PROBE INPUT PROBE_INPUT_DRIVE_DIGITAL X " + str(self.DIbit),task=1)
             self.addlog('Probe input set to axis ' + str(self.DIaxis) + ' and bit ' + str(self.DIbit))
             # Probe mode setting
-            self.A3200handle.cmd_exe("PROBE MODE PROBE_SW_MODE 1 $global[{}]".format(self.reading_gvariable))
+            self.A3200handle.sendCommands("PROBE MODE PROBE_SW_MODE 1 $global[{}]".format(self.reading_gvariable),task=1)
             self.addlog('Probe mode set to 1 with output saved to $global[{}]'.format(self.reading_gvariable))
         else:
             self.addlog('Initialization done.')
@@ -230,54 +230,22 @@ class Panasonic_HGS_A3200(Sensor):
             self.extend()
             self.addlog(self.systemhandle.Dwell(dtime= self.extend_delay))
             
-            # Start monitoring probe
-            self.A3200handle.cmd_exe("PROBE ON {}".format(self.axis))
+            # Start monitoring probe and move down
+            self.A3200handle.sendCommands("PROBE ON {0}\nFREERUN {0} -{1}\nWAIT ((TASKSTATUS(DATAITEM_TaskStatus0) & TASKSTATUS0_ProbeCycle) == 0) -1".format(self.axis,self.slow_speed),task=1)
             self.addlog('Probe monitoring turned on for axis ' + self.axis)
-
-            # Slowly move probe down, it will stop when probe fault is triggered
-            point = {self.axis: self.move_to_floor}
-            self.addlog(
-                self.A3200handle.Move(
-                    point=point,
-                    motiontype='incremental',
-                    speed=self.slow_speed,
-                    motionmode='cmd',
-                )
-            )
-
-            # Waits for the probe input to capture and write the axis positions.
-            self.A3200handle.cmd_exe("WAIT ((TASKSTATUS(DATAITEM_TaskStatus0) & TASKSTATUS0_ProbeCycle) == 0) -1")      
 
             # Backstep, moving up then back down again for slower measurement
-            point = {self.axis: self.backstep_dist}
-            self.addlog(
-                self.A3200handle.Move(
-                    point=point,
-                    motiontype='incremental',
-                    speed=self.backstep_speed,
-                    motionmode='cmd',
-                )
-            )
+            self.A3200handle.sendCommands("G91\nG01 {0}{1} F{2}\nG90".format(self.axis,self.backstep_dist,self.backstep_speed),task=1)
 
-            # Turn on probe monitoring again
-            self.A3200handle.cmd_exe("PROBE ON {}".format(self.axis))
+            # Turn on probe monitoring again and move down slower
+            self.A3200handle.sendCommands("PROBE ON {0}\nFREERUN {0} -{1}\nWAIT ((TASKSTATUS(DATAITEM_TaskStatus0) & TASKSTATUS0_ProbeCycle) == 0) -1".format(self.axis,self.measure_speed),task=1)
             self.addlog('Probe monitoring turned on for axis ' + self.axis)
+            
+            # Turn off probe monitoring
+            self.A3200handle.sendCommands("PROBE OFF",task=1)
 
-            # Slowly move probe down rest of the way, will stop when triggered
-            point = {self.axis: self.move_to_floor}
-            self.addlog(
-                self.A3200handle.Move(
-                    point=point,
-                    motiontype='absolute',
-                    speed=self.measure_speed,
-                    motionmode='cmd',
-                )
-            )
-
-            # Waits for the probe input to capture and write the axis positions.
-            self.A3200handle.cmd_exe("WAIT ((TASKSTATUS(DATAITEM_TaskStatus0) & TASKSTATUS0_ProbeCycle) == 0) -1")      
-
-            result = self.A3200handle.get_global_variable(self.reading_gvariable)
+            # Read result from temp global variable
+            result = self.A3200handle.handle.get_global_variable(self.reading_gvariable)[0]
         else:
             result = float(input('What is the expected height?'))
 
@@ -405,15 +373,15 @@ class Panasonic_HGS_A3200(Sensor):
         Load and enable calibration table on A3200 controller.
         '''
         # Load calibration table to controller
-        self.A3200handle.cmd_exe('LOADCALFILE "{}", 2D_CAL'.format(infile))
+        self.A3200handle.sendCommands('LOADCALFILE "{}", 2D_CAL'.format(infile),task=1)
         self.addlog('2D calibration table at ' + infile + ' loaded to controller.')
         # Enable calibration table
-        self.A3200handle.cmd_exe('CALENABLE 2D')
+        self.A3200handle.sendCommands('CALENABLE 2D',task=1)
         self.addlog('2D calibration table has been enabled.')
 
     def disable_cal_table(self):
         '''
         Disable calibration table on A3200 controller.
         '''
-        self.A3200handle.cmd_exe('CALDISABLE 2D')
+        self.A3200handle.sendCommands('CALDISABLE 2D',task=1)
         self.addlog('2D calibration table has been disabled.')

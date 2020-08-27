@@ -53,29 +53,6 @@ class Touch_Probe_A3200_MeasureXY(Procedure):
         # Retreiving necessary device names
         motionname = self.apparatus.findDevice(descriptors='motion')
 
-        # Retrieving information from apparatus
-        zaxis = self.apparatus.getValue(['devices', motionname, 'TProbe', 'axismask'])[
-            'Z'
-        ]
-        # Assign apparatus addresses to procedures
-        self.move.requirements['speed']['address'] = [
-            'devices',
-            motionname,
-            'default',
-            'speed',
-        ]
-        self.move.requirements['axismask']['address'] = [
-            'devices',
-            motionname,
-            'TProbe',
-            'axismask',
-        ]
-        self.move.requirements['refpoint']['address'] = [
-            'information',
-            'alignments',
-            'safe' + zaxis,
-        ]
-
         self.pmove.requirements['speed']['address'] = [
             'devices',
             motionname,
@@ -96,11 +73,10 @@ class Touch_Probe_A3200_MeasureXY(Procedure):
 
         # Doing stuff
         self.motionset.Do({'Type': 'default'})
-        self.move.Do()
         self.pmove.Do(
             {
                 'relpoint': {'X': point['X'], 'Y': point['Y']},
-                'priority': [['X', 'Y'], ['Z']],
+                'priority': [['Z'],['X', 'Y']],
             }
         )
         self.DoEproc(motionname, 'Run', {})

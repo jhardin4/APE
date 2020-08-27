@@ -26,6 +26,7 @@ from Procedures.Pump_PumpOff import Pump_PumpOff  # noqa: F401
 #from Procedures.Keyence_GT2_SPHeightCorrect_Initialize import Keyence_GT2_SPHeightCorrect_Initialize
 from Procedures.Touch_Probe_A3200_Measure import Touch_Probe_A3200_Measure
 from Procedures.Touch_Probe_A3200_MeasureXY import Touch_Probe_A3200_MeasureXY
+from Procedures.Touch_Probe_A3200_MultiPtHeightCorrect import Touch_Probe_A3200_MultiPtHeightCorrect
 from Procedures.Aerotech_A3200_AirClean import Aerotech_A3200_AirClean
 
 # User input related Procedures

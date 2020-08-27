@@ -77,14 +77,12 @@ class Touch_Probe_A3200_Measure(Procedure):
         temp_target = [0]
         self.DoEproc('TProbe', 'Measure', {'address': temp_target, 'addresstype': 'pointer', 'retract': retract})
         self.apparatus.setValue(self.target,temp_target)
-
+        
         # Move away from surface after measuring
         self.DoEproc(motionname, 'Set_Motion', {'RelAbs': 'Rel', 'motionmode': 'cmd'})
         self.move.Do(
             {
-                'motiontype': 'linear',
-                'motionmode': 'cmd',
-                'point': {zaxis: zreturn},
+                'relpoint': {zaxis: zreturn},
                 'speed': speed,
             }
         )

@@ -54,10 +54,10 @@ MyApparatus['devices']['pump0']['pumpoff_time'] = 1.0  # time from end-arrival t
 MyApparatus['devices']['pump0']['pumpres_time'] = 0.0
 MyApparatus['devices']['pump0']['pressure'] = 10
 MyApparatus['devices']['pump0']['vacuum'] = 0
-MyApparatus['devices']['pump0']['COM'] = 4
+MyApparatus['devices']['pump0']['COM'] = 3
 
 # Connect to all the devices in the setup
-MyApparatus.Connect_All(simulation=True)
+MyApparatus.Connect_All(simulation=False)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
 
@@ -79,23 +79,22 @@ TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)
 class Sample(Core.Procedure):
     def Prepare(self):
         #self.name='Sample'
-        self.ProbeCorrect = Procedures.Touch_Probe_A3200_MeasureXY(MyApparatus,MyExecutor)
+        self.ProbeCorrect = Procedures.Touch_Probe_A3200_MultiPtHeightCorrect(MyApparatus,MyExecutor)
         self.Camera = Procedures.Camera_Capture_ImageXY(MyApparatus,MyExecutor)
         self.Cleaner = Procedures.Aerotech_A3200_AirClean(MyApparatus,MyExecutor)
         self.testMaterial = Procedures.ROSEDA_TestMaterial(MyApparatus, MyExecutor)
         self.rparameters = Make_TPGen_Data(mat0)
 
     def Plan(self):
-        self.ProbeCorrect.Do({'point':{'X':3*25/2,'Y':2*25/2},'retract':True,'zreturn':5})
+        self.ProbeCorrect.Do({'start_point':{'X':0,'Y':0},'x_length':75,'y_length':50,'x_count':4,'y_count':3})
         #self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
-        self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
-        self.Cleaner.Do({'nozzlename':'ntest_material','depth':5,'delay':5})
-        #import ipdb; ipdb.set_trace()
+        #self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
+        #self.Cleaner.Do({'nozzlename':'ntest_material','depth':5,'delay':5})
 
 # Do the experiment
 #startUp.Do({'filename': 'start_up.json'})
 AlignPrinter.Do({'primenoz': 'n' + mat0})
-TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 10, 'yspacing': 0, 'ysamples': 1})
+TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 5, 'yspacing': 0, 'ysamples': 1})
 TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
 
@@ -103,8 +102,3 @@ MyApparatus.Disconnect_All()
 
 with open(MyApparatus.proclog_address) as p_file:
     proclog = json.load(p_file)
-
-#import ipdb; ipdb.set_trace()
-print(MyApparatus['information']['ProcedureData']['Touch_Probe_Measurement'])
-
-pass
