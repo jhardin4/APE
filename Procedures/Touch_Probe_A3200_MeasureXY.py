@@ -2,17 +2,35 @@ from Core import Procedure
 import Procedures.Aerotech_A3200_Set
 import Procedures.Motion_RefRelLinearMotion
 import Procedures.Motion_RefRelPriorityLineMotion
-import Procedures.Touch_Probe_A3200_Measure
+import Procedures.Touch_Probe_A3200_MeasureXY
 
 
 class Touch_Probe_A3200_MeasureXY(Procedure):
-    '''
-    The idea behind this general touch probe procedure is to enable functionality
-    with both the Keyence_GT2 and Panasonic_HGS displacmenet sensors in addition
-    to future possible sensors.
-    '''
     def Prepare(self):
         self.name = 'Touch_Probe_A3200_MeasureXY'
+        self.requirements['zreturn'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'how high to return after measurement',
+        }
+        self.requirements['retract'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'retract probe after measurement',
+        }
+        self.requirements['target'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': [
+                'information',
+                'ProcedureData',
+                'Touch_Probe_Measurement',
+                'result',
+            ],
+            'desc': 'AppAddress where the result is stored',
+        }
         self.requirements['point'] = {
             'source': 'apparatus',
             'address': '',
@@ -39,10 +57,6 @@ class Touch_Probe_A3200_MeasureXY(Procedure):
         zaxis = self.apparatus.getValue(['devices', motionname, 'TProbe', 'axismask'])[
             'Z'
         ]
-
-        # Getting necessary eprocs
-        runmove = self.apparatus.GetEproc(motionname, 'Run')
-
         # Assign apparatus addresses to procedures
         self.move.requirements['speed']['address'] = [
             'devices',
@@ -60,18 +74,6 @@ class Touch_Probe_A3200_MeasureXY(Procedure):
             'information',
             'alignments',
             'safe' + zaxis,
-        ]
-
-        self.measure.requirements['address']['address'] = ['information', 'height_data']
-        self.measure.requirements['zreturn']['address'] = [
-            'devices',
-            'TProbe',
-            'zreturn',
-        ]
-        self.measure.requirements['retract']['address'] = [
-            'devices',
-            'TProbe',
-            'retract',
         ]
 
         self.pmove.requirements['speed']['address'] = [
@@ -101,5 +103,5 @@ class Touch_Probe_A3200_MeasureXY(Procedure):
                 'priority': [['X', 'Y'], ['Z']],
             }
         )
-        runmove.Do()
-        self.measure.Do()
+        self.DoEproc(motionname, 'Run', {})
+        self.measure.Do({'zreturn':self.zreturn, 'retract':self.retract})

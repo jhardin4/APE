@@ -1,4 +1,5 @@
 from Core import Procedure
+import Procedures.Motion_RefRelLinearMotion
 
 
 class Touch_Probe_A3200_Measure(Procedure):
@@ -9,12 +10,6 @@ class Touch_Probe_A3200_Measure(Procedure):
     '''
     def Prepare(self):
         self.name = 'Touch_Probe_A3200_Measure'
-        self.requirements['address'] = {
-            'source': 'apparatus',
-            'address': '',
-            'value': '',
-            'desc': 'where to store result',
-        }
         self.requirements['zreturn'] = {
             'source': 'apparatus',
             'address': '',
@@ -27,14 +22,28 @@ class Touch_Probe_A3200_Measure(Procedure):
             'value': '',
             'desc': 'retract probe after measurement',
         }
+        self.requirements['target'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': [
+                'information',
+                'ProcedureData',
+                'Touch_Probe_Measurement',
+                'result',
+            ],
+            'desc': 'AppAddress where the result is stored',
+        }
+        # Create the Apparatus entry
+        self.apparatus.createAppEntry(self.requirements['target']['value'])
+        
         # Initialize the Touch Probe here when procedure is instantiated.
         self.DoEproc('TProbe', 'Initialize',{})
+        self.move = Procedures.Motion_RefRelLinearMotion(self.apparatus, self.executor)
 
     def Plan(self):
         # Renaming useful pieces of informaiton
         retract = self.requirements['retract']['value']
         zreturn = self.requirements['zreturn']['value']
-        address = self.requirements['address']['value']
 
         # Retreiving necessary device names
         motionname = self.apparatus.findDevice(descriptors='motion')
@@ -45,17 +54,33 @@ class Touch_Probe_A3200_Measure(Procedure):
         ]
         speed = self.apparatus.getValue(['devices', motionname, 'default', 'speed'])
 
-        # Getting necessary eprocs
-        measure = self.apparatus.GetEproc('TProbe', 'Measure')
-        setmove = self.apparatus.GetEproc(motionname, 'Set_Motion')
-        move = self.apparatus.GetEproc(motionname, 'Move')
-
         # Assign apparatus addresses to procedures
+        self.move.requirements['speed']['address'] = [
+            'devices',
+            motionname,
+            'default',
+            'speed',
+        ]
+        self.move.requirements['axismask']['address'] = [
+            'devices',
+            motionname,
+            'TProbe',
+            'axismask',
+        ]
+        self.move.requirements['refpoint']['address'] = [
+            'information',
+            'alignments',
+            'safe' + zaxis,
+        ]
+
+        # Take measurement
+        temp_target = [0]
+        self.DoEproc('TProbe', 'Measure', {'address': temp_target, 'addresstype': 'pointer', 'retract': retract})
+        self.apparatus.setValue(self.target,temp_target)
 
         # Move away from surface after measuring
-        measure.Do({'address': address, 'addresstype': 'pointer', 'retract': retract})
-        setmove.Do({'RelAbs': 'Rel', 'motionmode': 'cmd'})
-        move.Do(
+        self.DoEproc(motionname, 'Set_Motion', {'RelAbs': 'Rel', 'motionmode': 'cmd'})
+        self.move.Do(
             {
                 'motiontype': 'linear',
                 'motionmode': 'cmd',
@@ -63,4 +88,5 @@ class Touch_Probe_A3200_Measure(Procedure):
                 'speed': speed,
             }
         )
-        setmove.Do({'RelAbs': 'Abs', 'motionmode': 'cmd'})
+        self.DoEproc(motionname, 'Run', {})
+        self.DoEproc(motionname, 'Set_Motion', {'RelAbs': 'Abs', 'motionmode': 'cmd'})
