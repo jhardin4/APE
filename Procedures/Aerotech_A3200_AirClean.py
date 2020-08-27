@@ -23,7 +23,7 @@ class Aerotech_A3200_AirClean(Procedure):
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'How long to wait in the cleaning vessel',
+            'desc': 'How long to wait between swirls',
         }
 
         self.move = Procedures.Motion_RefRelLinearMotion(self.apparatus, self.executor)
@@ -34,13 +34,13 @@ class Aerotech_A3200_AirClean(Procedure):
 
     def Plan(self):
         # Renaming useful informaiton
-        nozzlename = self.requirements['nozzlename']['value']
-        depth = self.requirements['depth']['value']
-        delay = self.requirements['delay']['value']
+        nozzlename = self.nozzlename
+        depth = self.depth
+        delay = self.delay
 
         # Retreiving necessary device names
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        motionname = self.apparatus.findDevice(descriptors= 'motion')
+        systemname = self.apparatus.findDevice(descriptors= 'system')
 
         # Assign apparatus addresses to procedures
         self.move.requirements['speed']['address'] = [
