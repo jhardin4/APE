@@ -79,17 +79,21 @@ TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)
 class Sample(Core.Procedure):
     def Prepare(self):
         #self.name='Sample'
-        self.ProbeCorrect = Procedures.Touch_Probe_A3200_MultiPtHeightCorrect(MyApparatus,MyExecutor)
+        self.ProbeMeasure = Procedures.Touch_Probe_A3200_MeasureGrid(MyApparatus,MyExecutor)
+        self.ProbeCorrect = Procedures.Touch_Probe_A3200_EnableCalibration(MyApparatus,MyExecutor)
+        self.ProbeStopCorrect = Procedures.Touch_Probe_A3200_DisableCalibration(MyApparatus,MyExecutor)
         self.Camera = Procedures.Camera_Capture_ImageXY(MyApparatus,MyExecutor)
         self.Cleaner = Procedures.Aerotech_A3200_AirClean(MyApparatus,MyExecutor)
         self.testMaterial = Procedures.ROSEDA_TestMaterial(MyApparatus, MyExecutor)
         self.rparameters = Make_TPGen_Data(mat0)
 
     def Plan(self):
-        self.ProbeCorrect.Do({'start_point':{'X':0,'Y':0},'x_length':75,'y_length':50,'x_count':4,'y_count':3})
-        #self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
-        #self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
-        #self.Cleaner.Do({'nozzlename':'ntest_material','depth':5,'delay':5})
+        self.ProbeMeasure.Do({'start_point':{'X':0,'Y':0},'x_length':75,'y_length':50,'x_count':4,'y_count':3})
+        self.ProbeCorrect.Do({'file':'test.cal','nozzlename': 'n' + mat0})
+        self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
+        self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
+        self.Cleaner.Do({'nozzlename':'ntest_material','depth':5,'delay':5})
+        self.ProbeStopCorrect.Do({})
 
 # Do the experiment
 #startUp.Do({'filename': 'start_up.json'})
