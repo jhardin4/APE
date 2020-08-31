@@ -78,6 +78,7 @@ class Touch_Probe_A3200_MeasureGrid(Procedure):
 
         # Retreiving necessary device names
         motionname = self.apparatus.findDevice(descriptors='motion')
+        alignments = self.apparatus['information']['alignments']
 
         self.pmove.requirements['speed']['address'] = [
             'devices',
@@ -100,8 +101,8 @@ class Touch_Probe_A3200_MeasureGrid(Procedure):
         self.start_point = {k.upper(): v for k, v in self.start_point.items()}
         self.pmove.Do(
             {
-                'relpoint': {'X': self.start_point['X'], 'Y': self.start_point['Y']},
-                'priority': [['Z'],['X', 'Y']],
+                'relpoint': {'X': self.start_point['X'], 'Y': self.start_point['Y'], 'Z': 5},
+                'priority': [['X', 'Y'],['Z']],
             }
         )
         self.DoEproc(motionname, 'Run', {})
@@ -112,19 +113,28 @@ class Touch_Probe_A3200_MeasureGrid(Procedure):
                 # Move to grid point
                 self.pmove.Do(
                     {
-                        'relpoint':{'X': x_pos, 'Y': y_pos},
+                        'relpoint':{'X': x_pos, 'Y': y_pos, 'Z':5},
                         'priority': [['Z'],['X', 'Y']]
                     })
                 self.DoEproc(motionname, 'Run', {})
-                # Measure using probe
-                self.measure.Do({'zreturn':5, 'retract':False})
+                # Measure using probe, retract and move up if last point
+                if y_pos == self.start_point['Y']+self.y_length and x_pos == self.start_point['X']+self.x_length:
+                    self.measure.Do({'zreturn':100, 'retract':False})
+                else:
+                    self.measure.Do({'zreturn':5, 'retract':False})
                 grid_results.append(self.apparatus.getValue(['information',
                 'ProcedureData',
                 'Touch_Probe_Measurement',
                 'result'])[0])
+                
         grid_results = np.reshape(grid_results,(int(self.y_count),int(self.x_count)))
         # Set results to AppAddress
         self.apparatus.setValue(self.target_results,grid_results)
+
+        # Update start point based off alignments        
+        self.start_point['X'] += alignments['TProbe@start']['X']
+        self.start_point['Y'] += alignments['TProbe@start']['Y']
+
         # Set settings to AppAddress
         settings = {'start_point':self.start_point, 
                     'x_length':self.x_length, 

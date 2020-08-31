@@ -539,8 +539,8 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
             outputaxis3 = 6 #Default output axis 3 to 3rd Z-axis
 
         header = """'        RowAxis  ColumnAxis  OutputAxis1  OutputAxis2  SampDistRow  SampDistCol  NumCols
-:START2D    2          1           4            5           {0}          -{1}       {2}
-:START2D OUTAXIS3={3} POSUNIT=PRIMARY CORUNIT=PRIMARY/1000 OFFSETROW=-{4} OFFSETCOL={5} NEGCOR\n""".format(*spacing,y_count,outputaxis3,*offset)
+:START2D    2          1           4            5           {0:.6f}          -{1:.6f}       {2}
+:START2D OUTAXIS3={3} POSUNIT=PRIMARY CORUNIT=PRIMARY/1000 OFFSETROW=-{5:.6f} OFFSETCOL={4:.6f} NEGCOR\n""".format(*spacing,x_count,outputaxis3,*offset)
 
         footer = """:END
 '
@@ -548,15 +548,15 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
 ' Notes:
 ' Assume X is axis 1, Y axis 2, A axis 4, B axis 5, {0} axis {1} in this example.
 ' The ColumnAxis (X) moves along a given row, selecting a particular column based on the SampDistCol
-' setting (-{3} mm in this example).
+' setting (-{3:.6f} mm in this example).
 ' The RowAxis (Y) moves vertically in the table, selecting a particular row of correction values based
-' on the SampDistRow setting ({2} mm in this example).
+' on the SampDistRow setting ({2:.6f} mm in this example).
 ' OutputAxis1 ({4}) gets correction from the first element of each correction triplet.
 ' OutputAxis2 ({5}) gets correction from the second element of each correction triplet.
 ' OutputAxis3 ({0}) gets correction from the third element of each correction triplet""".format(self.axes[outputaxis3-2],outputaxis3,*spacing,*self.axes[2:4])
 
-        # Correct from min position
-        scan = result-np.min(result)
+        # Correct around last position measured
+        scan = result-result.flatten()[-1]
         
         # Convert mm reading to microns
         scan *= 1000
@@ -591,7 +591,7 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
         self.sendCommands('LOADCALFILE "{}", 2D_CAL'.format(filename),task=task)
         self.tasklog['task' + str(task)].append('2D calibration table at ' + filename + ' loaded to controller.')
         # Enable calibration table
-        self.sendCommands('CALENABLE 2D',task=1)
+        self.sendCommands('CALENABLE 2D',task=task)
         self.tasklog['task' + str(task)].append('2D calibration table has been enabled.')
         return self.returnlog()
     
