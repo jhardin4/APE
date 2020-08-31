@@ -78,7 +78,7 @@ TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)
 
 class Sample(Core.Procedure):
     def Prepare(self):
-        #self.name='Sample'
+        self.name='Sample'
         self.ProbeMeasure = Procedures.Touch_Probe_A3200_MeasureGrid(MyApparatus,MyExecutor)
         self.ProbeCorrect = Procedures.Touch_Probe_A3200_EnableCalibration(MyApparatus,MyExecutor)
         self.ProbeStopCorrect = Procedures.Touch_Probe_A3200_DisableCalibration(MyApparatus,MyExecutor)
@@ -88,12 +88,12 @@ class Sample(Core.Procedure):
         self.rparameters = Make_TPGen_Data(mat0)
 
     def Plan(self):
-        self.ProbeMeasure.Do({'start_point':{'X':0,'Y':0},'x_length':75,'y_length':50,'x_count':4,'y_count':3})
+        self.ProbeMeasure.Do({'start_point':{'X':4,'Y':4},'x_length':67,'y_length':42,'x_count':3,'y_count':3})
         self.ProbeCorrect.Do({'file':'test.cal','nozzlename': 'n' + mat0})
         self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
         self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
-        self.Cleaner.Do({'nozzlename':'ntest_material','depth':5,'delay':5})
         self.ProbeStopCorrect.Do({})
+        self.Cleaner.Do({'nozzlename':'n' + mat0,'depth':39.5,'delay':1})
 
 # Do the experiment
 #startUp.Do({'filename': 'start_up.json'})
