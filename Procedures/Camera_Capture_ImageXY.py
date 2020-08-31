@@ -93,5 +93,5 @@ class Camera_Capture_ImageXY(Procedure):
             }
         )
         self.DoEproc(motionname, 'Run', {})
-        self.measure.Do({'file': self.file, 'settle_time':self.settle_time, 'camera_name': self.camera_name})
+        self.measure.Do({'file': self.file, 'settle_time':self.settle_time, 'camera_name': self.camera_name, 'config_file':'camera_config.ini'})
         self.apparatus.AddTicketItem({'image':self.file})
