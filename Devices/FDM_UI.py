@@ -405,23 +405,23 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
                 self.tasklog [ 'task' + str ( task ) ].append ( 'M600 Z25 /n' )
             elif tool_change == '':
                 if multiplexer_change == '':
-                    if tool_change < 0:
-                        tool_change_temp = -1* ( tool_change - 10 )
+                    if tool_number < 0:
+                        tool_number_temp = -1* ( tool_change - 10 )
                         if tool_change_distance != 0:
-                            self.tasklog [ 'task' + str ( task ) ].append ( 'M702 T%s' % ( tool_change_temp ), 'L%s' % ( tool_change_distance ), '/n' )
+                            self.tasklog [ 'task' + str ( task ) ].append ( 'M702 T%s' % ( tool_number_temp ), 'L%s' % ( tool_change_distance ), '/n' )
                         elif tool_change_distance == 0:
-                            self.tasklog [ 'task' + str ( task ) ].append ( 'M702 T%s' % ( tool_change_temp ), '/n' )
+                            self.tasklog [ 'task' + str ( task ) ].append ( 'M702 T%s' % ( tool_number_temp ), '/n' )
                         else:
-                            self.tasklog [ 'task' + str ( task ) ].append ( 'M702 T%s' % ( tool_change_temp ), '/n' )
-                    elif tool_change >= 0:
+                            self.tasklog [ 'task' + str ( task ) ].append ( 'M702 T%s' % ( tool_number_temp ), '/n' )
+                    elif tool_number >= 0:
                         if tool_change_distance != 0:
-                            self.tasklog [ 'task' + str ( task ) ].append ( 'M701 T%s' % ( tool_change ), 'L%s' % ( tool_change_distance ), '/n' )
+                            self.tasklog [ 'task' + str ( task ) ].append ( 'M701 T%s' % ( tool_number ), 'L%s' % ( tool_change_distance ), '/n' )
                         elif tool_change_distance == 0:
-                            self.tasklog [ 'task' + str ( task ) ].append ( 'M701 T%s' % ( tool_change ), '/n' )
+                            self.tasklog [ 'task' + str ( task ) ].append ( 'M701 T%s' % ( tool_number ), '/n' )
                         else:
-                            self.tasklog [ 'task' + str ( task ) ].append ( 'M701 T%s' % ( tool_change ), '/n' )
+                            self.tasklog [ 'task' + str ( task ) ].append ( 'M701 T%s' % ( tool_number ), '/n' )
                 elif multiplexer_change == 'AUTO':
-                    self.tasklog [ 'task' + str ( task ) ].append ('T%s' % ( multiplexer_change ), '/n' )
+                    self.tasklog [ 'task' + str ( task ) ].append ('T%s' % ( multiplexer_number ), '/n' )
             self.fRun ( motionmode, task )
         
     def fextrude ( self, extrude, extrude_distance, extrude_velocity, set_new_extrude_distance, task, motionmode ):
