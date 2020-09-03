@@ -52,9 +52,9 @@ MyApparatus['devices']['pump0']['pumpon_time'] = 1.0  # Time from pump on to mot
 MyApparatus['devices']['pump0']['mid_time'] = 0.0  # time from signal sent to motion initiation
 MyApparatus['devices']['pump0']['pumpoff_time'] = 1.0  # time from end-arrival to turn off pump
 MyApparatus['devices']['pump0']['pumpres_time'] = 0.0
-MyApparatus['devices']['pump0']['pressure'] = 10
+MyApparatus['devices']['pump0']['pressure'] = 1.0
 MyApparatus['devices']['pump0']['vacuum'] = 0
-MyApparatus['devices']['pump0']['COM'] = 3
+MyApparatus['devices']['pump0']['COM'] = 1
 
 # Connect to all the devices in the setup
 MyApparatus.Connect_All(simulation=False)
@@ -70,11 +70,12 @@ TP_gen = MyApparatus['information']['ProcedureData']['Toolpath_Generate']
 
 # Create instances of the procedures that will be used
 # Procedures that will almost always be used at this level
-AlignPrinter = Procedures.User_FlexPrinter_Alignments_Align(MyApparatus, MyExecutor)
+AlignPrinter = Procedures.User_RoboDaddy_Alignments_Align(MyApparatus, MyExecutor)
 CalInk = Procedures.User_InkCal_Calibrate(MyApparatus, MyExecutor)
 startUp = Procedures.User_StartUp(MyApparatus, MyExecutor)
 TraySetup = Procedures.SampleTray_XY_Setup(MyApparatus, MyExecutor)
 TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)
+
 
 class Sample(Core.Procedure):
     def Prepare(self):
@@ -84,6 +85,7 @@ class Sample(Core.Procedure):
         self.ProbeStopCorrect = Procedures.Touch_Probe_A3200_DisableCalibration(MyApparatus,MyExecutor)
         self.Camera = Procedures.Camera_Capture_ImageXY(MyApparatus,MyExecutor)
         self.Cleaner = Procedures.Aerotech_A3200_AirClean(MyApparatus,MyExecutor)
+        self.Pause = Procedures.Data_User_Input_Options(MyApparatus, MyExecutor)
         self.testMaterial = Procedures.ROSEDA_TestMaterial(MyApparatus, MyExecutor)
         self.rparameters = Make_TPGen_Data(mat0)
 
@@ -93,12 +95,13 @@ class Sample(Core.Procedure):
         self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
         self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
         self.ProbeStopCorrect.Do({})
-        self.Cleaner.Do({'nozzlename':'n' + mat0,'depth':39.5,'delay':1})
+        self.Cleaner.Do({'nozzlename':'n' + mat0,'depth':30,'delay':1})
+        self.Pause.Do({'message':'Ready to continue?','options':['y'],'default':'y'}) #Note: Doesn't currently do anything with response
 
 # Do the experiment
 #startUp.Do({'filename': 'start_up.json'})
-AlignPrinter.Do({'primenoz': 'n' + mat0})
-TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 5, 'yspacing': 0, 'ysamples': 1})
+AlignPrinter.Do({'primenoz': 'TProbe'})
+TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 1, 'yspacing': 0, 'ysamples': 10})
 TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
 

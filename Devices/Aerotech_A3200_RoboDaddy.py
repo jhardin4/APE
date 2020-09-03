@@ -540,7 +540,7 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
 
         header = """'        RowAxis  ColumnAxis  OutputAxis1  OutputAxis2  SampDistRow  SampDistCol  NumCols
 :START2D    2          1           4            5           {0:.6f}          -{1:.6f}       {2}
-:START2D OUTAXIS3={3} POSUNIT=PRIMARY CORUNIT=PRIMARY/1000 OFFSETROW=-{5:.6f} OFFSETCOL={4:.6f} NEGCOR\n""".format(*spacing,x_count,outputaxis3,*offset)
+:START2D OUTAXIS3={3} POSUNIT=PRIMARY CORUNIT=PRIMARY/1000 OFFSETROW=-{5:.6f} OFFSETCOL={4:.6f}\n""".format(*spacing,x_count,outputaxis3,*offset)
 
         footer = """:END
 '
@@ -656,5 +656,5 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
 
 
 if __name__ == '__main__':
-    myA3200 = Aerotech_A3200_FlexPrinter('myA3200')
+    myA3200 = Aerotech_A3200_RoboDaddy('myA3200')
     myA3200.simulation = True

@@ -1,5 +1,6 @@
 from Core import Procedure
 from Core import Apparatus
+import Procedures.User_FlexPrinter_Alignments_Derive
 import json
 
 class Touch_Probe_A3200_EnableCalibration(Procedure):
@@ -18,6 +19,9 @@ class Touch_Probe_A3200_EnableCalibration(Procedure):
             'value': '',
             'desc': 'name of the nozzle being cleaned',
         }
+        self.derivealign = Procedures.User_FlexPrinter_Alignments_Derive(
+            self.apparatus, self.executor
+        )
 
     def Plan(self):
         # Retreiving necessary device names
@@ -54,7 +58,12 @@ class Touch_Probe_A3200_EnableCalibration(Procedure):
         alignments['TProbe@start'][zaxis] = self.target_results.flatten()[-1]
         self.Report(message='TProbe@start alignment set to ' + str(alignments['TProbe@start']) + '.')
 
-        # Save a copy of the alignments to the main folder
-        filename = 'robodaddy_alignments.json'
+        measuredlist = ['initial', 'ntest_material@mark', 'TProbe@start', 'TProbe@clean', 'TProbe@mark', 'camera@mark']
+        primenoz = 'TProbe'
+        # Use the measured alignments to derive the remaining needed alignments
+        self.derivealign.Do({'Measured_List': measuredlist, 'primenoz': primenoz})
+
+        # Save a copy of the alignments to the main folder and to the log folder
+        filename = 'robodaddy_alignments_derived.json'
         with open(filename, 'w') as TPjson:
             json.dump(self.apparatus.getValue(['information', 'alignments']), TPjson)

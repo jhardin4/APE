@@ -48,7 +48,7 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
             message += 'Incomplete Alignments:\n'
             message += str(incomplete_alignments)
         default = ''
-        if message is not '':
+        if message != '':
             self.userinput.Do({'message': message, 'default': default})
             return
 
@@ -76,7 +76,7 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
             if 'Z' in axismask:
                 zaxis = axismask['Z']
 
-            for name in [tool + '@start', tool + 'slide@start', tool + '@cal']:
+            for name in [tool + '@start', tool + 'slide@start', tool + '@cal', tool + '@clean']:
                 if name not in alignments:
                     alignments[name] = {}
             alignments[tool + '@start']['X'] = alignments[primenoz + '@start']['X'] - (
@@ -99,6 +99,16 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
                 alignments[primenoz + '@mark']['Y'] - alignments[tool + '@mark']['Y']
             )
             alignments[tool + '@cal'][zaxis] = alignments[primenoz + '@cal'][pzaxis] - (
+                alignments[primenoz + '@mark'][pzaxis]
+                - alignments[tool + '@mark'][zaxis]
+            )
+            alignments[tool + '@clean']['X'] = alignments[primenoz + '@clean']['X'] - (
+                alignments[primenoz + '@mark']['X'] - alignments[tool + '@mark']['X']
+            )
+            alignments[tool + '@clean']['Y'] = alignments[primenoz + '@clean']['Y'] - (
+                alignments[primenoz + '@mark']['Y'] - alignments[tool + '@mark']['Y']
+            )
+            alignments[tool + '@clean'][zaxis] = alignments[primenoz + '@clean'][pzaxis] - (
                 alignments[primenoz + '@mark'][pzaxis]
                 - alignments[tool + '@mark'][zaxis]
             )

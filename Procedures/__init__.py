@@ -46,6 +46,9 @@ from Procedures.User_FlexPrinter_Alignments_Update import (  # noqa: F401
 from Procedures.User_FlexPrinter_Alignments_Align import (  # noqa: F401
     User_FlexPrinter_Alignments_Align,
 )
+from Procedures.User_RoboDaddy_Alignments_Align import (  # noqa: F401
+    User_RoboDaddy_Alignments_Align,
+)
 from Procedures.User_FlexPrinter_Alignments_Load import (  # noqa: F401
     User_FlexPrinter_Alignments_Load,
 )

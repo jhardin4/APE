@@ -63,7 +63,11 @@ class ROSEDA_TestMaterial(Procedure):
 
         self.DoEproc(pumpname, 'Set', {'pressure':pressure})
         self.printDotted([2.0,1.75,1.5,1.25,1.0,0.75,0.5], motionname, pumpname)
-        self.printCrossing([1,5,25,100], motionname)        
+        self.apparatus.setValue(['devices','pump0','pumpon_time'], 0.5)
+        self.apparatus.setValue(['devices','pump0','pumpoff_time'], 0)
+        self.PrintTP.Do()
+        self.printCrossing([1,5,25,100], motionname)      
+
     def printDotted(self, periods, motionname, pumpname):
         # Likely this is not the best way to command motion.
         for ind,period in enumerate(periods):
@@ -97,7 +101,8 @@ class ROSEDA_TestMaterial(Procedure):
             self.DoEproc(motionname, 'Run', {})
             self.move.Do(
                 {
-                    'relpoint': {'X':24, 'Y':5+4*(ind), 'Z':10},
+                    'relpoint': {'X':24, 'Y':5+4*(ind), 'Z':20},
+                    'speed': 20,
                 }
             )
             self.DoEproc(motionname, 'Run', {})

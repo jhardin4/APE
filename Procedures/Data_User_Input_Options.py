@@ -62,6 +62,6 @@ class Data_User_Input_Options(Procedure):
                 print('Incorrect response.')
 
         if self.response == 'stop':
-            self.Report(string=self.response)
+            self.Report(message=self.response)
             raise Exception('User requested stop')
-        self.Report(string=self.response)
+        self.Report(message=self.response)

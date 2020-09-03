@@ -82,7 +82,8 @@ class StartofMotion(Procedure):
         # Setting up motion data collection
         # THIS NEEDS TO BE UPDATED BASED ON WHERE YOU ARE GOING TO 
         # STORE THE SAMPLE NAME!!!
-        samplename = self.apparatus.getValue(['information','ProcedureData','SpanningSample','cur_parameters', 'samplename'])
+        #samplename = self.apparatus.getValue(['information','ProcedureData','SpanningSample','cur_parameters', 'samplename'])
+        samplename = 'test' # Need to set up sample naming
         filename = 'Data\\' + str(round(time.time())) + samplename + '_motion.txt'
         axismask = self.apparatus.getValue(['devices', motionname, nozzlename, 'axismask'])
         parameters = {
