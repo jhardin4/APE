@@ -5,7 +5,7 @@ import copy
 
 class SampleRepeat_Start(Procedure):
     def Prepare(self):
-        self.name = 'SampleTray_Start'
+        self.name = 'SampleRepeat_Start'
         self.requirements['tray'] = {
             'source': 'apparatus',
             'address': '',
@@ -39,8 +39,10 @@ class SampleRepeat_Start(Procedure):
         # Doing stuff
 
         # Do experiments
-        for position in tray:
+        for i,position in enumerate(tray):
             self.Report(position['sample'] + ' in progress.')
+            samplename = self.apparatus.getValue(['information','ProcedureData',self.name,'samplename']).split('_')[0]
+            self.apparatus.setValue(['information','ProcedureData',self.name,'samplename'], samplename+"_sample"+str(i+1))
             procedure.Do({'samplename': position['sample']})
             position['used'] = True
             

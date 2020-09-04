@@ -71,7 +71,7 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
                 optionList[loc] = True
             else:
                 optionList[loc] = False
-        print(str(optionList))
+        # print(str(optionList))
         # Doing stuff
         # Set up safety positions for Z-axis (not XY) without restricting axis names
         for axis in alignments['initial'].keys()^['X','Y']:
@@ -100,7 +100,7 @@ class User_FlexPrinter_Alignments_Derive(Procedure):
             for name in [tool + '@start', tool + 'slide@start', tool + '@cal', tool + '@clean']:
                 if name not in alignments:
                     alignments[name] = {}
-            
+
             if optionList['start']:
                 alignments[tool + '@start']['X'] = alignments[primenoz + '@start']['X'] - (
                     alignments[primenoz + '@mark']['X'] - alignments[tool + '@mark']['X']

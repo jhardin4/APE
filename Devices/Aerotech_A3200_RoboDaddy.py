@@ -526,7 +526,7 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
 
         import os
         import numpy as np
-        filename = os.getcwd() + '\\CalTables\\' + file
+        filename = os.getcwd() + "\\" + file
 
         spacing = [x_length/(x_count-1),y_length/(y_count-1)]
         offset = start_point.values()
@@ -587,7 +587,7 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
         '''
         # Load calibration table to controller
         import os
-        filename = os.getcwd() + '\\CalTables\\' + file
+        filename = os.getcwd() + "\\" + file
         self.sendCommands('LOADCALFILE "{}", 2D_CAL'.format(filename),task=task)
         self.tasklog['task' + str(task)].append('2D calibration table at ' + filename + ' loaded to controller.')
         # Enable calibration table

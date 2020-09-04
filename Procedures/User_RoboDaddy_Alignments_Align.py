@@ -120,9 +120,11 @@ class User_RoboDaddy_Alignments_Align(Procedure):
             except FileNotFoundError:
                 print('No file loaded.  Possible error in ' + afilename)
         
+        """
         # Saving a copy to simplify some simulation work
         with open(filename, 'w') as TPjson:
             json.dump(self.apparatus.getValue(['information', 'alignments']), TPjson)
+        """
 
     def PrintAlignments(self, alignments):
         printstr = ''

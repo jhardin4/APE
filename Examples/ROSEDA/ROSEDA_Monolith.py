@@ -57,8 +57,11 @@ MyApparatus['devices']['pump0']['pressure'] = 1.0
 MyApparatus['devices']['pump0']['vacuum'] = 0
 MyApparatus['devices']['pump0']['COM'] = 1
 
+MyApparatus.createAppEntry(['information','ProcedureData','SampleRepeat_Start','samplename'])
+MyApparatus.setValue(['information','ProcedureData','SampleRepeat_Start','samplename'], "SESY8020")
+
 # Connect to all the devices in the setup
-MyApparatus.Connect_All(simulation=True)
+MyApparatus.Connect_All(simulation=False)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
 
@@ -76,12 +79,10 @@ CalInk = Procedures.User_InkCal_Calibrate(MyApparatus, MyExecutor)
 startUp = Procedures.User_StartUp(MyApparatus, MyExecutor)
 TraySetup = Procedures.SampleTray_XY_Setup(MyApparatus, MyExecutor)
 TrayRun = Procedures.SampleRepeat_Start(MyApparatus, MyExecutor)
-DeriveAlignments = Procedures.User_FlexPrinter_Alignments_Derive(MyApparatus, MyExecutor)
-
 
 class Sample(Core.Procedure):
     def Prepare(self):
-        self.name='Sample'
+        self.name='Sample'      
         self.ProbeMeasure = Procedures.Touch_Probe_A3200_MeasureGrid(MyApparatus,MyExecutor)
         self.ProbeCorrect = Procedures.Touch_Probe_A3200_EnableCalibration(MyApparatus,MyExecutor)
         self.ProbeStopCorrect = Procedures.Touch_Probe_A3200_DisableCalibration(MyApparatus,MyExecutor)
@@ -92,10 +93,11 @@ class Sample(Core.Procedure):
         self.rparameters = Make_TPGen_Data(mat0)
 
     def Plan(self):
+        samplename = MyApparatus.getValue(['information','ProcedureData','SampleRepeat_Start','samplename'])
         self.ProbeMeasure.Do({'start_point':{'X':4,'Y':4},'x_length':67,'y_length':42,'x_count':3,'y_count':3})
-        self.ProbeCorrect.Do({'file':'test.cal','nozzlename': 'n' + mat0})
+        self.ProbeCorrect.Do({'file':'Data\\CalTables\\'+samplename+'.cal','nozzlename': 'n' + mat0})
         self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
-        self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
+        self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':'Data\\Pictures\\'+samplename+'.png','camera_name':'camera'}) 
         self.ProbeStopCorrect.Do({})
         self.Cleaner.Do({'nozzlename':'n' + mat0,'depth':30,'delay':1})
         winsound.Beep(1000, 5000)
@@ -104,10 +106,7 @@ class Sample(Core.Procedure):
 # Do the experiment
 #startUp.Do({'filename': 'start_up.json'})
 AlignPrinter.Do({'primenoz': 'TProbe'})
-options = {}
-DeriveAlignments.requirements['Measured_List']['address']=['information', 'alignmentnames']
-DeriveAlignments.Do({'primenoz': 'TProbe', 'loptions':['safeA', 'safeB', 'safeC', 'safeD']})
-TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 1, 'yspacing': 0, 'ysamples': 10})
+TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 1, 'yspacing': 0, 'ysamples': 2})
 TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
 
