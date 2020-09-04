@@ -5,8 +5,9 @@ application.
 
 import Core
 import Procedures
-from AppTemplates import RoboDaddyMonolith as AppBuilder
+from AppTemplates import ROSEDA_RoboDaddyMonolith as AppBuilder
 import json
+import winsound #only works in windows
 from Ros3daTPGen import Make_TPGen_Data
 
 MyApparatus = Core.Apparatus()
@@ -18,7 +19,7 @@ materials = [{'test_material': 'A'}]
 tools = []
 tools.append({'name': 'TProbe', 'axis': 'D', 'type': 'Panasonic_HGS_A3200'})
 tools.append({'name': 'camera', 'axis': 'D', 'type': 'IDS_ueye'})
-AppBuilder(MyApparatus, materials, tools)
+AppBuilder(MyApparatus, materials, tools, prime='TProbe')
 
 # Defining the materials. This can come from an existing file but here we are
 # creating a new one.
@@ -57,7 +58,7 @@ MyApparatus['devices']['pump0']['vacuum'] = 0
 MyApparatus['devices']['pump0']['COM'] = 1
 
 # Connect to all the devices in the setup
-MyApparatus.Connect_All(simulation=False)
+MyApparatus.Connect_All(simulation=True)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
 
@@ -74,7 +75,8 @@ AlignPrinter = Procedures.User_RoboDaddy_Alignments_Align(MyApparatus, MyExecuto
 CalInk = Procedures.User_InkCal_Calibrate(MyApparatus, MyExecutor)
 startUp = Procedures.User_StartUp(MyApparatus, MyExecutor)
 TraySetup = Procedures.SampleTray_XY_Setup(MyApparatus, MyExecutor)
-TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)
+TrayRun = Procedures.SampleRepeat_Start(MyApparatus, MyExecutor)
+DeriveAlignments = Procedures.User_FlexPrinter_Alignments_Derive(MyApparatus, MyExecutor)
 
 
 class Sample(Core.Procedure):
@@ -96,11 +98,15 @@ class Sample(Core.Procedure):
         self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
         self.ProbeStopCorrect.Do({})
         self.Cleaner.Do({'nozzlename':'n' + mat0,'depth':30,'delay':1})
+        winsound.Beep(1000, 5000)
         self.Pause.Do({'message':'Ready to continue?','options':['y'],'default':'y'}) #Note: Doesn't currently do anything with response
 
 # Do the experiment
 #startUp.Do({'filename': 'start_up.json'})
 AlignPrinter.Do({'primenoz': 'TProbe'})
+options = {}
+DeriveAlignments.requirements['Measured_List']['address']=['information', 'alignmentnames']
+DeriveAlignments.Do({'primenoz': 'TProbe', 'loptions':['safeA', 'safeB', 'safeC', 'safeD']})
 TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 1, 'yspacing': 0, 'ysamples': 10})
 TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})

@@ -45,7 +45,8 @@ class User_RoboDaddy_Alignments_Align(Procedure):
 
     def Plan(self):
         primenoz = self.requirements['primenoz']['value']
-        measuredlist = ['initial', primenoz+'@mark', primenoz+'@start', primenoz+'@clean', primenoz+'@mark']
+        measuredlist = self.requirements['Measured_List']['value']
+        # measuredlist = ['initial', primenoz+'@mark', primenoz+'@start', primenoz+'@clean', primenoz+'@mark']
         filename = self.requirements['filename']['value']
         chatty = self.requirements['chatty']['value']
 
@@ -118,6 +119,10 @@ class User_RoboDaddy_Alignments_Align(Procedure):
                 alignmentscollected = True
             except FileNotFoundError:
                 print('No file loaded.  Possible error in ' + afilename)
+        
+        # Saving a copy to simplify some simulation work
+        with open(filename, 'w') as TPjson:
+            json.dump(self.apparatus.getValue(['information', 'alignments']), TPjson)
 
     def PrintAlignments(self, alignments):
         printstr = ''

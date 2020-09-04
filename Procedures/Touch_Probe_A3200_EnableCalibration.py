@@ -61,7 +61,8 @@ class Touch_Probe_A3200_EnableCalibration(Procedure):
         measuredlist = ['initial', 'ntest_material@mark', 'TProbe@start', 'TProbe@clean', 'TProbe@mark', 'camera@mark']
         primenoz = 'TProbe'
         # Use the measured alignments to derive the remaining needed alignments
-        self.derivealign.Do({'Measured_List': measuredlist, 'primenoz': primenoz})
+        self.derivealign.requirements['Measured_List']['address']=['information', 'alignmentnames']
+        self.derivealign.Do({'primenoz': primenoz})
 
         # Save a copy of the alignments to the main folder and to the log folder
         filename = 'robodaddy_alignments_derived.json'

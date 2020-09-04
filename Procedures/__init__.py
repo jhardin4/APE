@@ -69,6 +69,7 @@ from Procedures.SPHeightCorrect_Update import SPHeightCorrect_Update  # noqa: F4
 from Procedures.Planner_Combinatorial import Planner_Combinatorial  # noqa: F401
 
 from Procedures.SampleTray_Start import SampleTray_Start  # noqa: F401
+from Procedures.SampleRepeat_Start import SampleRepeat_Start  # noqa: F401
 from Procedures.SampleTray_XY_Setup import SampleTray_XY_Setup  # noqa: F401
 
 from Procedures.User_Consol_Input import User_Consol_Input  # noqa: F401

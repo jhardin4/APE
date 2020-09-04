@@ -1,3 +1,5 @@
+#THIS NEEDS TO BE RETURNED TO ITS ORIGINAL FORM#
+
 from Core import Procedure
 import copy
 
@@ -101,3 +103,4 @@ class SampleTray_Start(Procedure):
                     )
                     self.apparatus.setValue(['information', 'alignments', alignment], copy.deepcopy(value))
             """
+
