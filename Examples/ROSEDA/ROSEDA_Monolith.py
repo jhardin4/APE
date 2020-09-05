@@ -9,12 +9,13 @@ from AppTemplates import ROSEDA_RoboDaddyMonolith as AppBuilder
 import json
 import winsound #only works in windows
 from Ros3daTPGen import Make_TPGen_Data
+import numpy as np
 
 MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 
-materials = [{'test_material': 'A'}]
+materials = [{'test_material': 'C'}]
 # These are other tools that can be added in. Comment out the ones not used.
 tools = []
 tools.append({'name': 'TProbe', 'axis': 'D', 'type': 'Panasonic_HGS_A3200'})
@@ -94,7 +95,13 @@ class Sample(Core.Procedure):
 
     def Plan(self):
         samplename = MyApparatus.getValue(['information','ProcedureData','SampleRepeat_Start','samplename'])
-        self.ProbeMeasure.Do({'start_point':{'X':4,'Y':4},'x_length':67,'y_length':42,'x_count':3,'y_count':3})
+        self.ProbeMeasure.Do({'start_point':{'X':4,'Y':4},'x_length':67,'y_length':42,'x_count':4,'y_count':3})
+        diff = np.max(MyApparatus.getValue(['information', 'ProcedureData', 'Grid_Measurements', 'result']))-np.min(MyApparatus.getValue(['information', 'ProcedureData', 'Grid_Measurements', 'result']))
+        while np.abs(diff) > 100:
+            # If diff is very large, glass slide may be positioned incorrectly.
+            self.Pause.Do({'message':'Large diff accross slide: {}, fix and continue?'.format(),'options':['y'],'default':'y'}) #Note: Doesn't currently do anything with response
+            self.ProbeMeasure.Do({'start_point':{'X':4,'Y':4},'x_length':67,'y_length':42,'x_count':4,'y_count':3})
+            diff = np.max(MyApparatus.getValue(['information', 'ProcedureData', 'Grid_Measurements', 'result']))-np.min(MyApparatus.getValue(['information', 'ProcedureData', 'Grid_Measurements', 'result']))
         self.ProbeCorrect.Do({'file':'Data\\CalTables\\'+samplename+'.cal','nozzlename': 'n' + mat0})
         self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
         self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':'Data\\Pictures\\'+samplename+'.png','camera_name':'camera'}) 
