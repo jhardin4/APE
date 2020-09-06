@@ -26,24 +26,28 @@ AppBuilder(MyApparatus, materials, tools, prime='TProbe')
 # creating a new one.
 
 # Briefly setting up components
-SE1700_base = Core.material()
-Sylgard_base = Core.material()
+HEMA_base = Core.material()
+DD_base = Core.material()
+FS_base = Core.material()
 
-SE1700_base.add_property('density', 1.1, 'g/cc')
-SE1700_base['names'] = ['SE1700 base', 'PDMS', 'silicone', 'base']
-
-Sylgard_base.add_property('density', 1.1, 'g/cc')
-Sylgard_base['names'] = ['Sylgard 184 base', 'PDMS', 'silicone', 'base']
+HEMA_base['names'] = ['HEMA', 'Glycol methacrylate', 'SA#128635']
+DD_base['names'] = ['Di-HEMA', 'Diurethane Dimethacrylate', 'SA#436909']
+FS_base['names'] = ['Fumed Silica', 'Cab-o-sil TS-720']
+samplename = "HDS2_ink20"
 
 # Setting up in for this run
-SESY_8020 = Core.material()
-SESY_8020.add_comp(SE1700_base, mass_perc=80, use_name='SE1700')
-SESY_8020.add_comp(Sylgard_base, mass_perc=20, use_name='Sylgard')
-SESY_8020.save('Materials//SESY_8020.json')
+HDS2_ink20 = Core.material()
+HDS2_ink20.add_comp(DD_base, mass_perc=95, use_name='Di-HEMA')
+HDS2_ink20.add_comp(HEMA_base, mass_perc=0, use_name='HEMA')
+HDS2_ink20.add_comp(FS_base, mass_perc=5, use_name='Fumed Silica')
+HDS2_ink20.save('Materials//{}.json'.format(samplename))
+
+MyApparatus.createAppEntry(['information','ProcedureData','SampleRepeat_Start','samplename'])
+MyApparatus.setValue(['information','ProcedureData','SampleRepeat_Start','samplename'], samplename)
 
 # Define the rest of the apparatus
 mat0 = list(materials[0])[0]
-MyApparatus.addMaterial(mat0, 'Materials//SESY_8020.json')
+MyApparatus.addMaterial(mat0, 'Materials//{}.json'.format(samplename))
 MyApparatus['devices']['n' + mat0]['descriptors'].append(mat0)
 MyApparatus['devices']['n' + mat0]['trace_height'] = 0.6
 MyApparatus['devices']['n' + mat0]['trace_width'] = 0.6
@@ -54,12 +58,9 @@ MyApparatus['devices']['pump0']['pumpon_time'] = 1.0  # Time from pump on to mot
 MyApparatus['devices']['pump0']['mid_time'] = 0.0  # time from signal sent to motion initiation
 MyApparatus['devices']['pump0']['pumpoff_time'] = 1.0  # time from end-arrival to turn off pump
 MyApparatus['devices']['pump0']['pumpres_time'] = 0.0
-MyApparatus['devices']['pump0']['pressure'] = 1.0
+MyApparatus['devices']['pump0']['pressure'] = 14.0
 MyApparatus['devices']['pump0']['vacuum'] = 0
-MyApparatus['devices']['pump0']['COM'] = 1
-
-MyApparatus.createAppEntry(['information','ProcedureData','SampleRepeat_Start','samplename'])
-MyApparatus.setValue(['information','ProcedureData','SampleRepeat_Start','samplename'], "SESY8020")
+MyApparatus['devices']['pump0']['COM'] = 2
 
 # Connect to all the devices in the setup
 MyApparatus.Connect_All(simulation=False)
@@ -103,19 +104,19 @@ class Sample(Core.Procedure):
             self.ProbeMeasure.Do({'start_point':{'X':4,'Y':4},'x_length':67,'y_length':42,'x_count':4,'y_count':3})
             diff = np.max(MyApparatus.getValue(['information', 'ProcedureData', 'Grid_Measurements', 'result']))-np.min(MyApparatus.getValue(['information', 'ProcedureData', 'Grid_Measurements', 'result']))
         self.ProbeCorrect.Do({'file':'Data\\CalTables\\'+samplename+'.cal','nozzlename': 'n' + mat0})
-        self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
+        #self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
         self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':'Data\\Pictures\\'+samplename+'.png','camera_name':'camera'}) 
         self.ProbeStopCorrect.Do({})
-        self.Cleaner.Do({'nozzlename':'n' + mat0,'depth':30,'delay':1})
-        winsound.Beep(1000, 5000)
-        self.Pause.Do({'message':'Ready to continue?','options':['y'],'default':'y'}) #Note: Doesn't currently do anything with response
+        #self.Cleaner.Do({'nozzlename':'n' + mat0,'depth':0,'delay':1})
+        #winsound.Beep(1000, 5000)
+        #self.Pause.Do({'message':'Ready to continue?','options':['y'],'default':'y'}) #Note: Doesn't currently do anything with response
 
 # Do the experiment
 #startUp.Do({'filename': 'start_up.json'})
-AlignPrinter.Do({'primenoz': 'TProbe'})
+AlignPrinter.Do({'primenoz': 'TProbe', 'chatty':False})
 TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 1, 'yspacing': 0, 'ysamples': 2})
 TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
-TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
+TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor), 'start_count':2})
 
 MyApparatus.Disconnect_All()
 
