@@ -1,4 +1,4 @@
-def RoboDaddyMonolith(apparatus, materials, tools):
+def ROSEDA_RoboDaddyMonolith(apparatus, materials, tools, prime=None):
     # Creating all the initial device entries
     # Representative of local computer
     apparatus.add_device_entry('system', 'System')
@@ -80,7 +80,11 @@ def RoboDaddyMonolith(apparatus, materials, tools):
         'D': '',
     }
     # Handle motion of each nozzle
-    primenozzle = True
+    # Defaults to first material being the prime nozzle if another options is
+    # not given
+    if not prime:
+        prime = True
+        
     for materialx in materials:
         material = list(materialx)[0]
         zaxis = materialx[material]
@@ -102,22 +106,31 @@ def RoboDaddyMonolith(apparatus, materials, tools):
         alignment_names.append('n' + material + '@mark')
         alignments['n' + material + '@mark'] = {'X': '', 'Y': '', zaxis: ''}
         # treat first nozzle as prime nozzles
-        if primenozzle:
+        if prime in [True, 'n' + material]:
+            # Handle the start location
             alignment_names.append('n' + material + '@start')
             alignments['n' + material + '@start'] = {
                 'X': '',
                 'Y': '',
                 zaxis: '',
             }
+            # Handle the calibration location
             alignment_names.append('n' + material + '@cal')
             alignments['n' + material + '@cal'] = {
                 'X': '',
                 'Y': '',
                 zaxis: '',
             }
-            primenozzle = False
+            # Handle the clean location
+            alignment_names.append('n' + material + '@clean')
+            alignments['n' + material + '@clean'] = {
+                'X': '',
+                'Y': '',
+                zaxis: '',
+            }
+            prime = False
 
-    # Handle motion for each of the tools
+    # Handle motion for each of the tools  
     for tool in tools:
         if tool['type'] == 'Panasonic_HGS_A3200':
             # Alignment information
@@ -134,7 +147,7 @@ def RoboDaddyMonolith(apparatus, materials, tools):
             alignments[tool['name'] + '@TP_init'] = {
                 'X': -200,
                 'Y': -250,
-                'B': -50,
+                tool['axis']: -50,
             }
 
         if tool['type'] == 'IDS_ueye':
@@ -147,6 +160,29 @@ def RoboDaddyMonolith(apparatus, materials, tools):
                 'Y': '',
                 tool['axis']: '',
             }
+        if prime == tool['name']:
+            # Handle the start location
+            alignment_names.append(tool['name'] + '@start')
+            alignments[tool['name'] + '@start'] = {
+                'X': '',
+                'Y': '',
+                tool['axis']: '',
+            }
+            # Handle the calibration location
+            alignment_names.append(tool['name'] + '@cal')
+            alignments[tool['name'] + '@cal'] = {
+                'X': '',
+                'Y': '',
+                tool['axis']: '',
+            }
+            # Handle the clean location
+            alignment_names.append(tool['name'] + '@clean')
+            alignments[tool['name'] + '@clean'] = {
+                'X': '',
+                'Y': '',
+                tool['axis']: '',
+            }
+            prime = False
     apparatus['information']['materials'] = {}
     apparatus['information']['calibrationfile'] = 'cal.json'
     apparatus['information']['ink calibration'] = {}
