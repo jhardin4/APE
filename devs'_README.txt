@@ -100,4 +100,19 @@ The deconvolver.py is the translation layer used to gain information about a pri
 
 
 line_interlacer.py
-    This module contains a single function, interlace.  interlace expects to be passed an argument for fileorlayer, wholeorpointcloud, usememory.  It uses the deconvolver functions to deconvolve and weave information from the gcode passed to it into apecode.  This apecode takes the
+    This module contains a single function, interlace.  It uses the deconvolver functions to deconvolve and weave information from the gcode passed to it into apecode.  This apecode takes the form [ { H : #, SF : #, BF : #, TC : str, T : #, MX : #, MXA : str, D : # }, { HB : #, HC : # }, { X : #, Y : #, Z : #, E : #, F : #, SetE : # }, { H : #, SF : #, BF : #, TC : str, T : #, MX : #, MXA : str, D : # }, { HB : #, HC : # }, { X : #, Y : #, Z : #, E : #, F : #, SetE : # } ] or [ { X : #, Y : #, Z : # }, { X : #, Y : #, Z : # } ]
+    Under normal operation, this will never be called unless a gcode which can be deconvolved is detected.
+        interlace expects to be passed an argument for fileorlayer, wholeorpointcloud, usememory.
+            fileorlayer: must be given 'file' or a # between 0 and the maximum layer number; determines if interlace will deconvolve a whole file or just one layer within that file.
+            wholeorpointcloud: must be given 'whole' or 'pointcloud' and makes the output contain all material, environment, tool, and path data if given 'whole' or just path data if 'pointcloud'.
+            usememory: must be given 'yes' or 'no' and is used to determine if RAM or storage is used to contain the deconvolved APE code.
+
+start_ape.py
+    This module contains checksfile, searchfile, makeshortcut, and installape.  start_ape.py is used to find file paths, create folders and shortcuts, and check the install directory / related folders for existence (not integrety yet).
+        checksfile requires no commands to be passed to it.  Its function is to check the install directory and for the existance of the Print_With_APE folder within the correct locations depending on operating system type.  Works on Linux and Windows.
+        searchfile requires name and root_folder.  It searches root_folder for a file with name.  It returns the total file path for the specified name under root_folder.  It will search through directories under root_folder of any depth.
+            name: must be passed a string which the user wishes to search for.
+            root_folder: must be passed a string which the user wishes to search under.
+        makeshortcut requires sortcut_name, py_loc, start_in, and icon_loc.  makeshortcut is used to create a microsoft windows compatable shortcut using shell.  It does not work ATM and throws no errors.  Requires debugging.
+            shortcut_name:
+
