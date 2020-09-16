@@ -196,7 +196,7 @@ class G(object):
 
         if is_str(outfile):
             self.out_fd = open(outfile, mode)
-        elif outfile is not None:  # if outfile not str assume it is an open file
+        elif outfile != None:  # if outfile not str assume it is an open file
             self.out_fd = outfile
         else:
             self.out_fd = None
@@ -315,17 +315,17 @@ class G(object):
             waits to return until all buffered lines have been acknowledged.
 
         """
-        if self.out_fd is not None:
+        if self.out_fd != None:
             if self.aerotech_include is True:
                 with open(os.path.join(HERE, 'footer.txt')) as fd:
                     self._write_out(lines=fd.readlines())
-            if self.footer is not None:
+            if self.footer != None:
                 with open(self.footer) as fd:
                     self._write_out(lines=fd.readlines())
             self.out_fd.close()
-        if self._socket is not None:
+        if self._socket != None:
             self._socket.close()
-        if self._p is not None:
+        if self._p != None:
             self._p.disconnect(wait)
 
     def home(self):
@@ -358,7 +358,7 @@ class G(object):
 
         """
         if self.extrude is True and 'E' not in kwargs.keys():
-            if self.is_relative is not True:
+            if self.is_relative != True:
                 x_move = self.current_position['x'] if x is None else x
                 y_move = self.current_position['y'] if y is None else y
                 x_distance = abs(x_move - self.current_position['x'])
@@ -446,11 +446,11 @@ class G(object):
 
         """
         dims = dict(kwargs)
-        if x is not None:
+        if x != None:
             dims['x'] = x
-        if y is not None:
+        if y != None:
             dims['y'] = y
-        if z is not None:
+        if z != None:
             dims['z'] = z
         msg = 'Must specify two of x, y, or z.'
         if len(dims) != 2:
@@ -527,7 +527,7 @@ class G(object):
         # only designed for flow calculations in x-y plane
         if self.extrude is True:
             area = self.layer_height*(self.extrusion_width-self.layer_height) + 3.14159*(self.layer_height/2)**2
-            if self.is_relative is not True:
+            if self.is_relative != True:
                 current_extruder_position = self.current_position['E']
             else:
                 current_extruder_position = 0
@@ -573,7 +573,7 @@ class G(object):
                 self.move(*move_line.tolist()[0])
         else:
             #Standard output
-            if axis is not None:
+            if axis != None:
                 self.write('G16 X Y {}'.format(axis))  # coordinate axis assignment
             self.write(plane_selector)
             args = self._format_args(**dims)
@@ -677,7 +677,7 @@ class G(object):
 
     def round_rect(self, x, y, direction='CW', start='LL', radius=0, linearize=True):
         """ Trace a rectangle with the given width and height with rounded corners,
-            note that starting point is not actually in corner of rectangle.
+            note that starting point != actually in corner of rectangle.
 
         Parameters
         ----------
@@ -1531,7 +1531,7 @@ class G(object):
             if extruding_state and ((color == color_incl) or (color_incl is None)):
                 X, Y, Z = position_hist[index-1:index+1, 0], position_hist[index-1:index+1, 1], position_hist[index-1:index+1, 2]
                 # Plot to matplotlb
-                if color_incl is not None:
+                if color_incl != None:
                     ax.plot(X, Y, Z,color_incl)
                 else:
                     ax.plot(X, Y, Z,'b')
@@ -2004,11 +2004,11 @@ class G(object):
         >>> g.rename_axis(z='A')
 
         """
-        if x is not None:
+        if x != None:
             self.x_axis = x
-        elif y is not None:
+        elif y != None:
             self.y_axis = y
-        elif z is not None:
+        elif z != None:
             self.z_axis = z
         else:
             msg = 'Must specify new name for x, y, or z only'
@@ -2023,7 +2023,7 @@ class G(object):
         if self.out_fd is None:
             return
 
-        if lines is not None:
+        if lines != None:
             for line in lines:
                 self._write_out(line)
 
@@ -2047,18 +2047,18 @@ class G(object):
         if self.aerotech_include is True:
             with open(os.path.join(HERE, 'header.txt')) as fd:
                 self._write_out(lines=fd.readlines())
-        if self.header is not None:
+        if self.header != None:
             with open(self.header) as fd:
                 self._write_out(lines=fd.readlines())
 
     def _format_args(self, x=None, y=None, z=None, **kwargs):
         d = self.output_digits
         args = []
-        if x is not None:
+        if x != None:
             args.append('{0}{1:.{digits}f}'.format(self.x_axis, x, digits=d))
-        if y is not None:
+        if y != None:
             args.append('{0}{1:.{digits}f}'.format(self.y_axis, y, digits=d))
-        if z is not None:
+        if z != None:
             args.append('{0}{1:.{digits}f}'.format(self.z_axis, z, digits=d))
         args += ['{0}{1:.{digits}f}'.format(k, kwargs[k], digits=d) for k in sorted(kwargs)]
         args = ' '.join(args)
@@ -2069,28 +2069,28 @@ class G(object):
         if mode == 'auto':
             mode = 'relative' if self.is_relative else 'absolute'
 
-        if self.x_axis is not 'X' and x is not None:
+        if self.x_axis != 'X' and x != None:
             kwargs[self.x_axis] = x
-        if self.y_axis is not 'Y' and y is not None:
+        if self.y_axis != 'Y' and y != None:
             kwargs[self.y_axis] = y
-        if self.z_axis is not 'Z' and z is not None:
+        if self.z_axis != 'Z' and z != None:
             kwargs[self.z_axis] = z
 
         if mode == 'relative':
-            if x is not None:
+            if x != None:
                 self._current_position['x'] += x
-            if y is not None:
+            if y != None:
                 self._current_position['y'] += y
-            if z is not None:
+            if z != None:
                 self._current_position['z'] += z
             for dimention, delta in kwargs.items():
                 self._current_position[dimention] += delta
         else:
-            if x is not None:
+            if x != None:
                 self._current_position['x'] = x
-            if y is not None:
+            if y != None:
                 self._current_position['y'] = y
-            if z is not None:
+            if z != None:
                 self._current_position['z'] = z
             for dimention, delta in kwargs.items():
                 self._current_position[dimention] = delta
