@@ -1,3 +1,5 @@
+#THIS NEEDS TO BE RETURNED TO ITS ORIGINAL FORM#
+
 from Core import Procedure
 import copy
 
@@ -79,10 +81,15 @@ class SampleTray_Start(Procedure):
                             self.apparatus.setValue(
                                 ['information', 'alignments', alignment, dim], new_pos
                             )
-            self.Report(string=position['sample'] + ' in progress.')
+            self.Report(position['sample'] + ' in progress.')
             procedure.Do({'samplename': position['sample']})
             position['used'] = True
             # Return Alignments to original state
+            # For ROSEDA patterns, we're always printing in the same spot, so this isn't necessary
+            # An issue arises due to the ['information','alignemnts'] expanding mid sample with the probe setting alignemnt vals
+            # Commented out as a temp fix.
+            # This addition of vals to alignments also causes issues on the second run in the tray for some reason.
+            """
             for alignment in self.apparatus.getValue(['information', 'alignments']):
                 if '@start' in alignment:
                     value = self.apparatus.getValue(
@@ -95,3 +102,5 @@ class SampleTray_Start(Procedure):
                         ]
                     )
                     self.apparatus.setValue(['information', 'alignments', alignment], copy.deepcopy(value))
+            """
+

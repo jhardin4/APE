@@ -100,3 +100,4 @@ The deconvolver.py is the translation layer used to gain information about a pri
 
 
 line_interlacer.py
+    This module contains a single function, interlace.  interlace expects to be passed an argument for fileorlayer, wholeorpointcloud, usememory.  It uses the deconvolver functions to deconvolve and weave information from the gcode passed to it into apecode.  This apecode takes the

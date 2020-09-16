@@ -1,50 +1,46 @@
 from Core import Procedure
-import Procedures.Camera_Capture_Image
-import Procedures.Aerotech_A3200_Set
 import Procedures.Motion_RefRelLinearMotion
 import Procedures.Motion_RefRelPriorityLineMotion
+import Procedures.Aerotech_A3200_Set
 
 
-class Camera_Capture_ImageXY(Procedure):
+class Aerotech_A3200_AirClean(Procedure):
     def Prepare(self):
-        self.name = 'Camera_Capture_ImageXY'
-        self.requirements['point'] = {
+        self.name = 'Aerotech_A3200_AirClean'
+        self.requirements['nozzlename'] = {
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'XY point to measure relative to start',
+            'desc': 'name of the nozzle being cleaned',
         }
-        self.requirements['file'] = {
+        self.requirements['depth'] = {
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'path to store image',
+            'desc': 'how deep to go into the cleaning vessel',
         }
-        self.requirements['settle_time'] = {
+        self.requirements['delay'] = {
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'time to wait before taking picture',
-        }        
-        self.requirements['camera_name'] = {
-            'source': 'apparatus',
-            'address': '',
-            'value': '',
-            'desc': 'name of the camera to be used',
+            'desc': 'How long to wait between swirls',
         }
+
         self.move = Procedures.Motion_RefRelLinearMotion(self.apparatus, self.executor)
-        self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
         self.pmove = Procedures.Motion_RefRelPriorityLineMotion(
             self.apparatus, self.executor
         )
-        self.measure = Procedures.Camera_Capture_Image(self.apparatus, self.executor)
+        self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
 
     def Plan(self):
+        # Renaming useful informaiton
+        nozzlename = self.nozzlename
+        depth = self.depth
+        delay = self.delay
+
         # Retreiving necessary device names
         motionname = self.apparatus.findDevice(descriptors= 'motion')
-
-        # Retrieving information from apparatus
-        zaxis = self.apparatus.getValue(['devices', motionname, self.camera_name, 'axismask'])['Z']
+        systemname = self.apparatus.findDevice(descriptors= 'system')
 
         # Assign apparatus addresses to procedures
         self.move.requirements['speed']['address'] = [
@@ -56,13 +52,13 @@ class Camera_Capture_ImageXY(Procedure):
         self.move.requirements['axismask']['address'] = [
             'devices',
             motionname,
-            self.camera_name,
+            nozzlename,
             'axismask',
         ]
         self.move.requirements['refpoint']['address'] = [
             'information',
             'alignments',
-            'safe' + zaxis,
+            nozzlename + '@clean',
         ]
 
         self.pmove.requirements['speed']['address'] = [
@@ -74,24 +70,29 @@ class Camera_Capture_ImageXY(Procedure):
         self.pmove.requirements['axismask']['address'] = [
             'devices',
             motionname,
-            self.camera_name,
+            nozzlename,
             'axismask',
         ]
         self.pmove.requirements['refpoint']['address'] = [
             'information',
             'alignments',
-            self.camera_name + '@start',
+            nozzlename + '@clean',
         ]
 
-        # Doing stuff
+        # Actual motion in and out of nozzle cleaner
         self.motionset.Do({'Type': 'default'})
-        self.move.Do()
+        # Move up in Z to clear cleaner, then move into position
         self.pmove.Do(
             {
-                'relpoint': {'X': self.point['X'], 'Y': self.point['Y']},
-                'priority': [['X', 'Y'], ['Z']],
+                'relpoint': {'X': 0, 'Y': 0, 'Z': 0},
+                'priority': [['Z'],['X', 'Y']],
             }
         )
+        # Move down into cleaner using depth argument
+        self.move.Do({'relpoint': {'Z': -depth}})
         self.DoEproc(motionname, 'Run', {})
-        self.measure.Do({'file': self.file, 'settle_time':self.settle_time, 'camera_name': self.camera_name, 'config_file':'camera_config.ini'})
-        self.apparatus.AddTicketItem({'image':self.file})
+        # Pause in cleaner defined by delay argument
+        self.DoEproc(systemname, 'Dwell', {'dtime': delay})
+        # Move up and out of cleaner
+        self.move.Do({'relpoint': {'Z': 0}})
+        self.DoEproc(motionname, 'Run', {})

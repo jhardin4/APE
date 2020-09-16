@@ -9,9 +9,9 @@ class importape:
         if configpoint == 'thread_count':
             return ( 1 )
         if configpoint == 'line_start':
-            return ( 50 )
+            return ( 0 )
         if configpoint == 'line_end':
-            return ( 5000 )
+            return ( 1000 )
         if configpoint == 'call_file':
             return ( 'test_klein_bottle.gcode' )
         if configpoint == 'callthread':

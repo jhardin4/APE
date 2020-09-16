@@ -17,7 +17,7 @@ class Keyence_GT2_A3200_Initialize(Procedure):
         # Renaming useful pieces of informaiton
 
         # Retreiving necessary device names
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Getting necessary eprocs
         initialize = self.apparatus.GetEproc('TProbe', 'Initialize')

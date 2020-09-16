@@ -1,13 +1,12 @@
 from Core import Procedure
 import Procedures.User_FlexPrinter_Alignments_Update
-import Procedures.User_FlexPrinter_Alignments_Derive
 import json
 import time
 
 
-class User_FlexPrinter_Alignments_Align(Procedure):
+class User_RoboDaddy_Alignments_Align(Procedure):
     def Prepare(self):
-        self.name = 'User_FlexPrinter_Alignments_Align'
+        self.name = 'User_RoboDaddy_Alignments_Align'
         self.requirements['Measured_List'] = {
             'source': 'apparatus',
             'address': ['information', 'alignmentnames'],
@@ -45,8 +44,9 @@ class User_FlexPrinter_Alignments_Align(Procedure):
         self.userinput = Procedures.User_Consol_Input(self.apparatus, self.executor)
 
     def Plan(self):
-        measuredlist = self.requirements['Measured_List']['value']
         primenoz = self.requirements['primenoz']['value']
+        measuredlist = self.requirements['Measured_List']['value']
+        # measuredlist = ['initial', primenoz+'@mark', primenoz+'@start', primenoz+'@clean', primenoz+'@mark']
         filename = self.requirements['filename']['value']
         chatty = self.requirements['chatty']['value']
 
@@ -119,17 +119,12 @@ class User_FlexPrinter_Alignments_Align(Procedure):
                 alignmentscollected = True
             except FileNotFoundError:
                 print('No file loaded.  Possible error in ' + afilename)
-
-
-        # Use the measured alignments to derive the remaining needed alignments
-        self.derivealign.Do({'Measured_List': measuredlist, 'primenoz': primenoz})
-
-        # Save a copy of the alignments to the main folder and to the log folder
+        
+        """
+        # Saving a copy to simplify some simulation work
         with open(filename, 'w') as TPjson:
             json.dump(self.apparatus.getValue(['information', 'alignments']), TPjson)
-
-        with open('Logs/' + str(int(round(time.time(), 0))) + filename, 'w') as TPjson:
-            json.dump(self.apparatus.getValue(['information', 'alignments']), TPjson)
+        """
 
     def PrintAlignments(self, alignments):
         printstr = ''

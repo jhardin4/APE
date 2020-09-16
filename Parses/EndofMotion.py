@@ -18,13 +18,14 @@ class EndofMotion(Procedure):
 
     def Plan(self):
         # Renaming useful pieces of informaiton
+        motion = self.requirements['motion']['value']
         materialname = self.requirements['motion']['value']['material']
 
         # Retreiving necessary device names
-        pumpname = self.apparatus.findDevice({'descriptors': ['pump', materialname]})
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        pumpname = self.apparatus.findDevice(descriptors=['pump', materialname])
+        motionname = self.apparatus.findDevice(descriptors='motion')
         nozzlename = self.apparatus.findDevice(
-            {'descriptors': ['nozzle', materialname]}
+            descriptors=['nozzle', materialname]
         )
 
         # Assign apparatus addresses to procedures
@@ -62,12 +63,19 @@ class EndofMotion(Procedure):
 
         # Doing stuff
         if pumpname != 'No devices met requirments':
-            pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
+            if 'pressure' in motion:
+                pressure = motion['pressure']
+            elif 'mpo' in motion:
+                pressure = motion['mpo'] * self.apparatus.getValue(['devices', pumpname, 'pressure'])
+            else:
+                pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
             self.DoEproc(pumpname, 'Set', {'pressure': pressure})
-            self.pumpon.Do({'name': pumpname})
+            self.pumpon.Do({'pump_name': pumpname})
+        # End data collection
+        self.DoEproc(motionname, 'LogData_Stop', {})
         self.DoEproc(motionname, 'Run', {})  # Run the motion up to this point
         if pumpname != 'No devices met requirments':
-            self.pumpoff.Do({'name': pumpname})
+            self.pumpoff.Do({'pump_name': pumpname})
         self.motionset.Do({'Type': 'default'})
         self.DoEproc(motionname, 'Move', {'point': point, 'speed': speed})
         self.DoEproc(motionname, 'Run', {})

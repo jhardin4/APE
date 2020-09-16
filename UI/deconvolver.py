@@ -42,7 +42,10 @@ class getape ( threading.Thread ):
             line_end = importape.numberoflines ( call_file, 'end' )
         pastpoint  = [ 0, 0, 0 ]
         if past_line != 'Empty':
-            pastpoint = [ past_line.get ( 'X' ), past_line.get ( 'Y' ), past_line.get ( 'Z' ) ]
+            try:
+                pastpoint = [ past_line.get ( 'X' ), past_line.get ( 'Y' ), past_line.get ( 'Z' ) ]
+            except:
+                pass
         nextpoint = [ 0, 0, 0 ]
         toolpathpoint = [ { 'Empty' : 'Empty' } ]
         linepoint = { 'X' : 0, 'Y' : 0, 'Z' : 0 }
@@ -154,7 +157,7 @@ class getape ( threading.Thread ):
                 elif UI_line == 'no':
                     toolpathpoint.append ( linepoint )
                 else:
-                    pass
+                    toolpathpoint.append ( linepoint )
         return ( toolpathpoint )
     
     #deconvolves hotend heat, system fan, bridging fan, tool change, tool #, multiplexer #, multiplexer change, and tool change distance information
@@ -183,7 +186,10 @@ class getape ( threading.Thread ):
         p = 0
         pastline = [ 0, 0, 0, '', 1, 1, '', 0 ]
         if past_line != 'Empty':
-            pastline = [ past_line.get ( 'H' ), past_line.get ( 'SF' ), past_line.get ( 'BF' ), past_line.get ( 'TC' ), past_line.get ( 'T' ), past_line.get ( 'MX' ), past_line.get ( 'MXA' ), past_line.get ( 'D' ) ]
+            try:
+                pastline = [ past_line.get ( 'H' ), past_line.get ( 'SF' ), past_line.get ( 'BF' ), past_line.get ( 'TC' ), past_line.get ( 'T' ), past_line.get ( 'MX' ), past_line.get ( 'MXA' ), past_line.get ( 'D' ) ]
+            except:
+                pass
         nextline = [ 0, 0, 0, '', 1, 1, '', 0 ]
         hotendline = { 'H' : 0, 'SF' : 0, 'BF' : 0, 'TC' : '', 'T' : 1, 'MX' : 1, 'MXA' : '', 'D' : 0 }
         hotendfinal = [ { 'Empty' : 'Empty' } ]
@@ -357,7 +363,10 @@ class getape ( threading.Thread ):
         toolpathextrude = [ { 'Empty' : 'Empty' } ]
         pastline = [ 0, 0, 'Empty' ]
         if past_line != 'Empty':
-            pastline = [ past_line.get ( 'E' ), past_line.get ( 'F' ), past_line.get ( 'SetE' ) ]
+            try:
+                pastline = [ past_line.get ( 'E' ), past_line.get ( 'F' ), past_line.get ( 'SetE' ) ]
+            except:
+                pass
         nextline = [ 0, 0, 'Empty' ]
         tempE = tempF = 0
         tempsetE = 'Empty'
@@ -434,7 +443,10 @@ class getape ( threading.Thread ):
         p = 0
         pastbed = [ 0, 0 ]
         if past_line != 'Empty':
-            pastbed = [ past_line.get ( 'HB' ), past_line.get ( 'HC' ) ]
+            try:
+                pastbed = [ past_line.get ( 'HB' ), past_line.get ( 'HC' ) ]
+            except:
+                pass
         nextbed = [ 0, 0 ]
         hotbedline = { 'HB' : 0, 'HC' : 0 }
         hotbedfinal = [ { 'Empty' : 'Empty' } ]
@@ -504,8 +516,10 @@ class getape ( threading.Thread ):
             line_end = importape.numberoflines ( call_file, 'end' )
         pastpoint  = nextpoint = [ 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty' ]
         if past_line != 'Empty':
-            pastpoint = [ past_line.get ( 'X' ), past_line.get ( 'Y' ), past_line.get ( 'Z' ), past_line.get ( 'E' ), past_line.get ( 'F' ), past_line.get ( 'SetE' ) ]
-            #print ( pastpoint )
+            try:
+                pastpoint = [ past_line.get ( 'X' ), past_line.get ( 'Y' ), past_line.get ( 'Z' ), past_line.get ( 'E' ), past_line.get ( 'F' ), past_line.get ( 'SetE' ) ]
+            except:
+                pass
         toolpathpoint = [ { 'Empty' : 'Empty' } ]
         linepoint = { 'X' : 0, 'Y' : 0, 'Z' : 0, 'E' : 0, 'F' : 0, 'SetE' : 'Empty' }
         tempX = tempY = tempZ = tempE = tempF = 'Empty'

@@ -3,6 +3,7 @@ import Procedures.Aerotech_A3200_Set
 import Procedures.Motion_RefRelPriorityLineMotion
 import Procedures.Pump_PumpOn
 import Procedures.User_InkCal_Calculate
+import time
 
 
 class StartofMotion(Procedure):
@@ -37,10 +38,10 @@ class StartofMotion(Procedure):
 
         # Retreiving necessary device names
         nozzlename = self.apparatus.findDevice(
-            {'descriptors': ['nozzle', materialname]}
+            descriptors=['nozzle', materialname]
         )
-        pumpname = self.apparatus.findDevice({'descriptors': ['pump', materialname]})
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+        pumpname = self.apparatus.findDevice(descriptors= ['pump', materialname])
+        motionname = self.apparatus.findDevice(descriptors='motion')
 
         # Assign apparatus addresses to procedures
         self.pumpon.requirements['pumpon_time']['address'] = [
@@ -78,4 +79,16 @@ class StartofMotion(Procedure):
         # if materialname in self.apparatus.getValue(['information', 'materials']):
         #     self.calUpdate.Do({'material': materialname})
         self.motionset.Do({'Type': nozzlename})
+        # Setting up motion data collection
+        # THIS NEEDS TO BE UPDATED BASED ON WHERE YOU ARE GOING TO 
+        # STORE THE SAMPLE NAME!!!
+        samplename = self.apparatus.getValue(['information','ProcedureData','SampleRepeat_Start','samplename'])
+        filename = 'Data\\Motion\\' + str(round(time.time())) + "_" + samplename + '_motion.txt'
+        axismask = self.apparatus.getValue(['devices', motionname, nozzlename, 'axismask'])
+        parameters = {
+            'X': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'], 
+            'Y': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'], 
+            axismask['Z']: ['pc', 'pf', 'vc', 'vf', 'ac', 'af']
+        }
+        self.DoEproc(motionname, 'LogData_Start', {'file': filename, 'points': 20000, 'parameters': parameters, 'interval': 1})
 

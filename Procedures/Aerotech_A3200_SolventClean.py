@@ -45,17 +45,10 @@ class Aerotech_A3200_SolventClean(Procedure):
         self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
 
     def Plan(self):
-        # Renaming useful informaiton
-        nozzlename = self.requirements['nozzlename']['value']
-        depth = self.requirements['depth']['value']
-        delay = self.requirements['delay']['value']
-        swirls = self.requirements['swirls']['value']
-        sradius = self.requirements['sradius']['value']
-
         # Retreiving necessary device names
-        motionname = self.apparatus.findDevice({'descriptors': 'motion'})
-        pumpname = self.apparatus.findDevice({'descriptors': ['pump', nozzlename[1:]]})
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        motionname = self.apparatus.findDevice(descriptors='motion')
+        pumpname = self.apparatus.findDevice(descriptors=['pump', self.nozzlename[1:]])
+        systemname = self.apparatus.findDevice(descriptors= 'system')
 
         # Getting necessary eprocs
         runmove = self.apparatus.GetEproc(motionname, 'Run')
@@ -74,13 +67,13 @@ class Aerotech_A3200_SolventClean(Procedure):
         self.move.requirements['axismask']['address'] = [
             'devices',
             motionname,
-            nozzlename,
+            self.nozzlename,
             'axismask',
         ]
         self.move.requirements['refpoint']['address'] = [
             'information',
             'alignments',
-            nozzlename + '@dump',
+            self.nozzlename + '@dump',
         ]
 
         self.pmove.requirements['speed']['address'] = [
@@ -92,57 +85,57 @@ class Aerotech_A3200_SolventClean(Procedure):
         self.pmove.requirements['axismask']['address'] = [
             'devices',
             motionname,
-            nozzlename,
+            self.nozzlename,
             'axismask',
         ]
         self.pmove.requirements['refpoint']['address'] = [
             'information',
             'alignments',
-            nozzlename + '@dump',
+            self.nozzlename + '@dump',
         ]
 
         # Doing stuff
         self.motionset.Do({'Type': 'default'})
         self.pmove.Do({'priority': [['X', 'Y'], ['Z']]})
-        self.move.Do({'relpoint': {'Z': -depth}})
+        self.move.Do({'relpoint': {'Z': -self.depth}})
         runmove.Do()
         # pumpset.requirements['pressure']['address'] = ['devices', pumpname, 'pressure']
         # pumpset.Do()
         pumpon.Do()
-        for n in range(swirls):
+        for n in range(self.swirls):
             self.move.Do(
-                {'relpoint': {'X': sradius / 2, 'Y': sradius / 2, 'Z': -depth}}
+                {'relpoint': {'X': self.sradius / 2, 'Y': self.sradius / 2, 'Z': -self.depth}}
             )
             self.move.Do(
-                {'relpoint': {'X': sradius / 2, 'Y': -sradius / 2, 'Z': -depth}}
+                {'relpoint': {'X': self.sradius / 2, 'Y': -self.sradius / 2, 'Z': -self.depth}}
             )
             self.move.Do(
-                {'relpoint': {'X': -sradius / 2, 'Y': -sradius / 2, 'Z': -depth}}
+                {'relpoint': {'X': -self.sradius / 2, 'Y': -self.sradius / 2, 'Z': -self.depth}}
             )
             self.move.Do(
-                {'relpoint': {'X': -sradius / 2, 'Y': sradius / 2, 'Z': -depth}}
+                {'relpoint': {'X': -self.sradius / 2, 'Y': self.sradius / 2, 'Z': -self.depth}}
             )
-        self.move.Do({'relpoint': {'Z': -depth}})
+        self.move.Do({'relpoint': {'Z': -self.depth}})
         runmove.Do()
-        dwell.Do({'dtime': delay})
+        dwell.Do({'dtime': self.delay})
         pumpoff.Do()
-        for n in range(swirls):
+        for n in range(self.swirls):
             self.move.Do(
-                {'relpoint': {'X': sradius / 2, 'Y': sradius / 2, 'Z': -depth}}
+                {'relpoint': {'X': self.sradius / 2, 'Y': self.sradius / 2, 'Z': -self.depth}}
             )
             self.move.Do(
-                {'relpoint': {'X': sradius / 2, 'Y': -sradius / 2, 'Z': -depth}}
+                {'relpoint': {'X': self.sradius / 2, 'Y': -self.sradius / 2, 'Z': -self.depth}}
             )
             self.move.Do(
-                {'relpoint': {'X': -sradius / 2, 'Y': -sradius / 2, 'Z': -depth}}
+                {'relpoint': {'X': -self.sradius / 2, 'Y': -self.sradius / 2, 'Z': -self.depth}}
             )
             self.move.Do(
-                {'relpoint': {'X': -sradius / 2, 'Y': sradius / 2, 'Z': -depth}}
+                {'relpoint': {'X': -self.sradius / 2, 'Y': self.sradius / 2, 'Z': -self.depth}}
             )
-        self.move.Do({'relpoint': {'Z': -depth}})
+        self.move.Do({'relpoint': {'Z': -self.depth}})
         self.move.Do({'relpoint': {'Z': 0}})
         zaxis = self.apparatus.getValue(
-            ['devices', motionname, nozzlename, 'axismask']
+            ['devices', motionname, self.nozzlename, 'axismask']
         )['Z']
         self.move.requirements['refpoint']['address'] = [
             'information',

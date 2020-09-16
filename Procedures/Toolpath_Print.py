@@ -7,7 +7,7 @@ class Toolpath_Print(Procedure):
         self.name = 'Toolpath_Print'
         self.requirements['toolpath'] = {
             'source': 'apparatus',
-            'address': '',
+            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath'],
             'value': '',
             'desc': 'toolpath to be printed',
         }
@@ -50,9 +50,9 @@ class Toolpath_Print(Procedure):
                 if line['parse'] == 'end':
                     self.end.Do()
             else:
-                motionname = self.apparatus.findDevice({'descriptors': 'motion'})
+                motionname = self.apparatus.findDevice(descriptors='motion')
                 nozzlename = self.apparatus.findDevice(
-                    {'descriptors': ['nozzle', line['material']]}
+                    descriptors=['nozzle', line['material']]
                 )
                 refpoint = self.apparatus.getValue(
                     ['information', 'alignments', nozzlename + '@start']

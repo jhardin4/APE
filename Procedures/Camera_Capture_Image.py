@@ -1,4 +1,5 @@
 from Core import Procedure
+from Core import Apparatus
 
 
 class Camera_Capture_Image(Procedure):
@@ -14,7 +15,7 @@ class Camera_Capture_Image(Procedure):
             'source': 'apparatus',
             'address': '',
             'value': '',
-            'desc': 'time to weight before taking picture',
+            'desc': 'time to wait before taking picture',
         }
         self.requirements['camera_name'] = {
             'source': 'apparatus',
@@ -22,20 +23,29 @@ class Camera_Capture_Image(Procedure):
             'value': '',
             'desc': 'name of the camera to be used',
         }
+        self.requirements['config_file'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'configuration file to load to camera',
+        }
 
     def Plan(self):
-        # Renaming useful pieces of informaiton
-        file = self.requirements['file']['value']
-        stime = self.requirements['settle_time']['value']
-        cname = self.requirements['camera_name']['value']
-
         # Retreiving necessary device names
-        systemname = self.apparatus.findDevice({'descriptors': 'system'})
+        systemname = self.apparatus.findDevice(descriptors='system')
 
         # Retrieving information from apparatus
-
+        # Support a default location for the settle_time
+        if self.settle_time == '':
+            stime_address = ['devices', self.camera_name, 'settle_time']
+            try:
+                self.settle_time = self.apparatus.getValue(stime_address)
+            except Apparatus.InvalidApparatusAddressException:
+                self.settle_time = 0
         # Assign apparatus addresses to procedures
 
         # Doing stuff
-        self.DoEproc(systemname, 'Dwell', {'dtime': stime})
-        self.DoEproc(cname, 'Measure', {'file': file})
+        self.DoEproc(systemname, 'Dwell', {'dtime': self.settle_time})
+        self.DoEproc(self.camera_name, 'LoadConfiguration', {'file': self.config_file})
+        self.DoEproc(self.camera_name, 'Measure', {'file': self.file})
+        self.apparatus.AddTicketItem({'image':self.file})

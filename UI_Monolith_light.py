@@ -43,7 +43,34 @@ def Auto_Run_Monolith ( ):
     """
     connect, send code 1 line at a time with a que of 3 total.
     log events here as code is sent. log using convert_1 or convert_2 as coorisponding gcode is sent.
+    
+    Below is a test code to run in the event that legacy devices are being controlled.
+    I've run into this problem multiple times.  Have fun debugging :)
+    
+    LCAT funding
+    anthony
+    chargecode for ??? funding source
+    
+    import usb.core
+    import usb.backend.libusb1
+
+    busses = usb.busses()
+    for bus in busses:
+        devices = bus.devices
+        for dev in devices:
+            if dev != None:
+                try:
+                    xdev = usb.core.find(idVendor=dev.idVendor, idProduct=dev.idProduct)
+                    if xdev._manufacturer is None:
+                        xdev._manufacturer = usb.util.get_string(xdev, xdev.iManufacturer)
+                    if xdev._product is None:
+                        xdev._product = usb.util.get_string(xdev, xdev.iProduct)
+                    stx = '%6d %6d: '+str(xdev._manufacturer).strip()+' = '+str(xdev._product).strip()
+                    print ( stx % (dev.idVendor,dev.idProduct) )
+                except:
+                    print ( 'empty device' )
     """
+    
     
     
     

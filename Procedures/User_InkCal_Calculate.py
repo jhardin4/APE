@@ -34,9 +34,9 @@ class User_InkCal_Calculate(Procedure):
         filename = self.requirements['filename']['value']
         cfilename = material + filename
 
-        motion = self.apparatus.findDevice({'descriptors': ['motion']})
-        nozzle = self.apparatus.findDevice({'descriptors': ['nozzle', material]})
-        pump = self.apparatus.findDevice({'descriptors': ['pump', material]})
+        motion = self.apparatus.findDevice(descriptors=['motion'])
+        nozzle = self.apparatus.findDevice(descriptors=['nozzle', material])
+        pump = self.apparatus.findDevice(descriptors=['pump', material])
 
         do_pumpcal = self.apparatus.getValue(
             ['information', 'materials', material, 'do_pumpcal']
