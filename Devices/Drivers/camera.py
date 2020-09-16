@@ -1,15 +1,9 @@
-import os
-import numpy as np
-from matplotlib.image import imsave
-import matplotlib.pyplot as plt
-
-try:
-    import pyueye.ueye as pue
-except ImportError:
-    pue = None  # don't throw an error if uye lib is not installed
-
+import cv2
+import numpy as np 
+from pyueye import ueye
 from .ueye_codes import get_codes, invert_dict, error_codes
-
+import threading
+import time
 
 class CameraException(Exception):
     def __init__(self, camera, message='', code=-1, stop=True):
@@ -23,8 +17,8 @@ class CameraException(Exception):
             self.status = 'running'
 
     def close(self):
-        err = pue.is_ExitCamera(self.camera)
-        if err == pue.IS_SUCCESS:
+        err = ueye.is_ExitCamera(self.camera)
+        if err == ueye.IS_SUCCESS:
             self.status = 'closed'
         else:
             self.status = 'did not close'
@@ -32,264 +26,337 @@ class CameraException(Exception):
     def __str__(self):
         return self.message + ', ' + self.ueye_error
 
-
 class UEye(object):
-    def __init__(self, cam_id=0, width=2048, height=1088):
-        """
-        Opens the camera connection and prepares the device for taking images.
-        """
-        self.image_data = None
-        self._color_mode = None
-        self._width = width
-        self._height = height
-        self._ppc_img_mem = None
-        self._mem_id = None
-        self._pitch = None
-        self._c_width = None
-        self._c_height = None
-        self._c_pixel_bits = None
-        self._bytes_per_pixel = 0
-        self._video_capture = False
-
-        if pue is None:
-            raise RuntimeError(
-                'uEye library could not be loaded, check the PYUEYE_DLL_PATH:'
-                f' "{os.environ.get("PYUEYE_DLL_PATH", "")}"'
-            )
-
-        self._cam = pue.HIDS(cam_id)
+    def __init__(self, cam_id, name):
+    
+        self._cam = ueye.HIDS(cam_id)
+        self._cam_name = name
+        self._sInfo = ueye.SENSORINFO()
+        self._sFPS = ueye.DOUBLE()
         self._connect()
-        self._configure_camera()
-        self._set_color_mode('rgb8')
+
+        # Query additional information about the sensor type used in the camera
+        err = ueye.is_GetSensorInfo(self._cam, self._sInfo)
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>close>GetSensorInfo>', err)
+
+        # Reset camera to default settings
+        err = ueye.is_ResetToDefault(self._cam)
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>close>ResetToDefault>', err)
+        
+        # Set display mode to DIB
+        err = ueye.is_SetDisplayMode(self._cam, ueye.IS_SET_DM_DIB)
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>close>SetDisplayMode>', err)
+        
+        # Core Camera Variables
+        self._width = ueye.INT(self._sInfo.nMaxWidth.value)
+        self._height = ueye.INT(self._sInfo.nMaxHeight.value)
+        self._pitch = ueye.INT()
+        self._ppc_img_mem = ueye.c_mem_p()
+        self._mem_id = ueye.INT()
+        self._nBitsPerPixel = ueye.INT()
+        self._m_nColorMode = ueye.INT()
+        self._bytes_per_pixel = ueye.INT()
+        self._video_capture = False
+        self._done_saving = True
+
+        # Allicate memory for frames
         self._allocate_memory()
 
-    def __enter__(self):
-        self.__init__()
-        return self
+        # Start collection of frames
+        self.start_video_capture()
 
-    def __exit__(self):
-        self.close()
+        # Get frames per second
+        err = ueye.is_GetFramesPerSecond(self._cam, self._sFPS)
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>close>GetFramesPerSecond>', err)
+
+        # Start new thread to save frame
+        threading.Thread(target = self._update).start()
+    
+    def _update(self):
+        self.frame = self.get_video_frame()
 
     def close(self):
+        # Wait to make sure video file is saved completely
+        while not self._done_saving:
+            pass
         self._deallocate_memory()
-        err = pue.is_ExitCamera(self._cam)
-        if err != pue.IS_SUCCESS:
+        err = ueye.is_ExitCamera(self._cam)
+        if err != ueye.IS_SUCCESS:
             raise CameraException(self._cam, 'ueye>close>', err)
 
-    def _set_color_mode(self, mode):
-        self._color_mode = ColorMode(mode)
-        err = pue.is_SetColorMode(self._cam, self._color_mode.code)
-        if err != pue.IS_SUCCESS:
-            raise CameraException(
-                self._cam, 'ueye>configure_image>_set_color_mode>', err
-            )
-
     def _connect(self):
-        err = pue.is_InitCamera(self._cam, None)
-        if err != pue.IS_SUCCESS:
-            err = pue.is_EnableAutoExit(self._cam, 1)
-        if err != pue.IS_SUCCESS:
+        err = ueye.is_InitCamera(self._cam, None)
+        if err != ueye.IS_SUCCESS:
+            err = ueye.is_EnableAutoExit(self._cam, 1)
+        if err != ueye.IS_SUCCESS:
             raise CameraException(self._cam, 'ueye>_connect>', err)
 
-    def _configure_camera(self, mode='RGB8', **kwargs):
-        err = pue.is_SetDisplayMode(self._cam, pue.IS_SET_DM_DIB)
-        if err != pue.IS_SUCCESS:
-            raise CameraException(
-                self._cam, 'ueye>configure_image>set_display_mode>', err
-            )
-        err = pue.is_SetExternalTrigger(self._cam, pue.IS_SET_TRIGGER_SOFTWARE)
-        if err != pue.IS_SUCCESS:
-            raise CameraException(self._cam, 'ueye>configure_image>set_trigger>', err)
-        err = pue.is_SetHardwareGain(self._cam, 0, 24, 0, 30)
-        if err != pue.IS_SUCCESS:
-            raise CameraException(
-                self._cam, 'ueye>configure_image>set_hardware_gain>', err
-            )
-        err = pue.is_SetHardwareGamma(self._cam, pue.IS_SET_HW_GAMMA_OFF)
-        if err != pue.IS_SUCCESS:
-            raise CameraException(
-                self._cam, 'ueye>configure_image>set_hardware_gamma>', err
-            )
-        '''
-        black_level = 70
-        c_BL = ctypes.c_void_p(black_level)
+    def start_feed(self):
+        self.feed_live = True
+        threading.Thread(target = self._feed_loop).start()
 
-        err = pue.is_Blacklevel(self.cam, 8, IDS_SUCKS(70), 8)
-        if err != pue.IS_SUCCESS:
-            raise CameraException(self.cam, 'ueye>configure_image>set_black_level>', err)
-        '''
+    def stop_feed(self):
+        self.feed_live = False
+
+    def start_record(self, path):
+        while not self._done_saving:
+            pass
+        self.record_live = True
+        self._done_saving = False
+        threading.Thread(target = self._record_loop, args=(path,)).start()
+
+    def stop_record(self):
+        self.record_live = False
+
+    def _record_loop(self,path):
+        videoFrames = []
+        frametime = []
+        while self.record_live:
+            startTime = time.time()
+            videoFrames.append(np.copy(self.frame[:,:,:3]))
+            frametime.append(time.time()-startTime)
+
+        framerate = round(1/np.mean(frametime))
+        out = cv2.VideoWriter(path, 0, int(framerate), (int(self._width),int(self._height)))
+        for frame in videoFrames:
+            out.write(frame)
+        out.release()
+        self._done_saving = True
+
+    def _feed_loop(self):
+        #https://stackoverflow.com/questions/27006462/opencv-imshow-window-cannot-be-reused-when-called-within-a-thread
+        while self.feed_live:
+            resize = self._resize_keep_aspect(self.frame,width=640)
+            cv2.imshow(self._cam_name, resize)
+            cv2.waitKey(1)
+
+    def _resize_keep_aspect(self,image, width=None, height=None):
+        (h, w) = image.shape[:2]
+
+        if width is None and height is None:
+            return image
+        if width is None:
+            r = height / float(h)
+            dim = (int(w * r), height)
+        else:
+            r = width / float(w)
+            dim = (width, int(h * r))
+        return cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+
+    def start_video_capture(self):
+        # Activates the camera's live video mode (free run mode)
+        err = ueye.is_CaptureVideo(self._cam, ueye.IS_WAIT)
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>video_capture>', err, False)
+        
+        err = ueye.is_InquireImageMem(
+            self._cam,
+            self._ppc_img_mem,
+            self._mem_id,
+            self._width,
+            self._height,
+            self._nBitsPerPixel,
+            self._pitch,
+        )
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>video_capture>', err, False)
+        self._video_capture = True
+
+    def save_image(self, path, invert=True):
+        if invert:
+            output = np.rot90(self.frame[:,:,:3],2)
+        if path.split('.')[-1] == 'png':
+            cv2.imwrite(path, output,[cv2.IMWRITE_PNG_COMPRESSION,0])
+        elif path.split('.')[-1] == 'jpeg':
+            cv2.imwrite(path, output,[cv2.IMWRITE_JPEG_QUALITY,100])
+        else:
+            raise CameraException(self._cam, 'ueye>save_image>image type not supported')
+
+    def get_video_frame(self):
+        array = ueye.get_data(
+            self._ppc_img_mem,
+            self._width,
+            self._height,
+            self._nBitsPerPixel,
+            self._pitch,
+            copy=False,
+        )
+        frame = np.reshape(
+            array, (int(self._height), int(self._width), int(self._bytes_per_pixel))
+        )
+        return frame
+
+    def auto_configure(self, auto_reference=90, timeout=60):
+        ueye.is_SetAutoParameter(self._cam, ueye.IS_SET_AUTO_WB_ONCE,ueye.DOUBLE(1),ueye.DOUBLE(0))
+        ueye.is_SetAutoParameter(self._cam, ueye.IS_SET_AUTO_BRIGHTNESS_ONCE,ueye.DOUBLE(1),ueye.DOUBLE(0))
+        ueye.is_SetAutoParameter(self._cam,ueye.IS_SET_AUTO_REFERENCE, ueye.DOUBLE(auto_reference), ueye.DOUBLE(0))
+        ueye.is_SetAutoParameter(self._cam, ueye.IS_SET_ENABLE_AUTO_WHITEBALANCE,ueye.DOUBLE(1),ueye.DOUBLE(0))
+        ueye.is_SetAutoParameter(self._cam, ueye.IS_SET_ENABLE_AUTO_GAIN,ueye.DOUBLE(1),ueye.DOUBLE(0))
+        err= ueye.is_SetAutoParameter(self._cam, ueye.IS_SET_ENABLE_AUTO_SHUTTER,ueye.DOUBLE(1),ueye.DOUBLE(0))
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>auto_parameters>', err)
+        
+        WB_status = ueye.DOUBLE(1.0)
+        gain_status = ueye.DOUBLE(1.0)
+        shutter_status = ueye.DOUBLE(1.0)
+        timeout += time.time()
+        while WB_status or gain_status or shutter_status:
+            ueye.is_SetAutoParameter(self._cam, ueye.IS_GET_ENABLE_AUTO_WHITEBALANCE,WB_status,ueye.DOUBLE(0))
+            ueye.is_SetAutoParameter(self._cam, ueye.IS_GET_ENABLE_AUTO_GAIN,gain_status,ueye.DOUBLE(0))
+            ueye.is_SetAutoParameter(self._cam, ueye.IS_GET_ENABLE_AUTO_SHUTTER,shutter_status,ueye.DOUBLE(0))
+            if time.time() > timeout:
+                break
+
+    def configure(self, parameters):
+        # Exposure varies by camera: 0.020ms to 69.847 for UI-3250 model (check uEye cockpit for specifics)
+        # Gain (master) can be set between 0-100
+        # Black level can be set between 0-255
+        # Gamma can be set between 0.01 and 10
+
+        #Set dict keys to all lower case
+        parameters = dict((k.lower(),v) for k,v in parameters.items())
+
+        if 'exposure' in parameters:
+            #Doesn't do anything
+            err = ueye.is_Exposure(self._cam, ueye.IS_EXPOSURE_CMD_SET_EXPOSURE, ueye.DOUBLE(parameters['exposure']), ueye.sizeof(ueye.DOUBLE(parameters['exposure'])))
+            if err != ueye.IS_SUCCESS:
+                raise CameraException(self._cam, 'ueye>configure>exposure>', err)
+        
+        if 'gain' in parameters:
+            err = ueye.is_SetHardwareGain(self._cam, ueye.INT(parameters['gain']), ueye.IS_IGNORE_PARAMETER,ueye.IS_IGNORE_PARAMETER,ueye.IS_IGNORE_PARAMETER)
+            if err != ueye.IS_SUCCESS:
+                raise CameraException(self._cam, 'ueye>configure>gain>', err)
+
+        if 'black_level' in parameters:
+            err = ueye.is_Blacklevel(self._cam, ueye.IS_BLACKLEVEL_CMD_SET_OFFSET, ueye.INT(parameters['black_level']),ueye.sizeof(ueye.INT(parameters['black_level'])))
+            if err != ueye.IS_SUCCESS:
+                raise CameraException(self._cam, 'ueye>configure>black_level>', err)
+
+        if 'gamma' in parameters:
+            # Digital gamma correction
+            err = ueye.is_Gamma(self._cam, ueye.IS_GAMMA_CMD_SET, ueye.INT(int(parameters['gamma']*100)),ueye.sizeof(ueye.INT(int(parameters['gamma']*100))))
+            if err != ueye.IS_SUCCESS:
+                raise CameraException(self._cam, 'ueye>configure>gamma>', err) 
+
+    def load_parameters(self, path):
+        # Load parameters from file
+        # Taken from: https://stackoverflow.com/questions/56461431/error-loading-ueye-camera-configuration-file-with-pyueye
+        pParam = ueye.wchar_p()
+        pParam.value = path
+        err = ueye.is_ParameterSet(self._cam, ueye.IS_PARAMETERSET_CMD_LOAD_FILE, pParam, 0)
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>load_parameters>', err)
+        # Wait for parameters to take effect
+        time.sleep(5)
+
+    def save_parameters(self, path):
+        # Save parameters to file
+        pParam = ueye.wchar_p()
+        pParam.value = path
+        err = ueye.is_ParameterSet(self._cam, ueye.IS_PARAMETERSET_CMD_SAVE_FILE, pParam, 0)
+        if err != ueye.IS_SUCCESS:
+            raise CameraException(self._cam, 'ueye>save_parameters>', err)
 
     def _allocate_memory(self):
-        """
-        Allocates memory on the PC and camera
-        """
-        # init c-values
-        self._c_width = pue.INT(self._width)
-        self._c_height = pue.INT(self._height)
-        self._c_pixel_bits = pue.INT(self._color_mode.bits_per_pixel)
-        self._bytes_per_pixel = self._color_mode.bits_per_pixel / 8
+        # Allocates memory on the PC and camera
 
-        # the starting memory address for the image, will be returned
-        self._ppc_img_mem = pue.c_mem_p()
-        # the ID for the allocated image, will be returned
-        self._mem_id = pue.INT()
+        # Set the right color mode
+        if int.from_bytes(self._sInfo.nColorMode.value, byteorder='big') == ueye.IS_COLORMODE_BAYER:
+            # setup the color depth to the current windows setting
+            ueye.is_GetColorDepth(self._cam, self._nBitsPerPixel, self._m_nColorMode)
+            self._bytes_per_pixel = self._nBitsPerPixel / 8
+
+        elif int.from_bytes(self._sInfo.nColorMode.value, byteorder='big') == ueye.IS_COLORMODE_CBYCRY:
+            # for color camera models use RGB32 mode
+            self._m_nColorMode = ueye.IS_CM_BGRA8_PACKED
+            self._nBitsPerPixel = ueye.INT(32)
+            self._bytes_per_pixel = self._nBitsPerPixel / 8
+
+        elif int.from_bytes(self._sInfo.nColorMode.value, byteorder='big') == ueye.IS_COLORMODE_MONOCHROME:
+            # for color camera models use RGB32 mode
+            self._m_nColorMode = ueye.IS_CM_MONO8
+            self._nBitsPerPixel = ueye.INT(8)
+            self._bytes_per_pixel = self._nBitsPerPixel / 8
+
+        else:
+            # for monochrome camera models use Y8 mode
+            self._m_nColorMode = ueye.IS_CM_MONO8
+            self._nBitsPerPixel = ueye.INT(8)
+            self._bytes_per_pixel = self._nBitsPerPixel / 8
 
         # allocate memory for an image
-        err = pue.is_AllocImageMem(
+        err = ueye.is_AllocImageMem(
             self._cam,
-            self._c_width,
-            self._c_height,
-            self._c_pixel_bits,
+            self._width,
+            self._height,
+            self._nBitsPerPixel,
             self._ppc_img_mem,
             self._mem_id,
         )
-        if err != pue.IS_SUCCESS:
+        if err != ueye.IS_SUCCESS:
             raise CameraException(self._cam, 'ueye>_allocate_memory>', err)
 
         # make the image memory 'active'
-        err = pue.is_SetImageMem(self._cam, self._ppc_img_mem, self._mem_id)
-        if err != pue.IS_SUCCESS:
+        err = ueye.is_SetImageMem(self._cam, self._ppc_img_mem, self._mem_id)
+        if err != ueye.IS_SUCCESS:
             raise CameraException(self._cam, 'ueye>_allocate_memory>', err)
-        # create an array in python to which to copy the image
-        self.image_data = np.zeros(
-            (self._height, self._width, self._color_mode.channels),
-            dtype=self._color_mode.dtype,
-        )
 
     def _deallocate_memory(self):
         if self._ppc_img_mem is None:
             return
         # Releases an image memory that was allocated using is_AllocImageMem() and removes it from the driver management
-        err = pue.is_FreeImageMem(self._cam, self._ppc_img_mem, self._mem_id)
-        if err != pue.IS_SUCCESS:
+        err = ueye.is_FreeImageMem(self._cam, self._ppc_img_mem, self._mem_id)
+        if err != ueye.IS_SUCCESS:
             raise CameraException(self._cam, 'ueye>_deallocate_memory>', err)
         self._ppc_img_mem = None
 
-    def capture(self):
-        """
-        Takes an image from the camera and places it in the computer memory
-        """
-        err = pue.is_FreezeVideo(
-            self._cam, pue.IS_WAIT
-        )  # IS_DONT_WAIT  = 0x0000, or IS_GET_LIVE = 0x8000
-        if err != pue.IS_SUCCESS:
-            raise CameraException(self._cam, 'ueye>capture>', err, False)
-        err = pue.is_CopyImageMem(
-            self._cam, self._ppc_img_mem, self._mem_id, self.image_data.ctypes.data
-        )
-        if err != pue.IS_SUCCESS:
-            raise CameraException(self._cam, 'ueye>capture>', err, False)
-
-    def save_image(self, path, take_snapshot=True):
-        if take_snapshot:
-            self.capture()
-        imsave(path, self.image_data)
-
-    def start_video_capture(self):
-        # Activates the camera's live video mode (free run mode)
-        err = pue.is_CaptureVideo(self._cam, pue.IS_DONT_WAIT)
-        if err != pue.IS_SUCCESS:
-            raise CameraException(self._cam, 'ueye>video_capture', err, False)
-        self._pitch = pue.INT()
-        err = pue.is_InquireImageMem(
-            self._cam,
-            self._ppc_img_mem,
-            self._mem_id,
-            self._c_width,
-            self._c_height,
-            self._c_pixel_bits,
-            self._pitch,
-        )
-        if err != pue.IS_SUCCESS:
-            raise CameraException(self._cam, 'ueye>video_capture', err, False)
-        self._video_capture = True
-
-    def get_video_frame(self):
-        if not self._video_capture:
-            return None
-
-        if pue.IS_SUCCESS:
-            array = pue.get_data(
-                self._ppc_img_mem,
-                self._c_width,
-                self._c_height,
-                self._c_pixel_bits,
-                self._pitch,
-                copy=False,
-            )
-            frame = np.reshape(
-                array, (self._height, self._width, self._bytes_per_pixel)
-            )
-            return frame
-        else:
-            return None
-
-    #
-    # CAMERA AND IMAGE CONFIGURATION FUNCTIONS
-    #
-
-    def set_gain(self, master, red, green, blue):
-        err = pue.is_SetHardwareGain(self._cam, master, red, green, blue)
-        if err != pue.IS_SUCCESS:
-            raise CameraException(self._cam, 'ueye>set_gain>', err, False)
-
-
-class ColorMode:
-    def __init__(self, mode):
-        self.mode = mode
-        self.code = self._modes[mode]
-        if 'mono' in mode:
-            self.channels = 1
-        else:
-            if 'a8' in mode or 'y8' in mode:
-                self.channels = 4
-            else:
-                self.channels = 3
-        if '8' in mode:
-            self.bits_per_channel = 8
-        if '10' in mode:
-            self.bits_per_channel = 16
-        if '12' in mode:
-            self.bits_per_channel = 16
-        if '16' in mode:
-            self.bits_per_channel = 16
-
-        self.bits_per_pixel = self.channels * self.bits_per_channel
-        self.dtype = 'uint{}'.format(int(self.bits_per_channel))
-        print(self.dtype)
-
-    @property
-    def _modes(self):
-        return {
-            'mono8': pue.IS_CM_MONO8,
-            'mono10': pue.IS_CM_MONO10,
-            'mono12': pue.IS_CM_MONO12,
-            'mono16': pue.IS_CM_MONO16,
-            'raw8': pue.IS_CM_SENSOR_RAW8,
-            'raw10': pue.IS_CM_SENSOR_RAW10,
-            'raw12': pue.IS_CM_SENSOR_RAW12,
-            'raw16': pue.IS_CM_SENSOR_RAW16,
-            'rgb8': pue.IS_CM_RGB8_PACKED,
-            'rgba8': pue.IS_CM_RGBA8_PACKED,
-            'rgby8': pue.IS_CM_RGBY8_PACKED,
-            'rgb10': pue.IS_CM_RGB10_PACKED,
-            'bgr8': pue.IS_CM_BGR8_PACKED,
-            'bgr10': pue.IS_CM_BGR10_PACKED,
-            'bgra8': pue.IS_CM_BGRA8_PACKED,
-            'bgry8': pue.IS_CM_BGRY8_PACKED,
-        }
-
-
 if __name__ == '__main__':
     try:
-        cam = UEye()
-        cam.capture()
-        plt.imshow(cam.image_data[:, :, :])
-        # cam.save_image("C:\\Users\\Engineer\\Documents\\Alex\\test\\img.png")
+        cam = UEye(cam_id=0,name='cam0')
+        print("Connected to camera")
+        
+        cam.start_feed()
+        print("Started live feed")
+
+        cam.auto_configure()
+        print("Auto configured camera")
+
+        cam.save_parameters('auto_config.ini')
+        print("Saved configuration to file")
+
+        cam.configure({'exposure':40.0,'gain': 50, 'black_level':200, 'gamma':1.0})
+        print("Manually configured the camera")
+
+        cam.load_parameters('auto_config.ini')
+        print("Loaded configuration file")
+        
+        cam.start_record('video_test_1.avi')
+        print("Started rec 1")
+        time.sleep(5)
+        cam.save_image('image_test_1.png')
+        print("Took and saved image 1")
+        time.sleep(5)
+        cam.stop_record()
+        print("Stopped rec 1")
+        
+        cam.start_record('video_test_2.avi')
+        print("Started rec 2")
+        time.sleep(5)
+        cam.save_image('image_test_2.png')
+        print("Took and saved image 2")
+        time.sleep(5)
+        cam.stop_record()
+        print("Stopped rec 2")
+
+        cam.stop_feed()
+        print("Stopped live feed")
+
         cam.close()
+        print("Dicsonnected from camera")
+
     except CameraException as ce:
         print(ce)
-    '''
-    finally:
-        print('closing camera: ', pue.is_ExitCamera(pue.HIDS(0)))
-    '''

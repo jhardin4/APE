@@ -352,9 +352,9 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
 
     def fSet_LookAhead(self, LookAhead, task, motionmode):
         if LookAhead:
-            self.tasklog['task' + str(task)].append('VELOCITY ON \n') #some temperature
+            self.tasklog['task' + str(task)].append('VELOCITY ON \n')
         else:
-            self.tasklog['task' + str(task)].append('VELOCITY OFF \n') #
+            self.tasklog['task' + str(task)].append('VELOCITY OFF \n')
         self.motionsetting['LookAhead'] = LookAhead
 
         self.fRun(motionmode, task)
