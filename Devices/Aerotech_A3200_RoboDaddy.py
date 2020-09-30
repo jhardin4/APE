@@ -518,6 +518,90 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
         if not self.simulation:
             # print(cmdmessage)
             self.handle.cmd_exe(cmdmessage, task=task)
+    
+    def gen_cal_table(self, start_point, x_length, y_length, x_count, y_count, outaxis, result, file=''):
+        '''
+        Generate calibration table from grid of measurements
+        '''
+
+        import os
+        import numpy as np
+        filename = os.getcwd() + '\\CalTables\\' + file
+
+        spacing = [x_length/(x_count-1),y_length/(y_count-1)]
+        offset = start_point.values()
+        
+        outaxis = self.axes.index(outaxis)+2
+
+        if outaxis == 7:
+            outputaxis3 = 7 #If 4th Z-axis is selected, use the 4th.
+        else:
+            outputaxis3 = 6 #Default output axis 3 to 3rd Z-axis
+
+        header = """'        RowAxis  ColumnAxis  OutputAxis1  OutputAxis2  SampDistRow  SampDistCol  NumCols
+:START2D    2          1           4            5           {0:.6f}          -{1:.6f}       {2}
+:START2D OUTAXIS3={3} POSUNIT=PRIMARY CORUNIT=PRIMARY/1000 OFFSETROW=-{5:.6f} OFFSETCOL={4:.6f}\n""".format(*spacing,x_count,outputaxis3,*offset)
+
+        footer = """:END
+'
+'
+' Notes:
+' Assume X is axis 1, Y axis 2, A axis 4, B axis 5, {0} axis {1} in this example.
+' The ColumnAxis (X) moves along a given row, selecting a particular column based on the SampDistCol
+' setting (-{3:.6f} mm in this example).
+' The RowAxis (Y) moves vertically in the table, selecting a particular row of correction values based
+' on the SampDistRow setting ({2:.6f} mm in this example).
+' OutputAxis1 ({4}) gets correction from the first element of each correction triplet.
+' OutputAxis2 ({5}) gets correction from the second element of each correction triplet.
+' OutputAxis3 ({0}) gets correction from the third element of each correction triplet""".format(self.axes[outputaxis3-2],outputaxis3,*spacing,*self.axes[2:4])
+
+        # Correct around last position measured
+        scan = result-result.flatten()[-1]
+        
+        # Convert mm reading to microns
+        scan *= 1000
+
+        # Add zeros
+        output = np.zeros((scan.shape[0],scan.shape[1]*3))
+
+        if outaxis == 7:
+            replacement_col = 2
+        else:
+            replacement_col = outaxis-4
+            
+        for i in range(scan.shape[1]):
+            output[:,i*3+replacement_col] = scan[:,i]
+
+        # Write table to outfile
+        f=open(filename,'w')
+        f.write(header)
+        np.savetxt(f,output,fmt='%.3f')
+        f.write(footer)
+        f.close()
+
+        return self.returnlog()
+
+    def enableCalTable(self, file='',task=''):
+        '''
+        Load and enable calibration table on A3200 controller.
+        '''
+        # Load calibration table to controller
+        import os
+        filename = os.getcwd() + '\\CalTables\\' + file
+        self.sendCommands('LOADCALFILE "{}", 2D_CAL'.format(filename),task=task)
+        self.tasklog['task' + str(task)].append('2D calibration table at ' + filename + ' loaded to controller.')
+        # Enable calibration table
+        self.sendCommands('CALENABLE 2D',task=task)
+        self.tasklog['task' + str(task)].append('2D calibration table has been enabled.')
+        return self.returnlog()
+    
+    def disableCalTable(self,task=''):
+        '''
+        Disable calibration table on A3200 controller.
+        '''
+        self.sendCommands('CALDISABLE 2D',task=task)
+        self.tasklog['task' + str(task)].append('2D calibration table has been disabled.')
+        return self.returnlog()
 
     def LogData_Start(
         self, file='', points='', parameters='', interval='', task='', motionmode=''
@@ -572,5 +656,5 @@ class Aerotech_A3200_RoboDaddy(Motion, Sensor):
 
 
 if __name__ == '__main__':
-    myA3200 = Aerotech_A3200_FlexPrinter('myA3200')
+    myA3200 = Aerotech_A3200_RoboDaddy('myA3200')
     myA3200.simulation = True

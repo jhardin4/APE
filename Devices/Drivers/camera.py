@@ -166,11 +166,13 @@ class UEye(object):
             raise CameraException(self._cam, 'ueye>video_capture>', err, False)
         self._video_capture = True
 
-    def save_image(self, path):
+    def save_image(self, path, invert=True):
+        if invert:
+            output = np.rot90(self.frame[:,:,:3],2)
         if path.split('.')[-1] == 'png':
-            cv2.imwrite(path, self.frame[:,:,:3],[cv2.IMWRITE_PNG_COMPRESSION,0])
+            cv2.imwrite(path, output,[cv2.IMWRITE_PNG_COMPRESSION,0])
         elif path.split('.')[-1] == 'jpeg':
-            cv2.imwrite(path, self.frame[:,:,:3],[cv2.IMWRITE_JPEG_QUALITY,100])
+            cv2.imwrite(path, output,[cv2.IMWRITE_JPEG_QUALITY,100])
         else:
             raise CameraException(self._cam, 'ueye>save_image>image type not supported')
 
@@ -188,7 +190,7 @@ class UEye(object):
         )
         return frame
 
-    def auto_configure(self, auto_reference=70):
+    def auto_configure(self, auto_reference=90, timeout=60):
         ueye.is_SetAutoParameter(self._cam, ueye.IS_SET_AUTO_WB_ONCE,ueye.DOUBLE(1),ueye.DOUBLE(0))
         ueye.is_SetAutoParameter(self._cam, ueye.IS_SET_AUTO_BRIGHTNESS_ONCE,ueye.DOUBLE(1),ueye.DOUBLE(0))
         ueye.is_SetAutoParameter(self._cam,ueye.IS_SET_AUTO_REFERENCE, ueye.DOUBLE(auto_reference), ueye.DOUBLE(0))
@@ -201,10 +203,13 @@ class UEye(object):
         WB_status = ueye.DOUBLE(1.0)
         gain_status = ueye.DOUBLE(1.0)
         shutter_status = ueye.DOUBLE(1.0)
+        timeout += time.time()
         while WB_status or gain_status or shutter_status:
             ueye.is_SetAutoParameter(self._cam, ueye.IS_GET_ENABLE_AUTO_WHITEBALANCE,WB_status,ueye.DOUBLE(0))
             ueye.is_SetAutoParameter(self._cam, ueye.IS_GET_ENABLE_AUTO_GAIN,gain_status,ueye.DOUBLE(0))
             ueye.is_SetAutoParameter(self._cam, ueye.IS_GET_ENABLE_AUTO_SHUTTER,shutter_status,ueye.DOUBLE(0))
+            if time.time() > timeout:
+                break
 
     def configure(self, parameters):
         # Exposure varies by camera: 0.020ms to 69.847 for UI-3250 model (check uEye cockpit for specifics)
@@ -245,6 +250,8 @@ class UEye(object):
         err = ueye.is_ParameterSet(self._cam, ueye.IS_PARAMETERSET_CMD_LOAD_FILE, pParam, 0)
         if err != ueye.IS_SUCCESS:
             raise CameraException(self._cam, 'ueye>load_parameters>', err)
+        # Wait for parameters to take effect
+        time.sleep(5)
 
     def save_parameters(self, path):
         # Save parameters to file
@@ -325,7 +332,7 @@ if __name__ == '__main__':
         print("Manually configured the camera")
 
         cam.load_parameters('auto_config.ini')
-        print("Loaded configuration to file")
+        print("Loaded configuration file")
         
         cam.start_record('video_test_1.avi')
         print("Started rec 1")

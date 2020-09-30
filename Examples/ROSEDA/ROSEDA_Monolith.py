@@ -5,19 +5,21 @@ application.
 
 import Core
 import Procedures
-from AppTemplates import RoboDaddyMonolith as AppBuilder
+from AppTemplates import ROSEDA_RoboDaddyMonolith as AppBuilder
 import json
+import winsound #only works in windows
+from Ros3daTPGen import Make_TPGen_Data
 
 MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 
-materials = [{'SESY_123': 'A'}]
+materials = [{'test_material': 'A'}]
 # These are other tools that can be added in. Comment out the ones not used.
 tools = []
-# tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
-tools.append({'name': 'camera', 'axis': 'B', 'type': 'IDS_ueye_3250CP2'})
-AppBuilder(MyApparatus, materials, tools)
+tools.append({'name': 'TProbe', 'axis': 'D', 'type': 'Panasonic_HGS_A3200'})
+tools.append({'name': 'camera', 'axis': 'D', 'type': 'IDS_ueye'})
+AppBuilder(MyApparatus, materials, tools, prime='TProbe')
 
 # Defining the materials. This can come from an existing file but here we are
 # creating a new one.
@@ -33,19 +35,17 @@ Sylgard_base.add_property('density', 1.1, 'g/cc')
 Sylgard_base['names'] = ['Sylgard 184 base', 'PDMS', 'silicone', 'base']
 
 # Setting up in for this run
-SESY_123 = Core.material()
-SESY_123.add_comp(SE1700_base, mass_perc=1.23, use_name='SE1700')
-SESY_123.add_comp(Sylgard_base, mass_perc=100-1.23, use_name='Sylgard')
-SESY_123.save('Materials//SESY_123.json')
-
-
+SESY_8020 = Core.material()
+SESY_8020.add_comp(SE1700_base, mass_perc=80, use_name='SE1700')
+SESY_8020.add_comp(Sylgard_base, mass_perc=20, use_name='Sylgard')
+SESY_8020.save('Materials//SESY_8020.json')
 
 # Define the rest of the apparatus
 mat0 = list(materials[0])[0]
-MyApparatus.addMaterial(mat0, 'Materials//SESY_123.json')
+MyApparatus.addMaterial(mat0, 'Materials//SESY_8020.json')
 MyApparatus['devices']['n' + mat0]['descriptors'].append(mat0)
 MyApparatus['devices']['n' + mat0]['trace_height'] = 0.6
-MyApparatus['devices']['n' + mat0]['trace_width'] = 0.61
+MyApparatus['devices']['n' + mat0]['trace_width'] = 0.6
 MyApparatus['devices']['pump0']['descriptors'].append(mat0)
 MyApparatus['devices']['gantry']['default']['speed'] = 20 # change the slide default from 40 to 20
 MyApparatus['devices']['gantry']['n' + mat0]['speed'] = 2 # Calibration is on so this is overwritten
@@ -53,21 +53,14 @@ MyApparatus['devices']['pump0']['pumpon_time'] = 1.0  # Time from pump on to mot
 MyApparatus['devices']['pump0']['mid_time'] = 0.0  # time from signal sent to motion initiation
 MyApparatus['devices']['pump0']['pumpoff_time'] = 1.0  # time from end-arrival to turn off pump
 MyApparatus['devices']['pump0']['pumpres_time'] = 0.0
-MyApparatus['devices']['pump0']['pressure'] = 10
+MyApparatus['devices']['pump0']['pressure'] = 1.0
 MyApparatus['devices']['pump0']['vacuum'] = 0
-MyApparatus['devices']['pump0']['COM'] = 4
+MyApparatus['devices']['pump0']['COM'] = 1
 
 # Connect to all the devices in the setup
 MyApparatus.Connect_All(simulation=True)
 # Renaming some elements for the variable explorer
 information = MyApparatus['information']
-
-
-# Setup information
-MyApparatus['information']['materials'][mat0] = {'density': 1.92, 'details': 'Measured', 'calibrated': False}  # changed from density = 1.048
-MyApparatus['information']['materials'][mat0]['do_speedcal'] = True
-MyApparatus['information']['materials'][mat0]['do_pumpcal'] = False
-MyApparatus['information']['ink calibration']['time'] = 60
 
 # Setup toolpath generation and run a default
 GenTP = Procedures.Toolpath_Generate(MyApparatus, MyExecutor)
@@ -78,21 +71,47 @@ TP_gen = MyApparatus['information']['ProcedureData']['Toolpath_Generate']
 
 # Create instances of the procedures that will be used
 # Procedures that will almost always be used at this level
-AlignPrinter = Procedures.User_FlexPrinter_Alignments_Align(MyApparatus, MyExecutor)
+AlignPrinter = Procedures.User_RoboDaddy_Alignments_Align(MyApparatus, MyExecutor)
 CalInk = Procedures.User_InkCal_Calibrate(MyApparatus, MyExecutor)
-Camera = Procedures.Camera_Capture_ImageXY(MyApparatus,MyExecutor)
-testMaterial = Procedures.ROSEDA_TestMaterial(MyApparatus, MyExecutor)
 startUp = Procedures.User_StartUp(MyApparatus, MyExecutor)
+TraySetup = Procedures.SampleTray_XY_Setup(MyApparatus, MyExecutor)
+TrayRun = Procedures.SampleRepeat_Start(MyApparatus, MyExecutor)
+DeriveAlignments = Procedures.User_FlexPrinter_Alignments_Derive(MyApparatus, MyExecutor)
+
+
+class Sample(Core.Procedure):
+    def Prepare(self):
+        self.name='Sample'
+        self.ProbeMeasure = Procedures.Touch_Probe_A3200_MeasureGrid(MyApparatus,MyExecutor)
+        self.ProbeCorrect = Procedures.Touch_Probe_A3200_EnableCalibration(MyApparatus,MyExecutor)
+        self.ProbeStopCorrect = Procedures.Touch_Probe_A3200_DisableCalibration(MyApparatus,MyExecutor)
+        self.Camera = Procedures.Camera_Capture_ImageXY(MyApparatus,MyExecutor)
+        self.Cleaner = Procedures.Aerotech_A3200_AirClean(MyApparatus,MyExecutor)
+        self.Pause = Procedures.Data_User_Input_Options(MyApparatus, MyExecutor)
+        self.testMaterial = Procedures.ROSEDA_TestMaterial(MyApparatus, MyExecutor)
+        self.rparameters = Make_TPGen_Data(mat0)
+
+    def Plan(self):
+        self.ProbeMeasure.Do({'start_point':{'X':4,'Y':4},'x_length':67,'y_length':42,'x_count':3,'y_count':3})
+        self.ProbeCorrect.Do({'file':'test.cal','nozzlename': 'n' + mat0})
+        self.testMaterial.Do({'material':mat0, 'parameters':self.rparameters})
+        self.Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':r'Samples\mono_test.png','camera_name':'camera'}) 
+        self.ProbeStopCorrect.Do({})
+        self.Cleaner.Do({'nozzlename':'n' + mat0,'depth':30,'delay':1})
+        winsound.Beep(1000, 5000)
+        self.Pause.Do({'message':'Ready to continue?','options':['y'],'default':'y'}) #Note: Doesn't currently do anything with response
 
 # Do the experiment
-startUp.Do({'filename': 'start_up.json'})
-AlignPrinter.Do({'primenoz': 'n' + mat0})
-CalInk.Do({'material': mat0})
-from Ros3daTPGen import Make_TPGen_Data
-rparameters = Make_TPGen_Data(mat0)
-testMaterial.Do({'material':mat0, 'parameters':rparameters})
-Camera.Do({'point':{'X':3*25/2,'Y':2*25/2},'file':'Samples\mono_test.png','camera_name':'camera'})
+#startUp.Do({'filename': 'start_up.json'})
+AlignPrinter.Do({'primenoz': 'TProbe'})
+options = {}
+DeriveAlignments.requirements['Measured_List']['address']=['information', 'alignmentnames']
+DeriveAlignments.Do({'primenoz': 'TProbe', 'loptions':['safeA', 'safeB', 'safeC', 'safeD']})
+TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 1, 'yspacing': 0, 'ysamples': 10})
+TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
+TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
+
 MyApparatus.Disconnect_All()
-# toolpath = TP_gen['toolpath'][0]
+
 with open(MyApparatus.proclog_address) as p_file:
     proclog = json.load(p_file)

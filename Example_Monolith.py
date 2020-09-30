@@ -20,6 +20,16 @@ tools = []
 # tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
 # tools.append({'name': 'camera', 'axis': 'ZZ4', 'type': 'IDS_ueye'})
 AppBuilder(MyApparatus, materials, tools)
+# Build a material
+# Briefly setting up components
+SE1700 = Core.material()
+
+SE1700.add_property('density', 1.1, 'g/cc')
+SE1700['names'] = ['SE1700', 'PDMS', 'silicone']
+
+SE1700.save('Materials//SE1700.json')
+
+
 # Define the rest of the apparatus
 mat0 = list(materials[0])[0]
 MyApparatus.addMaterial(mat0, 'Materials//SE1700.json')
