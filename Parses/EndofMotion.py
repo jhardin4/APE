@@ -18,6 +18,7 @@ class EndofMotion(Procedure):
 
     def Plan(self):
         # Renaming useful pieces of informaiton
+        motion = self.requirements['motion']['value']
         materialname = self.requirements['motion']['value']['material']
 
         # Retreiving necessary device names
@@ -62,9 +63,16 @@ class EndofMotion(Procedure):
 
         # Doing stuff
         if pumpname != 'No devices met requirments':
-            pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
+            if 'pressure' in motion:
+                pressure = motion['pressure']
+            elif 'mpo' in motion:
+                pressure = motion['mpo'] * self.apparatus.getValue(['devices', pumpname, 'pressure'])
+            else:
+                pressure = self.apparatus.getValue(['devices', pumpname, 'pressure'])
             self.DoEproc(pumpname, 'Set', {'pressure': pressure})
             self.pumpon.Do({'pump_name': pumpname})
+        # End data collection
+        self.DoEproc(motionname, 'LogData_Stop', {})
         self.DoEproc(motionname, 'Run', {})  # Run the motion up to this point
         if pumpname != 'No devices met requirments':
             self.pumpoff.Do({'pump_name': pumpname})

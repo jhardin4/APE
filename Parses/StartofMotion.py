@@ -3,6 +3,7 @@ import Procedures.Aerotech_A3200_Set
 import Procedures.Motion_RefRelPriorityLineMotion
 import Procedures.Pump_PumpOn
 import Procedures.User_InkCal_Calculate
+import time
 
 
 class StartofMotion(Procedure):
@@ -78,4 +79,17 @@ class StartofMotion(Procedure):
         # if materialname in self.apparatus.getValue(['information', 'materials']):
         #     self.calUpdate.Do({'material': materialname})
         self.motionset.Do({'Type': nozzlename})
+        # Setting up motion data collection
+        # THIS NEEDS TO BE UPDATED BASED ON WHERE YOU ARE GOING TO 
+        # STORE THE SAMPLE NAME!!!
+        #samplename = self.apparatus.getValue(['information','ProcedureData','SpanningSample','cur_parameters', 'samplename'])
+        samplename = 'test' # Need to set up sample naming
+        filename = 'Data\\' + str(round(time.time())) + samplename + '_motion.txt'
+        axismask = self.apparatus.getValue(['devices', motionname, nozzlename, 'axismask'])
+        parameters = {
+            'X': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'], 
+            'Y': ['pc', 'pf', 'vc', 'vf', 'ac', 'af'], 
+            axismask['Z']: ['pc', 'pf', 'vc', 'vf', 'ac', 'af']
+        }
+        self.DoEproc(motionname, 'LogData_Start', {'file': filename, 'points': 20000, 'parameters': parameters, 'interval': 1})
 
