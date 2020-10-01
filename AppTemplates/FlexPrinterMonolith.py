@@ -67,7 +67,7 @@ def FlexPrinterMonolith(apparatus, materials, tools):
 
     # Setting up interactions between tools/nozzles and gantry
     apparatus['information']['alignments'] = {}
-    apparatus['information']['alignmentnames'] = ['initial']
+    apparatus['information']['alignmentnames'] = ['@initial']
     apparatus['information']['alignmentsfile'] = 'alignments.json'
     gantry = apparatus['devices']['gantry']
     alignments = apparatus['information']['alignments']
@@ -83,7 +83,7 @@ def FlexPrinterMonolith(apparatus, materials, tools):
         'mode': 'loadrun',
         'axismask': {},
     }
-    alignments['initial'] = {
+    alignments['@initial'] = {
         'X': '',
         'Y': '',
         'ZZ1': '',

@@ -23,6 +23,12 @@ class Camera_Capture_Image(Procedure):
             'value': '',
             'desc': 'name of the camera to be used',
         }
+        self.requirements['config_file'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'configuration file to load to camera',
+        }
 
     def Plan(self):
         # Retreiving necessary device names
@@ -40,5 +46,7 @@ class Camera_Capture_Image(Procedure):
 
         # Doing stuff
         self.DoEproc(systemname, 'Dwell', {'dtime': self.settle_time})
+        if self.config_file != '':
+            self.DoEproc(self.camera_name, 'LoadConfiguration', {'file': self.config_file})
         self.DoEproc(self.camera_name, 'Measure', {'file': self.file})
         self.apparatus.AddTicketItem({'image':self.file})

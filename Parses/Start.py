@@ -27,7 +27,7 @@ class Start(Procedure):
         self.pmove.requirements['refpoint']['address'] = [
             'information',
             'alignments',
-            'initial',
+            '@initial',
         ]
 
         # Doing stuff

@@ -32,6 +32,12 @@ class Camera_Capture_ImageXY(Procedure):
             'value': '',
             'desc': 'name of the camera to be used',
         }
+        self.requirements['config_file'] = {
+            'source': 'apparatus',
+            'address': '',
+            'value': '',
+            'desc': 'configuration file to load to camera',
+        }
         self.move = Procedures.Motion_RefRelLinearMotion(self.apparatus, self.executor)
         self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
         self.pmove = Procedures.Motion_RefRelPriorityLineMotion(
@@ -93,5 +99,6 @@ class Camera_Capture_ImageXY(Procedure):
             }
         )
         self.DoEproc(motionname, 'Run', {})
-        self.measure.Do({'file': self.file, 'settle_time':self.settle_time, 'camera_name': self.camera_name})
+        if self.config_file != '':
+            self.measure.Do({'file': self.file, 'settle_time':self.settle_time, 'camera_name': self.camera_name, 'config_file':self.config_file})
         self.apparatus.AddTicketItem({'image':self.file})
