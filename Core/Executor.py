@@ -159,7 +159,7 @@ class Executor(ApeInterface):
             )
 
     def getDevices(self, address):
-        if address == self.node.name:
+        if address == '' or address == self.node.name:
             return [
                 name
                 for name, device in self.devicelist.items()

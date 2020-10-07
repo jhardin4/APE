@@ -55,7 +55,7 @@ def ROSEDA_RoboDaddyMonolith(apparatus, materials, tools, prime=None):
 
     # Setting up interactions between tools/nozzles and gantry
     apparatus['information']['alignments'] = {}
-    apparatus['information']['alignmentnames'] = ['initial']
+    apparatus['information']['alignmentnames'] = ['@initial']
     apparatus['information']['alignmentsfile'] = 'robodaddy_alignments.json'
     gantry = apparatus['devices']['gantry']
     alignments = apparatus['information']['alignments']
@@ -71,7 +71,7 @@ def ROSEDA_RoboDaddyMonolith(apparatus, materials, tools, prime=None):
         'mode': 'loadrun',
         'axismask': {},
     }
-    alignments['initial'] = {
+    alignments['@initial'] = {
         'X': '',
         'Y': '',
         'A': '',

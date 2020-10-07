@@ -28,6 +28,7 @@ class Apparatus(dict):
         self.proclog_depthindex = 0
         self.executor = ''
         self.simulation = False
+        self.sendDataPacks = True
         self.dependent_Devices = []
         self.logpath = 'Logs//'
         self.AppID = str(int(round(time.time(), 0)))
@@ -481,10 +482,11 @@ class Apparatus(dict):
             self['devices'] = old_app_data['devices']
             self['information'] = old_app_data['information']
 
-    def DoEproc(self, device, method, details):
+    def DoEproc(self, device, method, details, silent=False):
         procname = 'eproc_' + device + '_' + method
         p_uuid = str(uuid.uuid4())
-        self.LogProc('start', procname, p_uuid, reqs=details)
+        if not silent:
+            self.LogProc('start', procname, p_uuid, reqs=details)
 
         try:
             e_log = self.executor.execute(
@@ -492,7 +494,8 @@ class Apparatus(dict):
             )
             
         finally:  # makes sure depthindex is decreased on error
-            self.LogProc('end', procname, p_uuid, log=e_log)
+            if not silent:
+                self.LogProc('end', procname, p_uuid, log=e_log)
 
     def createAppEntry(self, app_address):
         target = self
@@ -554,7 +557,8 @@ class Apparatus(dict):
         self.AddTicketItem({'proclog':self.ProcLogFileName})
         self.AddTicketItem({'run_name':self.AppID + self.run_name})
 
-    def dataPack_make(self, ticket=''):
+    def dataPack_make(self, ticket='', mode='move'):
+        
         fname = str(int(round(time.time(), 0)))
         
         # Check to see if the ticket file is still open
@@ -623,6 +627,7 @@ class Apparatus(dict):
         new_file = os.path.join(os.getcwd(), foldername, ticket_file)
         os.rename(old_file, new_file)
         self._makeUpLoadPack(foldername)
+        # This is just to make finding the proclog easier for a specific run
         self.proclog_address = os.path.join(pfolder, self.proclog_address)
 
     def _makeUpLoadPack(self, folder):
@@ -635,6 +640,26 @@ class Apparatus(dict):
                 UpLoadPack.add(os.path.join(root, file), arcname = rel_file_path)
             
         UpLoadPack.close()
+        if self.sendDataPacks:
+            self.attemptSend(folder + 'UPLOAD_ME.tar')
+    
+    def attemptSend(self, archive):
+        # Make sure that this descriptor is set in main file or apparatus builder
+        repo_name = self.findDevice(descriptors='repository')
+        # Check to see if the the device has been registered with executor
+        exe_devices = self.executor.getDevices('')
+        if repo_name not in exe_devices:
+            self.executor.createDevice(
+                    repo_name,
+                    self['devices'][repo_name]['type'],
+                    '',
+                    self['devices'][repo_name]['address'],
+                )
+        repo_details = {'key_file':self.getValue(['devices', repo_name, 'key_file'])}
+        self.executor.setSimulation('gcp', False, '')
+        self.DoEproc(repo_name, 'Connect', repo_details, silent=True)
+        self.DoEproc(repo_name, 'Upload', {'ufile':archive}, silent=True)
+        self.DoEproc(repo_name, 'Disconnect', {}, silent=True)
     
     def addMaterial(self, m_name, mat_fname):
         # Import the material from file

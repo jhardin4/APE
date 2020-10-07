@@ -19,6 +19,7 @@ class Roseda(Device):
         # Append relevant descriptors
         self.descriptors.append('GCP')
         self.descriptors.append('roseda')
+        self.descriptors.append('repository')
         # Defining the elemental procedures
         self.requirements['Connect']['key_file'] = {
             'value': '',
@@ -45,6 +46,7 @@ class Roseda(Device):
         self.timeout = 60
 
     def Connect(self, key_file=''):
+        bucket_name = 'undefined'
         if not self.simulation:
             from google.cloud import storage
             with open(key_file) as kfile:
@@ -61,6 +63,8 @@ class Roseda(Device):
         
         if not self.simulation:
             if type(ufile) == str:
+                print(ufile)
+                print(f'{os.path.split(ufile)}')
                 blob = self.bucket.blob(os.path.split(ufile)[1])
                 blob.upload_from_filename(ufile)
             else:
