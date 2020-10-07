@@ -63,8 +63,8 @@ class Roseda(Device):
         
         if not self.simulation:
             if type(ufile) == str:
-                print(ufile)
-                print(f'{os.path.split(ufile)}')
+                # print(ufile)
+                # print(f'{os.path.split(ufile)}')
                 blob = self.bucket.blob(os.path.split(ufile)[1])
                 blob.upload_from_filename(ufile)
             else:

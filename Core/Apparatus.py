@@ -606,7 +606,8 @@ class Apparatus(dict):
                                 print('Got it. No worries!')
         
         # Copy the scripts into an archive in the payload folder
-        APE_version = tarfile.open(pfolder + '\\APE_version.tar', mode='w')
+        APE_file_name = os.path.join(pfolder, 'APE_version.tar')
+        APE_version = tarfile.open(APE_file_name, mode='w')
         copied_extensions = ('.py', '.ui', '.qml')
         cwd = os.getcwd()
         for root, dirs, files in os.walk(cwd):
@@ -632,11 +633,14 @@ class Apparatus(dict):
 
     def _makeUpLoadPack(self, folder):
         # Assumes that folder does not end in \\.
-        UpLoadPack = tarfile.open(folder + 'UPLOAD_ME.tar', mode='w')
+        # print(folder)
+        tarfile_name = os.path.join(os.path.split(folder)[0], os.path.split(folder)[1] + 'UPLOAD_ME.tar')
+        # print(tarfile_name)
+        UpLoadPack = tarfile.open(tarfile_name, mode='w')
         for root, dirs, files in os.walk(folder):
             # print(root, dirs, files)
             for file in files:
-                rel_file_path = root.replace(folder, '') + '\\' + file
+                rel_file_path = os.path.join(root.replace(folder, ''), file)
                 UpLoadPack.add(os.path.join(root, file), arcname = rel_file_path)
             
         UpLoadPack.close()
