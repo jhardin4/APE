@@ -73,7 +73,12 @@ def GenerateToolpath(data, target):
     #pointlist.append({'X': x_offset, 'Y': y_offset})
     #pointlist.append({'X': x_offset + 2 * length, 'Y': y_offset})
     #pointlist = gcodecmd.getape.point ( 'test_klein_bottle.gcode', 'explicit', 'implicit', 'line', 'start', 8000, 'raw' )
-    pointlist = gcodecmd.getape ( 'auto' ).run( )
+    print ( 'pointlist attempt' )
+    pointlist = gcodecmd.getape ( 'auto' ).pointUI ( 0 )
+    
+    print ( pointlist )
+    
+    print ( 'pointlist gotten!!!!!!' )
     
     #{ startpoint, endpoint, material, speed }
     

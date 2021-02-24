@@ -14,6 +14,7 @@ def Auto_Run_Monolith ( ):
     MyApparatus = Core.Apparatus()
     MyExecutor = Core.Executor()
     MyApparatus.executor = MyExecutor
+    MyExecutor.debug = True
 
     materials = [{'test_material': 'ZZ1'}]
     # These are other tools that can be added in. Comment out the ones not used.
@@ -27,8 +28,16 @@ def Auto_Run_Monolith ( ):
     MyApparatus['devices']['n' + mat0]['descriptors'].append(mat0)
     MyApparatus['devices']['n' + mat0]['trace_height'] = 0.1
     MyApparatus['devices']['n' + mat0]['trace_width'] = 0.3
+    MyApparatus['devices']['aeropump0']['descriptors'].append(mat0)
     MyApparatus['devices']['gantry']['default']['speed'] = 20  # change the slide default from 40 to 20
     MyApparatus['devices']['gantry']['n' + mat0]['speed'] = 20  # Calibration is on so this is overwritten
+    MyApparatus['devices']['aeropump0']['pumpon_time'] = 0.0  # Time from pump on to motion, if calibration is on so this is overwritten
+    MyApparatus['devices']['aeropump0']['mid_time'] = .05  # time from signal sent to motion initiation
+    MyApparatus['devices']['aeropump0']['pumpoff_time'] = 0  # time from end-arrival to turn off pump
+    MyApparatus['devices']['aeropump0']['pumpres_time'] = 0.1
+    MyApparatus['devices']['aeropump0']['pressure'] = 550
+    MyApparatus['devices']['aeropump0']['vacuum'] = 0
+    MyApparatus['devices']['aeropump0']['COM'] = 7
 
     # Connect to all the devices in the setup
     MyApparatus.Connect_All(simulation=True)
@@ -49,7 +58,7 @@ def Auto_Run_Monolith ( ):
     GenTP.setParameters()  # Creates the parameter structure for TPGen
     TP_gen = MyApparatus['information']['ProcedureData']['Toolpath_Generate']
     TP_gen['parameters']['tiph'] = 4
-    TP_gen['parameters']['length'] = 6
+    TP_gen['parameters']['length'] = 5
 
     # Create instances of the procedures that will be used
     # Procedures that will almost always be used at this level
@@ -59,6 +68,8 @@ def Auto_Run_Monolith ( ):
     TraySetup = Procedures.SampleTray_XY_Setup(MyApparatus, MyExecutor)
     TrayRun = Procedures.SampleTray_Start(MyApparatus, MyExecutor)
     Planner = Procedures.Planner_Combinatorial(MyApparatus, MyExecutor)
+    
+    
 
     class Sample(Core.Procedure):
         def Prepare(self):
@@ -66,7 +77,7 @@ def Auto_Run_Monolith ( ):
             self.GenTP = Procedures.Toolpath_Generate(self.apparatus, self.executor)
             self.PrintTP = Procedures.Toolpath_Print(self.apparatus, self.executor)
             self.Planner = Procedures.Planner_Combinatorial(self.apparatus, self.executor)
-
+    
         def Plan(self):
             space = {}
             space['tiph'] = [0.1 * n for n in range(5)]
@@ -80,18 +91,18 @@ def Auto_Run_Monolith ( ):
                 if self.apparatus.simulation:
                     import time
                     time.sleep(1)
-                print('Generating toolpath')
-                self.GenTP.requirements['generator']['address'] = ['information', 'ProcedureData', 'Toolpath_Generate', 'generator']
-                self.GenTP.Do()
-                print('Printing toolpath')
-                self.PrintTP.requirements['toolpath']['address'] = ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath']
-                self.PrintTP.Do()
-
+                    print('Generating toolpath')
+                    self.GenTP.requirements['generator']['address'] = ['information', 'ProcedureData', 'Toolpath_Generate', 'generator']
+                    self.GenTP.Do()
+                    print('Printing toolpath')
+                    self.PrintTP.requirements['toolpath']['address'] = ['information', 'ProcedureData', 'Toolpath_Generate', 'toolpath']
+                    self.PrintTP.Do()
+                    
 
     # Do the experiment
     AlignPrinter.Do({'primenoz': 'n' + mat0})
     CalInk.Do({'material': mat0})
-    TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 100, 'xsamples': 1, 'yspacing': 100, 'ysamples': 1})
+    TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 14, 'xsamples': 1, 'yspacing': 15, 'ysamples': 1})
     TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
     TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})
     MyApparatus.Disconnect_All()
@@ -112,8 +123,8 @@ if sa.checksfile ( ) == 'ready 1':
                 Auto_Run_Monolith ( )
         except FileNotFoundError:
             print ( ' file not found ' )
-        except None:
-            None
+        #except None:
+            #None
         except:
             print ( ' unknown error ' )
         #print ( ra.runinback ( ) )
@@ -134,8 +145,8 @@ elif sa.checksfile ( ) == 'ready 0':
                 Auto_Run_Monolith ( )
         except FileNotFoundError:
             print ( ' file not found ' )
-        except None:
-            None
+        #except None:
+            #None
         except:
             print ( ' unknown error ' )
         #print ( ra.runinback ( ) )
