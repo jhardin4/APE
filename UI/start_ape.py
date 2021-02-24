@@ -54,7 +54,7 @@ class startape ( ):
     
     #used for windows shortcut creation
     def makeshortcut ( self, shortcut_name, py_loc, start_in, icon_loc ):
-        import win32com, sys
+        import win32com
         cmd = win32com.client.Dispatch ( 'WScript.shell' )
         shortcut = cmd.CreateShortCut ( '%s.lnk' % ( start_in ) )
         shortcut.TargetPath = py_loc

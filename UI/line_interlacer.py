@@ -18,8 +18,7 @@ def interlace ( fileorlayer, wholeorpointcloud, usememory ):
     #not yet priority
     elif fileorlayer == 'layer':
         pass
-    else:
-        print ( 'must specify "file" or "layer"' )
+
     interlace = []
     pasttempb = tempb = pasttempt = tempt = pasttempp = tempp = pasttempp2 = tempp2 = {}
     for i in range ( line_start, line_end ):
