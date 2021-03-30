@@ -13,7 +13,6 @@ MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 MyApparatus.run_name = 'Example'
-
 materials = [{'test_material': 'ZZ1'}]
 # These are other tools that can be added in. Comment out the ones not used.
 tools = []

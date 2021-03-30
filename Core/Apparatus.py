@@ -28,7 +28,7 @@ class Apparatus(dict):
         self.proclog_depthindex = 0
         self.executor = ''
         self.simulation = False
-        self.sendDataPacks = True
+        self.sendDataPacks = False
         self.dependent_Devices = []
         self.logpath = 'Logs//'
         self.AppID = str(int(round(time.time(), 0)))
