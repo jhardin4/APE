@@ -585,7 +585,7 @@ class Apparatus(dict):
         os.mkdir(pfolder)
         
         # Move Data and Logs into payload folder
-        copied_folders = ['Data', 'Logs']
+        copied_folders = ['Data', 'Logs', 'Materials']
         excluded_files = ['readme.txt','.gitignore']
         for folder in copied_folders:
             fpath = os.path.join(os.getcwd(), folder)
