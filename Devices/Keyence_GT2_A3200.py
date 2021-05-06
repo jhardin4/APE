@@ -143,14 +143,14 @@ class Keyence_GT2_A3200(Sensor):
         systemaddress='',
     ):
         self.descriptors.append(A3200name)
-        self.A3200handle = A3200address
+        self.A3200handle = self.checkDependencies(A3200name, A3200address)
         self.axis = axis
         self.DOaxis = DOaxis
         self.DObit = DObit
         self.AIaxis = AIaxis
         self.AIchannel = AIchannel
         self.systemname = systemname
-        self.systemhandle = systemaddress
+        self.systemhandle = self.checkDependencies(systemname, systemaddress)
 
         self.addlog(
             'Keyence Touchprobe using '

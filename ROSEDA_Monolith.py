@@ -5,7 +5,7 @@ application.
 
 import Core
 import Procedures
-from AppTemplates import ROSEDA_RoboDaddyMonolith as AppBuilder
+from AppTemplates import FlexPrinterMonolith as AppBuilder
 import json
 # import winsound #only works in windows
 from Ros3daTPGen import Make_TPGen_Data
@@ -14,12 +14,12 @@ MyApparatus = Core.Apparatus()
 MyExecutor = Core.Executor()
 MyApparatus.executor = MyExecutor
 
-materials = [{'test_material': 'A'}]
+materials = [{'test_material': 'ZZ1'}]
 # These are other tools that can be added in. Comment out the ones not used.
 tools = []
-tools.append({'name': 'TProbe', 'axis': 'D', 'type': 'Panasonic_HGS_A3200'})
-tools.append({'name': 'camera', 'axis': 'D', 'type': 'IDS_ueye'})
-AppBuilder(MyApparatus, materials, tools, prime='TProbe')
+tools.append({'name': 'TProbe', 'axis': 'ZZ2', 'type': 'Keyence_GT2_A3200'})
+tools.append({'name': 'camera', 'axis': 'ZZ3', 'type': 'IDS_ueye'})
+AppBuilder(MyApparatus, materials, tools)
 
 # Defining the materials. This can come from an existing file but here we are
 # creating a new one.
@@ -46,16 +46,16 @@ MyApparatus.addMaterial(mat0, 'Materials//SESY_8020.json')
 MyApparatus['devices']['n' + mat0]['descriptors'].append(mat0)
 MyApparatus['devices']['n' + mat0]['trace_height'] = 0.6
 MyApparatus['devices']['n' + mat0]['trace_width'] = 0.6
-MyApparatus['devices']['pump0']['descriptors'].append(mat0)
+MyApparatus['devices']['aeropump0']['descriptors'].append(mat0)
 MyApparatus['devices']['gantry']['default']['speed'] = 20 # change the slide default from 40 to 20
 MyApparatus['devices']['gantry']['n' + mat0]['speed'] = 2 # Calibration is on so this is overwritten
-MyApparatus['devices']['pump0']['pumpon_time'] = 1.0  # Time from pump on to motion, if calibration is on so this is overwritten
-MyApparatus['devices']['pump0']['mid_time'] = 0.0  # time from signal sent to motion initiation
-MyApparatus['devices']['pump0']['pumpoff_time'] = 1.0  # time from end-arrival to turn off pump
-MyApparatus['devices']['pump0']['pumpres_time'] = 0.0
-MyApparatus['devices']['pump0']['pressure'] = 1.0
-MyApparatus['devices']['pump0']['vacuum'] = 0
-MyApparatus['devices']['pump0']['COM'] = 1
+MyApparatus['devices']['aeropump0']['pumpon_time'] = 1.0  # Time from pump on to motion, if calibration is on so this is overwritten
+MyApparatus['devices']['aeropump0']['mid_time'] = 0.0  # time from signal sent to motion initiation
+MyApparatus['devices']['aeropump0']['pumpoff_time'] = 1.0  # time from end-arrival to turn off pump
+MyApparatus['devices']['aeropump0']['pumpres_time'] = 0.0
+MyApparatus['devices']['aeropump0']['pressure'] = 1.0
+MyApparatus['devices']['aeropump0']['vacuum'] = 0
+MyApparatus['devices']['aeropump0']['COM'] = 1
 
 # DO NOT PUT KEYFILE IN ROSEDA DIRECTORY!
 keyfile = '/home/james_hardin_11/Desktop/jhardin-repos-1sud/Keys/rxms-roseda-9c944596ef93.json'
