@@ -1,7 +1,0 @@
-Find 250 mL Thinky mixing container
-Weigh container
-Scoop an SE1700 base into container
-Weigh container + base
-Calculate 1/10 of the weight of base
-Add that value in SE 1700 Catalyst to container
-Mix for 2 minutes a 2,000 rpm with 30 s of defoam

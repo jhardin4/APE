@@ -1,3 +1,5 @@
+# This is an example of how to create a material object.  Please adjust to
+# your needs.
 from Core import material
 
 SE1700 = material()
