@@ -74,7 +74,7 @@ information = MyApparatus['information']
 # Setup toolpath generation and run a default
 GenTP = Procedures.Toolpath_Generate(MyApparatus, MyExecutor)
 GenTP.setMaterial(mat0)
-GenTP.setGenerator('XlineTPGen')
+GenTP.setGenerator("Ros3daTPGen")
 GenTP.setParameters()  # Creates the parameter structure for TPGen
 TP_gen = MyApparatus['information']['ProcedureData']['Toolpath_Generate']
 
@@ -112,10 +112,10 @@ class Sample(Core.Procedure):
 
 # Do the experiment
 #startUp.Do({'filename': 'start_up.json'})
-AlignPrinter.Do({'primenoz': 'TProbe'})
+AlignPrinter.Do({'primenoz': f"n{mat0}"})
 options = {}
 DeriveAlignments.requirements['Measured_List']['address']=['information', 'alignmentnames']
-DeriveAlignments.Do({'primenoz': 'TProbe', 'loptions':['safeA', 'safeB', 'safeC', 'safeD']})
+DeriveAlignments.Do({'primenoz': f"n{mat0}"})
 TraySetup.Do({'trayname': 'test_samples', 'samplename': 'sample', 'xspacing': 0, 'xsamples': 1, 'yspacing': 0, 'ysamples': 1})
 TrayRun.requirements['tray']['address'] = ['information', 'ProcedureData', 'SampleTray_XY_Setup', 'trays', 'test_samples']
 TrayRun.Do({'procedure': Sample(MyApparatus, MyExecutor)})

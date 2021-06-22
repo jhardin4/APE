@@ -63,8 +63,8 @@ class ROSEDA_TestMaterial(Procedure):
 
         self.DoEproc(pumpname, 'Set', {'pressure':pressure})
         self.printDotted([2.0,1.75,1.5,1.25,1.0,0.75,0.5], motionname, pumpname)
-        self.apparatus.setValue(['devices','pump0','pumpon_time'], 0.5)
-        self.apparatus.setValue(['devices','pump0','pumpoff_time'], 0)
+        self.apparatus.setValue(['devices',pumpname,'pumpon_time'], 0.5)
+        self.apparatus.setValue(['devices',pumpname,'pumpoff_time'], 0)
         self.PrintTP.Do()
         self.printCrossing([1,5,25,100], motionname)      
 
