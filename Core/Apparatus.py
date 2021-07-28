@@ -47,6 +47,8 @@ class Apparatus(dict):
         self.PLFirstWrite = True
         self.dataPack_prep()
         self.ProcLogFile = open(self.ProcLogFileName, mode='w')
+        self.ProcLogFile.close()
+        self.ProcLogFile = open(self.ProcLogFileName, mode='r+')
         self.proclog_address = self.ProcLogFileName
         # Start the run ticket
 
@@ -404,6 +406,10 @@ class Apparatus(dict):
 
         json.dump(entry, self.ProcLogFile)
         self.ProcLogFile.write(']')
+
+    def getLog(self):
+        self.ProcLogFile.seek(0)
+        return json.loads(self.ProcLogFile.readlines()[0])
 
     def buildInfoEntry(self, information):
         simpleinfo = {}
