@@ -573,7 +573,7 @@ class Apparatus(dict):
             self.AddTicketItem({'end_ticket':''})
             self.TicketFile.close()
         else:
-            self.TicketFile = open(ticket, mode='w+')
+            self.TicketFile = open(ticket, mode='r+')
             self.AddTicketItem({'DataPack':fname})
             self.AddTicketItem({'end_ticket':''})
             self.TicketFile.close()
