@@ -18,7 +18,7 @@ class Apparatus(dict):
         dict.__init__(self)
         self['devices'] = {}
         self['information'] = {}
-        self['eproclist'] = []
+        self['information']['material_library'] = []
         self['public release'] = '88ABW-2019-6134'
         self['APE version'] = {}
         self['APE version']['time'] = 1583331028
@@ -373,7 +373,7 @@ class Apparatus(dict):
         if 'start_ticket' in item_dict:
             item_dict['start_ticket'] = time.time()
         elif 'end_ticket' in item_dict:
-            item_dict['end_ticket'] = time.time()             
+            item_dict['end_ticket'] = time.time()
         else:
             item_dict['ticket_time'] = time.time()
         self.UpdateTicket(item_dict)
@@ -410,6 +410,10 @@ class Apparatus(dict):
     def getLog(self):
         self.ProcLogFile.seek(0)
         return json.loads(self.ProcLogFile.readlines()[0])
+
+    def getTicket(self):
+        self.TicketFile.seek(0)
+        return json.loads(self.TicketFile.readlines()[0])
 
     def buildInfoEntry(self, information):
         simpleinfo = {}
@@ -477,7 +481,7 @@ class Apparatus(dict):
         jsonfile = open(fname, mode='w')
         json.dump(self.serialClone(), jsonfile, indent=2, sort_keys=True)
         jsonfile.close()
-        self.AddTicketItem({'ApparatusImage':fname})
+        self.AddTicketItem({'ApparatusImage': fname})
 
     def importApparatus(self, fname=None):
         if not fname:
@@ -558,26 +562,28 @@ class Apparatus(dict):
         # Create new ticket
         self.TicketFilename = self.AppID + 'RunTicket.json'
         self.TicketFile = open(self.TicketFilename, mode='w')
+        self.TicketFile.close()
+        self.TicketFile = open(self.TicketFilename, mode='r+')
         self.RTFirstWrite = True
-        self.AddTicketItem({'start_ticket':''})
-        self.AddTicketItem({'proclog':self.ProcLogFileName})
-        self.AddTicketItem({'run_name':self.AppID + self.run_name})
+        self.AddTicketItem({'start_ticket': ''})
+        self.AddTicketItem({'proclog': self.ProcLogFileName})
+        self.AddTicketItem({'run_name': self.AppID + self.run_name})
 
     def dataPack_make(self, ticket='', mode='move'):
-        
+
         fname = str(int(round(time.time(), 0)))
-        
+
         # Check to see if the ticket file is still open
         if not self.RTFirstWrite:
-            self.AddTicketItem({'DataPack':fname})
-            self.AddTicketItem({'end_ticket':''})
+            self.AddTicketItem({'DataPack': fname})
+            self.AddTicketItem({'end_ticket': ''})
             self.TicketFile.close()
         else:
             self.TicketFile = open(ticket, mode='r+')
-            self.AddTicketItem({'DataPack':fname})
-            self.AddTicketItem({'end_ticket':''})
+            self.AddTicketItem({'DataPack': fname})
+            self.AddTicketItem({'end_ticket': ''})
             self.TicketFile.close()
-        
+
         # Check for DataPacks Folder and create one if not there
         if not os.path.exists('DataPacks'):
             os.mkdir('DataPacks')

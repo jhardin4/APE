@@ -77,3 +77,4 @@ from Procedures.User_Consol_InputOptions import User_Consol_InputOptions  # noqa
 from Procedures.User_StartUp import User_StartUp  # noqa: F401
 
 from Procedures.ROSEDA_TestMaterial import ROSEDA_TestMaterial  # noqa: F401
+from Procedures.ROSEDA_getResults import ROSEDA_getResults  # noqa: F401
