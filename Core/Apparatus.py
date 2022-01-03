@@ -18,7 +18,7 @@ class Apparatus(dict):
         dict.__init__(self)
         self['devices'] = {}
         self['information'] = {}
-        self['information']['material_library'] = []
+        self['information']['material_library'] = {}
         self['public release'] = '88ABW-2019-6134'
         self['APE version'] = {}
         self['APE version']['time'] = 1583331028

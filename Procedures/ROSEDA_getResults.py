@@ -160,7 +160,7 @@ class ROSEDA_getResults(Procedure):
             json.dump(run_ticket_data, file)
 
         file_list = [self.image, proc_file_path, runtic_file_path]
-        if sneaker_net:
+        if sneaker_net or self.apparatus.simulation:
             message = f"Upload to {self.bucket} the following files:"
             for file in file_list:
                 message += f"\n{file}"
