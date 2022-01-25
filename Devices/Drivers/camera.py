@@ -169,12 +169,14 @@ class UEye(object):
     def save_image(self, path, invert=True):
         if invert:
             output = np.rot90(self.frame[:,:,:3],2)
+        else:
+            output = self.frame[:,:,:3]
         if path.split('.')[-1] == 'png':
             cv2.imwrite(path, output,[cv2.IMWRITE_PNG_COMPRESSION,0])
         elif path.split('.')[-1] == 'jpeg':
             cv2.imwrite(path, output,[cv2.IMWRITE_JPEG_QUALITY,100])
         else:
-            raise CameraException(self._cam, 'ueye>save_image>image type not supported')
+            raise CameraException(self._cam, 'ueye>save_image>unsupported image type. Only png and jpg supported')
 
     def get_video_frame(self):
         array = ueye.get_data(

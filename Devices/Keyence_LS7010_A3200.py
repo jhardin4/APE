@@ -14,6 +14,7 @@ class Keyence_LS7010_A3200(Sensor):
         self.DObit = ''  # 7
         self.dependent_device = True
         self.dependencies = ['A3200', 'system']
+        self.descriptors = [*self.descriptors, 'LS Touch Probe', 'LS Hight Probe']
 
         # Variables to store state
         self.XY_active = None

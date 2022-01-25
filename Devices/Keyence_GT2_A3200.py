@@ -25,6 +25,7 @@ class Keyence_GT2_A3200(Sensor):
         self.extend_delay = 1
         self.extended = False
         self.def_num_points = 5
+        self.descriptors = [*self.descriptors, 'GT2 Touch Probe', 'GT2 Height Probe']
 
         # used during initialization, take more samples
         self.init_number = 10

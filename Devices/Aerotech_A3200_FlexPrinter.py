@@ -87,7 +87,12 @@ class Aerotech_A3200_FlexPrinter(Motion, Sensor):
             'address': '',
             'desc': 'default task',
         }
-
+        self.requirements['Set_Motion']['motionmode'] = {
+            'value': '',
+            'source': 'apparatus',
+            'address': '',
+            'desc': 'cmd or loadrun to determine if it si stored in a buffer, commandlog, or run immediately',
+        }
         self.requirements['Move'] = {}
         self.requirements['Move']['point'] = {
             'value': '',
