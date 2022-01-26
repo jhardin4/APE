@@ -36,8 +36,7 @@ class Touch_Probe_A3200_Measure(Procedure):
         # Create the Apparatus entry
         self.apparatus.createAppEntry(self.requirements['target']['value'])
         
-        # Initialize the Touch Probe here when procedure is instantiated.
-        self.DoEproc('TProbe', 'Initialize',{})
+        self.motionset = Procedures.Aerotech_A3200_Set(self.apparatus, self.executor)
         self.move = Procedures.Motion_RefRelLinearMotion(self.apparatus, self.executor)
 
     def Plan(self):
@@ -67,11 +66,7 @@ class Touch_Probe_A3200_Measure(Procedure):
             'TProbe',
             'axismask',
         ]
-        self.move.requirements['refpoint']['address'] = [
-            'information',
-            'alignments',
-            'safe' + zaxis,
-        ]
+        self.move.requirements['refpoint']['value'] = {zaxis:0}
 
         # Take measurement
         temp_target = [0]
@@ -86,5 +81,5 @@ class Touch_Probe_A3200_Measure(Procedure):
                 'speed': speed,
             }
         )
+        self.motionset.Do({'Type': 'default'})
         self.DoEproc(motionname, 'Run', {})
-        self.DoEproc(motionname, 'Set_Motion', {'RelAbs': 'Abs', 'motionmode': 'cmd'})
