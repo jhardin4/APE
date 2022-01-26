@@ -44,6 +44,7 @@ class Procedure:
         # Once set, values are held until changed
         # Handle apparatus values
         for req in self.requirements:
+            # Check if set for apparatus reference AND that an appAddress is given
             if self.requirements[req]['source'] == 'apparatus' and self.requirements[
                 req
             ]['address'] not in ('', None):
@@ -56,7 +57,8 @@ class Procedure:
                     raise Exception(
                         f"ApparatusAddress {self.requirements[req]['address']} was not found."
                     )
-
+        
+        # Overwrite with given values
         for value in values:
             if value in self.requirements:
                 self.requirements[value]['value'] = values[value]

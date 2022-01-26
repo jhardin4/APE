@@ -18,10 +18,7 @@ class Keyence_GT2_A3200_Initialize(Procedure):
 
         # Retreiving necessary device names
         motionname = self.apparatus.findDevice(descriptors='motion')
-
-        # Getting necessary eprocs
-        initialize = self.apparatus.GetEproc('TProbe', 'Initialize')
-        runmove = self.apparatus.GetEproc(motionname, 'Run')
+        tprobe_name = self.apparatus.findDevice(descriptors='touch probe')
 
         # Assign apparatus addresses to procedures
         self.move.requirements['speed']['address'] = [
@@ -33,7 +30,7 @@ class Keyence_GT2_A3200_Initialize(Procedure):
         self.move.requirements['axismask']['address'] = [
             'devices',
             motionname,
-            'TProbe',
+            tprobe_name,
             'axismask',
         ]
         zaxis = self.apparatus.getValue(['devices', motionname, 'TProbe', 'axismask'])[
@@ -54,19 +51,20 @@ class Keyence_GT2_A3200_Initialize(Procedure):
         self.pmove.requirements['axismask']['address'] = [
             'devices',
             motionname,
-            'TProbe',
+            tprobe_name,
             'axismask',
         ]
         self.pmove.requirements['refpoint']['address'] = [
             'information',
             'alignments',
-            'TProbe@TP_init',
+            tprobe_name + '@TP_init',
         ]
 
         # Doing stuff
         self.motionset.Do({'Type': 'default'})
         self.pmove.Do({'priority': [['Z'], ['X', 'Y']]})
-        runmove.Do()
-        initialize.Do()
+        self.DoEproc(motionname, 'Run', {})
+        self.DoEproc(tprobe_name, 'Initialize', {})
         self.motionset.Do({'Type': 'default'})
         self.move.Do()
+        self.DoEproc(motionname, 'Run', {})

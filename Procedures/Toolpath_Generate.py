@@ -30,18 +30,18 @@ class Toolpath_Generate(Procedure):
         }
         self.requirements['target'] = {
             'source': 'apparatus',
-            'address': [
+            'value': [
                 'information',
                 'ProcedureData',
                 'Toolpath_Generate',
                 'toolpath',
             ],
-            'value': '',
+            'address': '',
             'desc': 'where to store the toolpath',
         }
         self.requirements['dataArgs'] = {
             'source': 'apparatus',
-            'address': '',
+            'address': ['information', 'ProcedureData', 'Toolpath_Generate', 'dataArgs'],
             'value': '',
             'desc': 'arguments to make parameter structure',
         }
@@ -57,6 +57,9 @@ class Toolpath_Generate(Procedure):
         self.apparatus.createAppEntry(
             ['information', 'ProcedureData', 'Toolpath_Generate', 'generator']
         )
+        self.apparatus.createAppEntry(
+            ['information', 'ProcedureData', 'Toolpath_Generate', 'dataArgs']
+        )
         # This creates an dummy entry for 
         self.material_name_add = [
                 'information',
@@ -65,15 +68,11 @@ class Toolpath_Generate(Procedure):
                 'parameters',
                 'materialname',
                 ]
+        self.material = None
 
     def Plan(self):
-        parameters = self.requirements['parameters']['value']
-        generator = self.requirements['generator']['value']
-        target = self.requirements['target']['address']
-        dataArgs = self.requirements['dataArgs']['value']
-
         # Set up the parameters for the toolpath generator
-        self.setParameters(parameters=parameters, generator=generator, dataArgs=dataArgs)
+        self.setParameters()
         # Run the toolpath generator
         systemname = self.apparatus.findDevice(descriptors='system')
         temptarget = [0]
@@ -81,80 +80,49 @@ class Toolpath_Generate(Procedure):
             systemname,
             'Run',
             {
-                'address': generator + '.GenerateToolpath',
+                'address': self.generator + '.GenerateToolpath',
                 'addresstype': 'pointer',
-                'arguments': [parameters, temptarget],
+                'arguments': [self.parameters, temptarget],
             },
         )
-        self.apparatus.setValue(target, temptarget)
-        self.printTP.requirements['target']['address'] = target
+        self.apparatus.setValue(self.target, temptarget)
+        self.printTP.requirements['target']['address'] = self.target
         self.printTP.Do({'newfigure': True})
 
-    def setMaterial(self, material):
-        self.apparatus.createAppEntry([
-                'information',
-                'ProcedureData',
-                'Toolpath_Generate',
-                'parameters',
-                'materialname',
-                ])
-        self.apparatus.setValue(
-                [
-                    'information',
-                    'ProcedureData',
-                    'Toolpath_Generate',
-                    'parameters',
-                    'materialname',
-                ],
-                material)
+    def setMaterial(self, material, mat_add=''):
+        # this assumes your are working with a "primary" toolpath generator
+        self.material = material
+        if type(mat_add) == list:
+            self.apparatus.createAppEntry(mat_add)
+            self.apparatus.setValue(mat_add, material)
 
     def setGenerator(self, generator):
         self.apparatus.setValue(
                 self.requirements['generator']['address'], generator
                 )
 
-    def setParameters(self, parameters='', generator='', dataArgs=''):
+    def setParameters(self):
         # Update values to ensure the right ones are used
-        values = {}
-        if parameters != '':
-            values['parameters'] = parameters
-        if generator != '':
-            values['generator'] = generator
-        if dataArgs != '':
-            values['dataArgs'] = dataArgs
-        self.GetRequirements(values)
-        parameters = self.requirements['parameters']['value']
-        generator = self.requirements['generator']['value']
-        if dataArgs == '':
-            material = self.apparatus.getValue(
-                [
-                    'information',
-                    'ProcedureData',
-                    'Toolpath_Generate',
-                    'parameters',
-                    'materialname',
-                ]
-            )
-            dataArgs = [material]
+        self.GetRequirements({})
+        # Assume that at least a material name is needed.
+        if self.dataArgs in ['', None, [], {}]:
+            if not self.material:
+                self.material = self.apparatus.getValue(
+                    self.material_name_add
+                )
+            self.dataArgs = [self.material]
+            self.requirements["dataArgs"]["value"] = [self.material]
 
         # Import the specific toolpath generation file and make a parameters
         # entry using the parameter generator in that file
-        TPGen = import_module(generator)
+        TPGen = import_module(self.generator)
         reload(TPGen)
-        tempPara = TPGen.Make_TPGen_Data(*dataArgs)
+        tempPara = TPGen.Make_TPGen_Data(*self.dataArgs)
 
-        # Determine if a new set of parameters needs to be created
-        # This typically has to be done for the first run of the generator
-        newPara = False
-        if type(parameters) != dict:
-            newPara = True
-        else:
-            for key in tempPara:
-                if key not in parameters:
-                    newPara = True
-        if newPara:
-            parameters = tempPara
-            self.apparatus.setValue(
-                ['information', 'ProcedureData', 'Toolpath_Generate', 'parameters'],
-                tempPara,
-            )
+        # Update the procedure values
+        self.parameters = tempPara
+        self.requirements["parameters"]["value"] = tempPara
+        para_address = self.requirements["parameters"]["address"]
+        # Update the apparatus if an address is listed
+        if type(para_address) == list:
+            self.apparatus.setValue(para_address, tempPara)
