@@ -1,5 +1,5 @@
 #used as class because initialization is not needed ***yet***
-class importape:
+class import_ape:
     
     #serves as a configuration setting
     #will become more robust as temperature and extruder data are deconvolved
@@ -9,9 +9,9 @@ class importape:
         if configpoint == 'thread_count':
             return ( 1 )
         if configpoint == 'line_start':
-            return ( 1 )
+            return ( 'start' )
         if configpoint == 'line_end':
-            return ( 1000 )
+            return ( 'end' )
         if configpoint == 'call_file':
             return ( 'test_klein_bottle.gcode' )
         if configpoint == 'callthread':

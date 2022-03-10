@@ -1,12 +1,12 @@
 #screws up on retraction and z-hop  this NEEDS fixed
-#must get velocity data from getape.extrude  once done, highly complex infill (fabrics included) will work
+#must get velocity data from deconvolver.extrude  once done, highly complex infill (fabrics included) will work
 
 import threading, os, linecache
-from UI.import_ape import importape
+from UI.import_ape import import_ape as importape
 from UI.run_ape import runape
 
 #primary deconvolving solution
-class getape ( threading.Thread ):
+class deconvolver ( threading.Thread ): #dependent on import_ape, run_ape
     #initializes the class
     def __init__ ( self, call_file ):
         threading.Thread.__init__( self )
@@ -18,7 +18,7 @@ class getape ( threading.Thread ):
         self.line_start = importape.config ( 'line_start' )
         self.line_end = importape.config ( 'line_end' )
         self.UI_line = importape.config ( 'UI_line' )
-        #used for selecting file path behavior of getape.xxx
+        #used for selecting file path behavior of deconvolver.xxx
         if call_file == 'auto':
             self.call_file = runape ( '%s/Print_With_APE/*.gcode' % ( os.path.expanduser ( '~' ) ) ).findfile ( 'file' )
         else:
@@ -48,7 +48,8 @@ class getape ( threading.Thread ):
                 pass
         nextpoint = [ 0, 0, 0 ]
         toolpathpoint = [ { 'Empty' : 'Empty' } ]
-        linepoint = { 'X' : 0, 'Y' : 0, 'Z' : 0 }
+        pastlinepoint = { 'Empty' : 'Empty' } 
+        linepoint = { 'Empty' : 'Empty' }
         tempX = tempY = tempZ = 0
         i = 0
         for i in range ( line_start, line_end + 1 ):
@@ -147,17 +148,21 @@ class getape ( threading.Thread ):
                 nextpoint [ 2 ] = float ( tempZ )
             linepoint = { 'X' : nextpoint [ 0 ], 'Y' : nextpoint [ 1 ], 'Z' : nextpoint [ 2 ] }
             if i in range ( line_start, line_end + 1 ):
-                if 'X' in tempstr or 'Y' in tempstr or 'Z' in tempstr:
-                    toolpathpoint.append ( linepoint )
-                elif UI_line == 'yes':
-                    if "G1" in tempstr:
+                if pastlinepoint == linepoint:
+                    pass
+                else:
+                    if 'X' in tempstr or 'Y' in tempstr or 'Z' in tempstr:
+                        toolpathpoint.append ( linepoint )
+                    elif UI_line == 'yes':
+                        if "G1" in tempstr:
+                            toolpathpoint.append ( linepoint )
+                        else:
+                            toolpathpoint.append ( { 'Empty' : 'Empty' } )
+                    elif UI_line == 'no':
                         toolpathpoint.append ( linepoint )
                     else:
-                        toolpathpoint.append ( { 'Empty' : 'Empty' } )
-                elif UI_line == 'no':
-                    toolpathpoint.append ( linepoint )
-                else:
-                    toolpathpoint.append ( linepoint )
+                        toolpathpoint.append ( linepoint )
+                pastlinepoint = linepoint
         return ( toolpathpoint )
     
     #deconvolves hotend heat, system fan, bridging fan, tool change, tool #, multiplexer #, multiplexer change, and tool change distance information
@@ -688,50 +693,50 @@ class getape ( threading.Thread ):
             
     #calles hotend and loads initialized perameters
     def hotendUI ( self, initialize, past_line ):
-        return ( getape.hotend ( self.call_file, self.lineorlayer, self.line_start, self.line_end, initialize, self.UI_line, past_line ) )
+        return ( deconvolver.hotend ( self.call_file, self.lineorlayer, self.line_start, self.line_end, initialize, self.UI_line, past_line ) )
     
     def hotendUI_line ( self, line, past_line ):
         line_start = line
         line_end = line
-        return ( getape.hotend ( self.call_file, self.lineorlayer, line_start, line_end, 'no', 'yes', past_line ) [ -1 ] )    
+        return ( deconvolver.hotend ( self.call_file, self.lineorlayer, line_start, line_end, 'no', 'yes', past_line ) [ -1 ] )    
     
     #calles hotbed and loads initialized perameters
     def hotbedUI ( self, initialize, past_line ):
-        return ( getape.hotbed ( self.call_file, self.lineorlayer, self.line_start, self.line_end, initialize, self.UI_line, past_line ) )
+        return ( deconvolver.hotbed ( self.call_file, self.lineorlayer, self.line_start, self.line_end, initialize, self.UI_line, past_line ) )
         
     def hotbedUI_line ( self, line, past_line ):
         line_start = line
         line_end = line
-        return ( getape.hotbed ( self.call_file, self.lineorlayer, line_start, line_end, 'no', 'yes', past_line ) [ -1 ] )
+        return ( deconvolver.hotbed ( self.call_file, self.lineorlayer, line_start, line_end, 'no', 'yes', past_line ) [ -1 ] )
     
     def pointUI ( self, past_line ):
-        return ( getape.point ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, self.line_start, self.line_end, self.UI_line, past_line ) )
+        return ( deconvolver.point ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, self.line_start, self.line_end, self.UI_line, past_line ) )
     
     def pointUI_line ( self, line, past_line ):
         line_start = line
         line_end = line
-        return ( getape.point ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, line_start, line_end, 'yes', past_line ) [ -1 ] )
+        return ( deconvolver.point ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, line_start, line_end, 'yes', past_line ) [ -1 ] )
     
     def interpointUI ( self, past_line ):
-        return ( getape.interpoint ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, self.line_start, self.line_end, self.UI_line, past_line ) )
+        return ( deconvolver.interpoint ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, self.line_start, self.line_end, self.UI_line, past_line ) )
 
     def interpointUI_line ( self , line, past_line ):
         line_start = line
         line_end = line
-        return ( getape.interpoint ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, line_start, line_end, 'yes', past_line ) [ -1 ] )
+        return ( deconvolver.interpoint ( self.call_file, self.implicitorexplicitaxes, self.implicitorexplicittravel, self.lineorlayer, line_start, line_end, 'yes', past_line ) [ -1 ] )
 
     def extrudeUI ( self, past_line ):
-        return ( getape.extrude ( self.call_file, self.lineorlayer, self.line_start, self.line_end, self.UI_line, past_line ) )
+        return ( deconvolver.extrude ( self.call_file, self.lineorlayer, self.line_start, self.line_end, self.UI_line, past_line ) )
     
     def extrudeUI_line ( self, line, past_line ):
         line_start = line
         line_end = line
-        return ( getape.extrude ( self.call_file, self.lineorlayer, line_start, line_end, 'yes', past_line ) [ -1 ] )
+        return ( deconvolver.extrude ( self.call_file, self.lineorlayer, line_start, line_end, 'yes', past_line ) [ -1 ] )
 
-
-#print ( getape ( 'auto' ).hotendUI ( 'yes' ) )
-#print ( getape ( 'auto' ).hotbedUI ( 'yes' ) )
-#print ( getape ( 'auto' ).pointUI_line ( 1, 'Empty' ) )
-#print ( getape ( 'auto' ).pointUI ( ) )
-#print ( getape ( 'auto' ).interpointUI ( 'Empty' ) )
-#print ( getape ( 'auto' ).extrudeUI ( ) )
+#deconvolver testing
+#print ( deconvolver ( 'auto' ).hotendUI ( 'yes' ) )
+#print ( deconvolver ( 'auto' ).hotbedUI ( 'yes' ) )
+#print ( deconvolver ( 'auto' ).pointUI_line ( 1, 'Empty' ) )
+#print ( deconvolver ( 'auto' ).pointUI ( ) )
+#print ( deconvolver ( 'auto' ).interpointUI ( 'Empty' ) )
+#print ( deconvolver ( 'auto' ).extrudeUI ( ) )
